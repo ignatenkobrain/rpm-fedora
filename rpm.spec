@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 6
+Release: 7
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-posttrans.patch
@@ -45,7 +45,7 @@ BuildRequires: beecrypt-devel >= 4.1.2
 Requires: beecrypt >= 4.1.2
 
 BuildRequires: neon-devel
-BuildRequires: sqlite3-devel
+BuildRequires: sqlite-devel
 
 # XXX Red Hat 5.2 has not bzip2 or python
 %if %{with_bzip2}
@@ -77,7 +77,7 @@ Group: Development/Libraries
 Requires: rpm = %{rpm_version}-%{release}
 Requires: beecrypt >= 4.1.2
 Requires: neon-devel
-Requires: sqlite3-devel
+Requires: sqlite-devel
 
 %description devel
 This package contains the RPM C library and header files. These
@@ -508,6 +508,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Mar  9 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-7
+- rebuild against renamed sqlite package (#149719).
+
 * Mon Mar  7 2005 Jeremy Katz <katzj@redhat.com> - 4.4.1-6
 - fix build with new glibc
 

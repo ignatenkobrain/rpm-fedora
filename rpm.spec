@@ -1,5 +1,5 @@
 %define	with_python_subpackage	1%{nil}
-%define	with_python_version	2.2%{nil}
+%define	with_python_version	2.3%{nil}
 %define	with_bzip2		1%{nil}
 %define	with_apidocs		1%{nil}
 
@@ -17,30 +17,28 @@
 
 Summary: The RPM package management system.
 Name: rpm
-%define version 4.2.1
+%define version 4.2.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.30.1
+Release: 0.4
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
-Patch: rpm-4.2.1-0.30-psmworks.patch
-Copyright: GPL
+Patch0: rpm-4.2.2-soflags.patch
+License: GPL
 Conflicts: patch < 2.5
 %ifos linux
 Prereq: fileutils shadow-utils
 %endif
-Requires: popt = 1.8.1
+Requires: popt = 1.8.2
 Obsoletes: rpm-perl < %{version}
-
-BuildRequires: libtool automake autoconf
 
 # XXX necessary only to drag in /usr/lib/libelf.a, otherwise internal elfutils.
 BuildRequires: elfutils-libelf
 
 BuildRequires: zlib-devel
 
-BuildRequires: beecrypt-devel >= 0:3.0.0-2
-Requires: beecrypt >= 0:3.0.0-2
+BuildRequires: beecrypt-devel >= 3.0.1
+Requires: beecrypt >= 3.0.1
 
 # XXX Red Hat 5.2 has not bzip2 or python
 %if %{with_bzip2}
@@ -105,7 +103,7 @@ programs that will manipulate RPM packages and databases.
 %package -n popt
 Summary: A C library for parsing command line parameters.
 Group: Development/Libraries
-Version: 1.8.1
+Version: 1.8.2
 
 %description -n popt
 Popt is a C library for parsing command line parameters. Popt was
@@ -119,9 +117,13 @@ shell-like rules.
 
 %prep
 %setup -q
-%patch -p1
+
+# XXX zap rpath for non-ix86
 cd db/dist
+%patch0 -p2
 ./s_config
+cd ../..
+
 
 %build
 
@@ -140,12 +142,12 @@ CFLAGS="$RPM_OPT_FLAGS -fPIC"; export CFLAGS
 %else
 CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
 %endif
-CFLAGS="$RPM_OPT_FLAGS" ./autogen.sh --prefix=%{__prefix} --sysconfdir=/etc \
+./configure --prefix=%{__prefix} --sysconfdir=/etc \
 	--localstatedir=/var --infodir='${prefix}%{__share}/info' \
 	--mandir='${prefix}%{__share}/man' \
 	$WITH_PYTHON --without-javaglue
 %else
-CFLAGS="$RPM_OPT_FLAGS" ./autogen.sh --prefix=%{__prefix} $WITH_PYTHON \
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} $WITH_PYTHON \
 	--without-javaglue
 %endif
 
@@ -160,7 +162,7 @@ unset LD_ASSUME_KERNEL || :
 
 rm -rf $RPM_BUILD_ROOT
 
-make MKINSTALLDIRS=`pwd`/mkinstalldirs DESTDIR="$RPM_BUILD_ROOT" install
+make DESTDIR="$RPM_BUILD_ROOT" install
 
 %ifos linux
 
@@ -197,7 +199,6 @@ gzip -9n apidocs/man/man*/* || :
   rm -f .%{__libdir}/libbeecrypt.{a,la,so.2.2.0}
   rm -f .%{__prefix}/lib/rpm/{Specfile.pm,cpanflute,cpanflute2,rpmdiff,rpmdiff.cgi,sql.prov,sql.req,tcl.req}
   rm -rf .%{__mandir}/{fr,ko}
-  rm -rf .%{__libdir}/python*/site-packages/rpmmodule.*a
 }
 
 %clean
@@ -483,72 +484,12 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
-* Fri Oct 10 2003 Elliot Lee <sopwith@redhat.com> 4.2.1-0.30.1
-- Add rpm-4.2-psmworks.patch
+* Mon Dec 15 2003 Jeff Johnson <jbj@jbj.org> 4.2.2-0.3
+- make peace with libtool-1.5, autoconf-2.59, automake-1.8.
+- build with db-4.2.52 internal.
+- refresh bsddb.
 
-* Wed Jul 16 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.30
-- repair find-debuginfo.sh to avoid recursing in /usr/lib/debug.
-- fix: ia64: don't attempt autorelocate on .src.rpm's.
-- fix: debuginfo: -not -path /usr/lib/debug needed -prune too.
+* Mon Dec  1 2003 Jeff Johnson <jbj@redhat.com> 4.2.2-0.1
+- start rpm-4.2.2.
+- unify signal handling in librpmio, use condvar to deliver signal.
 
-* Thu Jul 10 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.26
-- apply debugedit patch necessary to produce kernel -debuginfo files.
-- zap zlib files so that apidocs gets included.
-
-* Wed Jul  9 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.21
-- resolve elf32/elf64 file conflicts to prefer elf64.
-
-* Tue Jul  8 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.20
-- resurrect manifests, RPMRC_NOTFOUND returned by readLead().
-- python: missed tuple refcount in IDTXload/IDTXglob.
-- fix: IDTXglob should return REMOVETID sorted headers (#89857).
-
-* Wed Jul  2 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.19
-- autorelocate ix86 package file paths on ia64.
-
-* Tue Jul  1 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.18
-- don't attempt to remove dbenv on --rebuilddb.
-- rebuild.
-
-* Tue Jun 24 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.17
-- update for fr.po (#97829).
-
-* Fri Jun 20 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.16
-- brp-python-bytecompile to automagically bytecode compile python.
-
-* Thu Jun 19 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.15
-- 2nd test release.
-
-* Thu Jun 12 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.13
-- fdCLose typo (#97257).
-- test release.
-
-* Mon Jun  9 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.12
-- gratuitous bump/rebuild to exclude ppc64 for the moment.
-
-* Thu Jun  5 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.11
-- update ja man pages (#92261).
-- backport rpmsw stopwatch, insturment rpmts operations.
-- toy method to enable --stats through bindings.
-
-* Wed Jun  4 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.8
-- pass structure pointer, not args, through headerSprintf call chain.
-- add ":xml" header format modifier.
-- --queryformat '[%%{*:xml}\n]' to dump header content in XML.
-- add ".arch" suffix to erase colored packages with identical NEVR.
-
-* Tue Jun  3 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.6
-- rebuild against fixes in beecrypt-3.0.0-0.20030603.
-- treat missing epoch's exactly the same as Epoch: 0.
-
-* Mon Jun  2 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.4
-- rebuild against fixes in beecrypt-3.0.0-0.20030602.
-
-* Thu May 29 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.3
-- build with external beecrypt-3.0.0.
-- blueprint beecrypt-3.0.0 changes against rpm-4.3.
-- x86_64 -> athlon, ppc64[ip]series -> ppc64 arch compatibility.
-
-* Thu Mar 27 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.1
-- start rpm-4.2.1.
-- hack out O_DIRECT support in db4 for now.

@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.2.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.7
+Release: 0.8
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -33,6 +33,7 @@ Obsoletes: rpm-perl < %{version}
 
 # XXX necessary only to drag in /usr/lib/libelf.a, otherwise internal elfutils.
 BuildRequires: elfutils-libelf
+BuildRequires: elfutils-devel
 
 BuildRequires: zlib-devel
 
@@ -147,7 +148,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} $WITH_PYTHON \
 # XXX this hack not necessary with db-4.2.52 (which does not use O_DIRECT).
 perl -pi -e 's/#define HAVE_O_DIRECT 1/#undef HAVE_O_DIRECT/' db3/db_config.h
 
-make
+make %{_smp_mflags}
 
 %install
 # XXX rpm needs functioning nptl for configure tests
@@ -489,6 +490,20 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Sun Dec 28 2003 Jeff Johnson <jbj@jbj.org> 4.2.2-0.8
+- convert ja and ko man pages to utf8 (#106050).
+- man page corrections (#106415).
+- perl.req typo (#106672).
+- fix: wrong package count for trigger scriptlet 1st arg (#100509).
+- fix: don't break header SHA1 if non-existent user/group (#97727).
+- remove fuids/fgids from rpmfi, easier to lookup fuser/fgroup instead.
+- merge sensible parts of openpkg rpm.patch.bugfix (#104780).
+- mark _javadocdir as documentation (#102898).
+- flush pipe before exit 1 in check-files (#103867).
+- perl.req: avoid regex misfire on '^use' in "= <<" assign (#109934).
+- find-debuginfo.sh: permit stripping unwritable by non-root (#112429).
+- missing build dependency (#111104).
+
 * Tue Dec 23 2003 Jeff Johnson <jbj@redhat.com> 4.2.2-0.7
 - python: forcearray for deps.
 - plug some rpmbuild memory leaks.

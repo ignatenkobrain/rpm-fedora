@@ -20,9 +20,10 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 2
+Release: 3
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
+Patch0: rpm-4.4.1-posttrans.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -130,6 +131,7 @@ shell-like rules.
 
 %prep
 %setup -q
+%patch0 -p0 
 
 %build
 
@@ -500,6 +502,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Feb 28 2005 Jeremy Katz <katzj@redhat.com> - 4.4.1-3
+- fix posttrans callback check being backwards (#149524)
+
 * Sun Feb 13 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-1
 - don't classify files in /dev (#146623).
 - don't build with sqlite3 if <sqlite3.h> is missing.

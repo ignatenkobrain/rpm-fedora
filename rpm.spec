@@ -20,9 +20,10 @@ Name: rpm
 %define version 4.3.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 19
+Release: 21
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
+Patch: rpm-4.3.2-noverbosity.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -124,7 +125,7 @@ shell-like rules.
 
 %prep
 %setup -q
-
+%patch -p1
 %build
 
 # XXX rpm needs functioning nptl for configure tests
@@ -494,7 +495,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
-* Sun Oct 31 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-19
+* Mon Nov  1 2004 Bill Nottingham <notting@redhat.com> 4.3.2-21
+- remove excess rpmIncreaseVerbosity() calls (fixes #137834)
+
+* Sun Oct 31 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-20
 - fix: buffer overrun displaying ko_KR (#135389).
 
 * Sat Oct 30 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-18

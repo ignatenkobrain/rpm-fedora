@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.2.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.6
+Release: 0.7
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -489,6 +489,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Dec 23 2003 Jeff Johnson <jbj@redhat.com> 4.2.2-0.7
+- python: forcearray for deps.
+- plug some rpmbuild memory leaks.
+
 * Wed Dec 17 2003 Jeff Johnson <jbj@jbj.org> 4.2.2-0.6
 - detect (and remove) dbenv files while upgrading to db-4.2.52.
 - ensure that librpmdb links against just built, not system, librpmio.

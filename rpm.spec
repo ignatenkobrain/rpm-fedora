@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.20
+Release: 0.21
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -162,11 +162,6 @@ capabilities.
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} --sysconfdir=/etc --localstatedir=/var --infodir='${prefix}%{__share}/info' --mandir='${prefix}%{__share}/man'
 %else
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix}
-%endif
-
-# XXX workaround alpha sha1 digest miscompilation
-%ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
-make CFLAGS="-g -O0" digest.o digest.lo -C rpmio
 %endif
 
 # XXX workaround ia64 gcc-3.1-0.18 miscompilation
@@ -521,6 +516,13 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Tue Jan 29 2002 Jeff Johnson <jbj@redhat.com>
+- transaction rollback code in rpmRollback().
+
+* Sun Jan 27 2002 Jeff Johnson <jbj@redhat.com>
+- fix: fancy hash fiddles if not a tty.
+- fix: handle /.../ correctly in rpmCleanPath().
+
 * Sat Jan 26 2002 Jeff Johnson <jbj@redhat.com>
 - fix: %exclude functional (again).
 - trap SIGILL for ppc64 inline asm voodoo fix from cross-dressed ppc32.

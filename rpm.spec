@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 7x.9.1
+Release: 7x.10
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -521,8 +521,10 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
-* Fri Mar 29 2002 Tim Powers <timp@redhat.com>
-- rebuilt
+* Thu Apr  4 2002 Jeff Johnson <jbj@redhat.com>
+- speedup large queries by ~50%.
+- revert to presentation ordering Yet Again (#62158).
+- rpmdbSortIterator: on upgrade, mergesort faster than quicksort (~7%).
 
 * Wed Mar 27 2002 Jeff Johnson <jbj@redhat.com>
 - fix: look for "/path" in Providename as well as Basenames (#59665).

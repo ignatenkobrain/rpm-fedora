@@ -19,7 +19,7 @@ Name: rpm
 %define version 4.0.3
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.83
+Release: 0.84
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -448,6 +448,8 @@ fi
 %defattr(-,root,root)
 %rpmattr	%{__prefix}/bin/rpmprune
 %{perl_sitearch}/auto/*
+%{perl_sitearch}/RPM
+%{perl_sitearch}/RPM.pm
 %{__prefix}%{__share}/man/man1/rpmprune.1*
 %{__prefix}%{__share}/man/man3/RPM*
 %endif
@@ -499,6 +501,9 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Mon Jul 30 2001 Tim Powers <timp@redhat.com>
+- added all of the perl modules to the files list for the rpm-perl package
+
 * Fri Jul 27 2001 Jeff Johnson <jbj@redhat.com>
 - fix: --noscripts is another multimode option.
 - add tmpdir to configure db3 tmpdir into chroot tree.

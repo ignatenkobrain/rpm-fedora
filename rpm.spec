@@ -20,10 +20,9 @@ Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 7x.5
+Release: 7x.7
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
-Patch: rpm-4.0.4-pyver.patch
 Copyright: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -153,8 +152,6 @@ shell-like rules.
 
 %prep
 %setup -q
-%patch -p1
-autoconf
 
 %build
 
@@ -524,6 +521,18 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Mon Mar 18 2002 Jeff Johnson <jbj@redhat.com>
+- fix: one-step-too-far when searching added package provides (#61388).
+- fix: avoid libio misconfiguration with bleeding edge glibc.
+- fix: add quotes around [:blank:] in linux find-provides.
+- make --addsign and --resign behave exactly the same.
+- *really* dump signature header immutable region.
+- fix: don't overflow result buffer if gpg/pgp gives copious output.
+
+* Fri Mar 15 2002 Jeff Johnson <jbj@redhat.com>
+- re-enable FD_CLOEXEC, the problem is in zlib through mmap.
+- add toy python callbacks for payload unpacking failure(s).
+
 * Wed Feb 13 2002 Jeff Johnson <jbj@redhat.com>
 - don't do close-on-exec, 2 powertools packages cannot be read when doing.
 - reapply Berkeley DB patch #4491.

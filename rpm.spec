@@ -19,9 +19,14 @@ Name: rpm
 %define version 4.0.3
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 1.03
+Release: 1.03c
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
+Patch0: rpm-4.0.2-ferror.patch
+Patch1: rpm-4.0.3-s390-varargs.patch
+Patch2: rpm-4.0.3-shutup.patch
+Patch3: rpm-4.0.3-config.patch
+Patch4: rpm-4.0.3-s390.patch
 Copyright: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -150,6 +155,12 @@ shell-like rules.
 
 %prep
 %setup -q
+%patch0 -p1 -b .ferror
+%patch1 -p1 -b .s390-varargs
+#%patch2 -p1 -b .shutup
+%patch3 -p1 -b .config
+%patch4 -p1 -b .s390
+
 
 %build
 

@@ -20,9 +20,10 @@ Name: rpm
 %define version 4.3
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.7
+Release: 0.7.1
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
+Patch0: rpm-py.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -117,6 +118,7 @@ shell-like rules.
 
 %prep
 %setup -q
+%patch0 -p0 -b .python
 
 %build
 
@@ -482,6 +484,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Jan 19 2004 Jeremy Katz <katzj@redhat.com> 4.3-0.7.1
+- add patch from nasrat to fix rpm-python problems that show 
+  up in anaconda (#113387)
+
 * Mon Jan 12 2004 Jeff Johnson <jbj@redhat.com> 4.3-0.7
 - fix: handle files w/o contexts correctly.
 

@@ -291,6 +291,7 @@ exit 0
 %rpmattr	%{__prefix}/lib/rpm/config.guess
 %rpmattr	%{__prefix}/lib/rpm/config.sub
 %rpmattr	%{__prefix}/lib/rpm/convertrpmrc.sh
+%rpmattr	%{__prefix}/lib/rpm/freshen.sh
 %attr(0644, rpm, rpm)	%{__prefix}/lib/rpm/macros
 %rpmattr	%{__prefix}/lib/rpm/mkinstalldirs
 %rpmattr	%{__prefix}/lib/rpm/rpm.*

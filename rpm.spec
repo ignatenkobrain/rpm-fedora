@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 7x.2
+Release: 7x.3
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -525,6 +525,10 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Wed Feb 13 2002 Jeff Johnson <jbj@redhat.com>
+- don't do close-on-exec, 2 powertools packages cannot be read when doing.
+- reapply Berkeley DB patch #4491.
+
 * Thu Feb  7 2002 Jeff Johnson <jbj@redhat.com>
 - rpm-4.0.4 release candidate.
 - add cpanflute2, another perl.req fiddle.

@@ -15,12 +15,12 @@
 %define	__prefix	/usr
 %{expand: %%define __share %(if [ -d %{__prefix}/share/man ]; then echo /share ; else echo %%{nil} ; fi)}
 
-Summary: The RPM package management system.
+Summary: The Red Hat package management system.
 Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.11
+Release: 0.12
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -57,18 +57,18 @@ BuildRoot: %{_tmppath}/%{name}-root
 %description
 The RPM Package Manager (RPM) is a powerful command line driven
 package management system capable of installing, uninstalling,
-verifying, querying, and updating software packages. Each software
+verifying, querying, and updating software packages.  Each software
 package consists of an archive of files along with information about
 the package like its version, a description, etc.
 
 %package devel
-Summary: Development files for manipulating RPM packages.
+Summary: Development files for applications which will manipulate RPM packages.
 Group: Development/Libraries
 Requires: rpm = %{rpm_version}, popt = 1.6.4
 
 %description devel
-This package contains the RPM C library and header files. These
-development files will simplify the process of writing programs that
+This package contains the RPM C library and header files.  These
+development files will simplify the process of writing programs which
 manipulate RPM packages and databases. These files are intended to
 simplify the process of creating graphical package managers or any
 other tools that need an intimate knowledge of RPM packages in order
@@ -83,8 +83,8 @@ Group: Development/Tools
 Requires: rpm = %{rpm_version}
 
 %description build
-The rpm-build package contains the scripts and executable programs
-that are used to build packages using the RPM Package Manager.
+This package contains scripts and executable programs that are used to
+build packages using RPM.
 
 %if %{with_python_subpackage}
 %package python
@@ -95,14 +95,14 @@ Requires: python >= %{with_python_version}
 Requires: popt = 1.6.4
 
 %description python
-The rpm-python package contains a module that permits applications
+The rpm-python package contains a module which permits applications
 written in the Python programming language to use the interface
-supplied by the RPM Package Manager libraries.
+supplied by RPM (RPM Package Manager) libraries.
 
 This package should be installed if you want to develop Python
 programs that will manipulate RPM packages and databases.
-
 %endif
+
 %if %{with_perl_subpackage}
 %package perl
 Summary: Native bindings to the RPM API for Perl.
@@ -129,25 +129,29 @@ implementations.
 
 At this time, the interface only provides access to the database of
 installed packages, and header data retrieval for RPM and SRPM files
-is not yet installed. Error management and the export of most defined
+is not yet installed.  Error management and the export of most defined
 constants, through RPM::Error and RPM::Constants, respectively, are
 also available.
 
 %endif
+
 %package -n popt
 Summary: A C library for parsing command line parameters.
 Group: Development/Libraries
 Version: 1.6.4
 
 %description -n popt
-Popt is a C library for parsing command line parameters. Popt was
+Popt is a C library for parsing command line parameters.  Popt was
 heavily influenced by the getopt() and getopt_long() functions, but it
-improves on them by allowing more powerful argument expansion. Popt
+improves on them by allowing more powerful argument expansion.  Popt
 can parse arbitrary argv[] style arrays and automatically set
-variables based on command line arguments. Popt allows command line
+variables based on command line arguments.  Popt allows command line
 arguments to be aliased via configuration files and includes utility
 functions for parsing arbitrary strings into argv[] arrays using
 shell-like rules.
+
+Install popt if you're a C programmer and you'd like to use its
+capabilities.
 
 %prep
 %setup -q
@@ -512,6 +516,11 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Thu Jan 17 2002 Jeff Johnson <jbj@redhat.com>
+- missing key(s) on keyring when verifying a signature is now an error.
+- remove dependency whiteout.
+- calculate rpm-4.1 ordering/orientation metrics in rpmdepOrder().
+
 * Fri Jan 11 2002 Jeff Johnson <jbj@redhat.com>
 - permit subset installs for %lang colored hardlink file sets.
 

@@ -17,10 +17,10 @@
 
 Summary: The RPM package management system.
 Name: rpm
-%define version 4.3
+%define version 4.3.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.22
+Release: 0.3
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -28,7 +28,7 @@ Conflicts: patch < 2.5
 %ifos linux
 Prereq: fileutils shadow-utils
 %endif
-Requires: popt = 1.9
+Requires: popt = 1.9.1
 Obsoletes: rpm-perl < %{version}
 
 # XXX necessary only to drag in /usr/lib/libelf.a, otherwise internal elfutils.
@@ -103,7 +103,7 @@ programs that will manipulate RPM packages and databases.
 %package -n popt
 Summary: A C library for parsing command line parameters.
 Group: Development/Libraries
-Version: 1.9
+Version: 1.9.1
 
 %description -n popt
 Popt is a C library for parsing command line parameters. Popt was
@@ -485,6 +485,24 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Thu Apr 15 2004 Jeff Johnson <jbj@jbj.org> 4.3.1-0.3
+- make peace with libtool-1.5.6.
+- fix: follow current is_selinux_enabled() return (#121004).
+
+* Wed Apr  7 2004 Jeff Johnson <jbj@jbj.org> 4.3.1-0.2
+- fix: segfault on --recontext if file_contexts unreadable (#117374).
+- fix: /etc/security/selinux/file_contexts is default path.
+- fix: no transaction lock if --test was specified (#119783).
+- perl: skip new-fangled head[34] while generating deps (#118243).
+- perl: use __perl for perl variable macros (#115156).
+
+* Tue Mar 30 2004 Jeff Johnson <jbj@jbj.org> 4.3.1-0.1
+- fix: don't add leading space to %* argv expansion (#119059).
+- scareMem = 0 everywhere, document deprecation phase out.
+- fix: add u+w to FIXPERMS.
+- add buildtime to rpmds, methods to retrieve.
+- python: hide labelCompare() underneath ds.cmp(a,b).
+
 * Tue Mar 16 2004 Jeff Johnson <jbj@redhat.com> 4.3-0.22
 - fix: grrr, skip notes on non-i386 entirely.
 

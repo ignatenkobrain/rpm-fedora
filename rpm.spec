@@ -19,7 +19,7 @@ Name: rpm
 %define version 4.0.3
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.79
+Release: 0.83
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -54,20 +54,20 @@ BuildRequires: perl >= 0:5.00503
 BuildRoot: %{_tmppath}/%{name}-root
 
 %description
-The RPM Package Manager (RPM) is a powerful command line driven
+The Red Hat Package Manager (RPM) is a powerful command line driven
 package management system capable of installing, uninstalling,
 verifying, querying, and updating software packages.  Each software
 package consists of an archive of files along with information about
 the package like its version, a description, etc.
 
 %package devel
-Summary: Development files for applications which will manipulate RPM packages.
+Summary: Development files for manipulating RPM packages.
 Group: Development/Libraries
 Requires: rpm = %{rpm_version}, popt = 1.6.3
 
 %description devel
 This package contains the RPM C library and header files.  These
-development files will simplify the process of writing programs which
+development files will simplify the process of writing programs that
 manipulate RPM packages and databases. These files are intended to
 simplify the process of creating graphical package managers or any
 other tools that need an intimate knowledge of RPM packages in order
@@ -82,8 +82,9 @@ Group: Development/Tools
 Requires: rpm = %{rpm_version}
 
 %description build
-This package contains scripts and executable programs that are used to
-build packages using RPM.
+The rpm-build package contains the scripts and executable programs
+that are used to build packages using the Red Hat Package Manager
+(RPM).
 
 %if %{with_python_subpackage}
 %package python
@@ -94,14 +95,14 @@ Requires: python >= 1.5.2
 Requires: popt = 1.6.3
 
 %description python
-The rpm-python package contains a module which permits applications
+The rpm-python package contains a module that permits applications
 written in the Python programming language to use the interface
-supplied by RPM (RPM Package Manager) libraries.
+supplied by RPM (Red Hat Package Manager) libraries.
 
 This package should be installed if you want to develop Python
 programs that will manipulate RPM packages and databases.
-%endif
 
+%endif
 %if %{with_perl_subpackage}
 %package perl
 Summary: Native bindings to the RPM API for Perl.
@@ -131,7 +132,6 @@ constants, through RPM::Error and RPM::Constants, respectively, are
 also available.
 
 %endif
-
 %package -n popt
 Summary: A C library for parsing command line parameters.
 Group: Development/Libraries
@@ -147,9 +147,6 @@ arguments to be aliased via configuration files and includes utility
 functions for parsing arbitrary strings into argv[] arrays using
 shell-like rules.
 
-Install popt if you're a C programmer and you'd like to use its
-capabilities.
-
 %prep
 %setup -q
 
@@ -158,7 +155,7 @@ capabilities.
 #
 # XXX work around a (possible) compiler problem on ia64
 %ifarch ia64
-RPM_OPT_FLAGS="-O0"
+#RPM_OPT_FLAGS="-O0"
 %endif
 
 %ifos linux
@@ -502,6 +499,23 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Fri Jul 27 2001 Jeff Johnson <jbj@redhat.com>
+- fix: --noscripts is another multimode option.
+- add tmpdir to configure db3 tmpdir into chroot tree.
+- permit lazy db opens within chroot.
+- fix: diddle dbenv path to accomodate backing store reopen in chroot.
+
+* Tue Jul 24 2001 Jeff Johnson <jbj@redhat.com>
+- fix: don't segfault when presented with rpm-2.4.10 packaging (#49688).
+
+* Mon Jul 23 2001 Jeff Johnson <jbj@redhat.com>
+- add pmac/ppciseries/ppcpseries varieties to ppc arch family.
+- include tdigest.c tkey.c and trpmio.c to "make dist".
+- re-enable dependency resolution source from package NVR.
+- rename pmac to ppcmac.
+- ia64: revert -O0 compilation.
+- upgrade to db-3.3.11 final.
+
 * Sun Jul 22 2001 Jeff Johnson <jbj@redhat.com>
 - use %%{rpm_version} to avoid other package versions.
 

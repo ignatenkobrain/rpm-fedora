@@ -20,14 +20,10 @@ Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 7x.18a
+Release: 7x.26
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
-Patch0: rpm-4.0.2-ferror.patch
-Patch1: rpm-4.0.3-s390-varargs.patch
-Patch2: rpm-4.0.3-config.patch
-Patch3: rpm-4.0.3-s390.patch
 Conflicts: patch < 2.5
 %ifos linux
 Prereq: gawk fileutils textutils mktemp shadow-utils
@@ -156,10 +152,6 @@ shell-like rules.
 
 %prep
 %setup -q
-%patch0 -p1 -b .ferror
-%patch1 -p1 -b .s390-varargs
-%patch2 -p1 -b .config
-%patch3 -p1 -b .s390
 
 %build
 
@@ -385,10 +377,12 @@ fi
 %ifarch armv3l armv4l
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/armv[34][lb]*
 %endif
-%ifarch mips mipsel mipseb
+%ifarch mips mipsel
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/mips*
 %endif
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/noarch*
+
+#%attr(-, rpm, rpm)		%{__prefix}/lib/rpm/redhat
 
 %lang(cs)	%{__prefix}/*/locale/cs/LC_MESSAGES/rpm.mo
 %lang(da)	%{__prefix}/*/locale/da/LC_MESSAGES/rpm.mo
@@ -467,7 +461,6 @@ fi
 %files python
 %defattr(-,root,root)
 %{__prefix}/lib/python%{with_python_version}/site-packages/rpmmodule.so
-#%{__prefix}/lib/python%{with_python_version}/site-packages/poptmodule.so
 %endif
 
 %if %{with_perl_subpackage}
@@ -529,6 +522,29 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Tue Nov  5 2002 Jeff Johnson <jbj@redhat.com> 4.0.4-7x.26
+- backport /etc/rpm/platform changes.
+- backport db-4.1.17 changes.
+- add _noDirTokens macro for 6x builds.
+
+* Sat Jun 15 2002 Jeff Johnson <jbj@redhat.com> 4.0.4-7x.24
+- beecrypt: revert cpu/arch compile option mixup (#66752).
+
+* Sun Jun  9 2002 Jeff Johnson <jbj@redhat.com> 4.0.4-7x.23
+- make peace with automake-1.6.1 et al.
+- backport all beecrypt/rpmio bits from 4.1 that don't break the API.
+- use /etc/rpm/platform (if it exists), rather than uname(2), for arch.
+- add /usr/lib/rpm/redhat/* per-vendor configuration.
+
+* Thu May  2 2002 Jeff Johnson <jbj@redhat.com>
+- fix: include <sys/time.h> for 6.2 python modules.
+
+* Fri Apr 26 2002 Jeff Johnson <jbj@redhat.com>
+- fix: rpmdb iterator memory leak in python bindings.
+
+* Fri Apr 19 2002 Jeff Johnson <jbj@redhat.com>
+- fix: packages produced by rpm-4.0 dinna merge signature tags.
+
 * Thu Apr 18 2002 Jeff Johnson <jbj@redhat.com>
 - fix: queries that evaluated to "" incorrectly returned NULL.
 

@@ -20,10 +20,9 @@ Name: rpm
 %define version 4.3
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.9.1
+Release: 0.22
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
-Patch0: rpm-py-selinux.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -118,7 +117,6 @@ shell-like rules.
 
 %prep
 %setup -q
-%patch0 -p1 -b .sel
 
 %build
 
@@ -136,7 +134,7 @@ CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
 ./configure --prefix=%{__prefix} --sysconfdir=/etc \
 	--localstatedir=/var --infodir='${prefix}%{__share}/info' \
 	--mandir='${prefix}%{__share}/man' \
-	$WITH_PYTHON --without-javaglue
+	$WITH_PYTHON --enable-posixmutexes --without-javaglue
 %else
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} $WITH_PYTHON \
 	--without-javaglue
@@ -175,6 +173,8 @@ do
     touch $RPM_BUILD_ROOT/var/lib/rpm/$dbi
 done
 
+# - serialize rpmtsRun() using fcntl on /var/lock/rpm/transaction.
+mkdir -p ${RPM_BUILD_ROOT}/var/lock/rpm
 %endif
 
 %if %{with_apidocs}
@@ -266,6 +266,7 @@ exit 0
 #%config(noreplace,missingok)	/etc/rpm/macros.*
 %attr(0755, rpm, rpm)	%dir /var/lib/rpm
 %attr(0755, rpm, rpm)	%dir /var/spool/repackage
+%attr(0755, rpm, rpm)	%dir /var/lock/rpm
 
 %define	rpmdbattr %attr(0644, rpm, rpm) %verify(not md5 size mtime) %ghost %config(missingok,noreplace)
 %rpmdbattr	/var/lib/rpm/*
@@ -304,7 +305,7 @@ exit 0
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/alpha*
 %endif
-%ifarch sparc sparcv9 sparc64
+%ifarch sparc sparcv8 sparcv9 sparc64
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/sparc*
 %endif
 %ifarch ia64
@@ -484,10 +485,54 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
-* Tue Jan 27 2004 Jeremy Katz <katzj@redhat.com> - 4.3-0.9.1
-- add patch to setup selinux contexts from python
+* Tue Mar 16 2004 Jeff Johnson <jbj@redhat.com> 4.3-0.22
+- fix: grrr, skip notes on non-i386 entirely.
 
-* Mon Jan 19 2004 Jeff Johnson <jbj@jbj.org> 4.2-0.9
+* Fri Mar 12 2004 Jeff Johnson <jbj@jbj.org> 4.3-0.21
+- fix: increase file context regex parse buffer to BUFSIZ.
+- fix: handle elf64 note sections correctly.
+
+* Wed Mar 10 2004 Jeff Johnson <jbj@jbj.org> 4.3-0.20
+- add sparcv8 and enable elf32/elf64 Zon sparc64 (#117302).
+- fix: --querybynumber looped.
+- fix: ENOTSUP filter from lsetfilecon borkage.
+
+* Tue Mar  9 2004 Jeff Johnson <jbj@jbj.org> 4.3-0.19
+- fix: sq->reaped needs sighold(SIGCHLD)/sigrelease(SIGCHLD) (#117620).
+
+* Fri Mar  5 2004 Jeff Johnson <jbj@redhat.com> 4.3-0.18
+- selinux: ignore ENOTSUP return from lsetfilecon.
+
+* Mon Mar  1 2004 Jeff Johnson <jbj@jbj.org> 4.3-0.17
+- permit globs in macrofiles: directive (#117217).
+- fix: segfault generating transaction serialization lock path.
+- use /etc/security/selinux/file_contexts instead.
+
+* Wed Feb 25 2004 Jeff Johnson <jbj@jbj.org> 4.3-0.15
+- serialize rpmtsRun() using fcntl on /var/lock/rpm/transaction.
+
+* Sun Feb 22 2004 Jeff Johnson <jbj@jbj,org> 4.3-0.14
+- add ia32e arch.
+- stable sort for policy specifications, patterns before paths.
+- set "rpm_script_t" exec type for scriptlets iff /bin/sh, else default.
+- force FD_CLOEXEC on 1st 100 inherited fdno's.
+
+* Fri Feb 20 2004 Jeff Johnson <jbj@jbj.org> 4.3-0.13
+- fix: only first "mkdir -p" directory had context set.
+
+* Wed Feb 18 2004 Jeff Johnson <jbj@redhat.com> 4.3-0.12
+- python: add patch to rpm-4_3 to initialize RE contexts.
+
+* Sun Feb 15 2004 Jeff Johnson <jbj@jbj.org> 4.3-0.11
+- fix: set fcontext from pkg when file_contexts doesn't exist (#114040).
+- fix: set fcontext for "mkdir -p" directories not in packages.
+- fix: setfiles (aka rpmsx.c) dinna handle patterns correctly.
+- establish rpm_script_t before scriptlet exec.
+
+* Wed Feb 11 2004 Jeff Johnson <jbj@redhat.com> 4.3-0.10
+- re-add --enable-posixmutexes to build.
+
+* Mon Jan 19 2004 Jeff Johnson <jbj@jbj.org> 4.3-0.9
 - python: return None for NEVRAO, [] for everything else.
 
 * Mon Jan 12 2004 Jeff Johnson <jbj@redhat.com> 4.3-0.7

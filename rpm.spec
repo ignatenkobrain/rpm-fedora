@@ -17,10 +17,10 @@
 
 Summary: The RPM package management system.
 Name: rpm
-%define version 4.2.2
+%define version 4.3
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.8
+Release: 0.6
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -28,7 +28,7 @@ Conflicts: patch < 2.5
 %ifos linux
 Prereq: fileutils shadow-utils
 %endif
-Requires: popt = 1.8.2
+Requires: popt = 1.9
 Obsoletes: rpm-perl < %{version}
 
 # XXX necessary only to drag in /usr/lib/libelf.a, otherwise internal elfutils.
@@ -38,7 +38,7 @@ BuildRequires: elfutils-devel
 BuildRequires: zlib-devel
 
 BuildRequires: beecrypt-devel >= 3.0.1
-Requires: beecrypt >= 3.0.1
+Requires: beecrypt-devel >= 3.0.1
 
 # XXX Red Hat 5.2 has not bzip2 or python
 %if %{with_bzip2}
@@ -103,7 +103,7 @@ programs that will manipulate RPM packages and databases.
 %package -n popt
 Summary: A C library for parsing command line parameters.
 Group: Development/Libraries
-Version: 1.8.2
+Version: 1.9
 
 %description -n popt
 Popt is a C library for parsing command line parameters. Popt was
@@ -130,11 +130,7 @@ WITH_PYTHON="--without-python"
 %endif
 
 %ifos linux
-%ifarch x86_64 s390 s390x 
-CFLAGS="$RPM_OPT_FLAGS -fPIC"; export CFLAGS
-%else
 CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
-%endif
 ./configure --prefix=%{__prefix} --sysconfdir=/etc \
 	--localstatedir=/var --infodir='${prefix}%{__share}/info' \
 	--mandir='${prefix}%{__share}/man' \
@@ -143,10 +139,6 @@ CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} $WITH_PYTHON \
 	--without-javaglue
 %endif
-
-# XXX hack out O_DIRECT support in db4 for now.
-# XXX this hack not necessary with db-4.2.52 (which does not use O_DIRECT).
-perl -pi -e 's/#define HAVE_O_DIRECT 1/#undef HAVE_O_DIRECT/' db3/db_config.h
 
 make %{_smp_mflags}
 
@@ -229,7 +221,7 @@ exit 0
 /usr/lib/rpm/rpmdb_stat -CA -h /var/lib/rpm 2>&1 |
 grep "db_stat: Program version 4.2 doesn't match environment version" 2>&1 > /dev/null &&
 	rm -f /var/lib/rpm/__db*
-
+                                                                                
 %endif
 exit 0
 
@@ -285,10 +277,10 @@ exit 0
 %rpmattr	%{__bindir}/rpmquery
 %rpmattr	%{__bindir}/rpmverify
 
-%{__libdir}/librpm-4.2.so
-%{__libdir}/librpmdb-4.2.so
-%{__libdir}/librpmio-4.2.so
-%{__libdir}/librpmbuild-4.2.so
+%{__libdir}/librpm-4.3.so
+%{__libdir}/librpmdb-4.3.so
+%{__libdir}/librpmio-4.3.so
+%{__libdir}/librpmbuild-4.3.so
 
 %attr(0755, rpm, rpm)	%dir %{__prefix}/lib/rpm
 %rpmattr	%{__prefix}/lib/rpm/config.guess
@@ -490,36 +482,29 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
-* Sun Dec 28 2003 Jeff Johnson <jbj@jbj.org> 4.2.2-0.8
-- convert ja and ko man pages to utf8 (#106050).
-- man page corrections (#106415).
-- perl.req typo (#106672).
-- fix: wrong package count for trigger scriptlet 1st arg (#100509).
-- fix: don't break header SHA1 if non-existent user/group (#97727).
-- remove fuids/fgids from rpmfi, easier to lookup fuser/fgroup instead.
-- merge sensible parts of openpkg rpm.patch.bugfix (#104780).
-- mark _javadocdir as documentation (#102898).
-- flush pipe before exit 1 in check-files (#103867).
-- perl.req: avoid regex misfire on '^use' in "= <<" assign (#109934).
-- find-debuginfo.sh: permit stripping unwritable by non-root (#112429).
-- missing build dependency (#111104).
+* Mon Jan  5 2004 Jeff Johnson <jbj@redhat.com> 4.2-0.6
+- selinux phases 1 and 2 delivered.
 
-* Tue Dec 23 2003 Jeff Johnson <jbj@redhat.com> 4.2.2-0.7
-- python: forcearray for deps.
+* Tue Dec 23 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.5
 - plug some rpmbuild memory leaks.
+- file security contexts added to package header.
 
-* Wed Dec 17 2003 Jeff Johnson <jbj@jbj.org> 4.2.2-0.6
+* Mon Dec 22 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.4
+- test build with methods needed for selinux.
+
+* Wed Dec 17 2003 Jeff Johnson <jbj@jbj.org> 4.3-0.3
 - detect (and remove) dbenv files while upgrading to db-4.2.52.
-- ensure that librpmdb links against just built, not system, librpmio.
 - fix: dangling pointer brain fart (#107835).
 - fix: ds.Single() method needs malloc'd elements (#109919).
 
-* Mon Dec 15 2003 Jeff Johnson <jbj@jbj.org> 4.2.2-0.3
-- make peace with libtool-1.5, autoconf-2.59, automake-1.8.
-- build with db-4.2.52 internal.
-- refresh bsddb.
+* Sun Dec  7 2003 Jeff Johnson <jbj@jbj.org> 4.3-0.2
+- only internal Berkeley db from now on.
+- revive "make dist".
 
-* Mon Dec  1 2003 Jeff Johnson <jbj@redhat.com> 4.2.2-0.1
-- start rpm-4.2.2.
+* Wed Mar 19 2003 Jeff Johnson <jbj@redhat.com> 4.3-0.1
+- upgrade to zlib-1.2.beta7.
+- pass structure pointer, not args, through headerSprintf call chain.
+- add ":xml" tag format modifier.
+- --queryformat '[%%{*:xml}\n]' to dump header content in XML.
+- fix: short option help missing string terminator.
 - unify signal handling in librpmio, use condvar to deliver signal.
-

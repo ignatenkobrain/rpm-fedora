@@ -20,10 +20,9 @@ Name: rpm
 %define version 4.2.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.4
+Release: 0.5
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
-Patch0: rpm-4.2.2-soflags.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -118,13 +117,6 @@ shell-like rules.
 %prep
 %setup -q
 
-# XXX zap rpath for non-ix86
-cd db/dist
-%patch0 -p2
-./s_config
-cd ../..
-
-
 %build
 
 # XXX rpm needs functioning nptl for configure tests
@@ -152,6 +144,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} $WITH_PYTHON \
 %endif
 
 # XXX hack out O_DIRECT support in db4 for now.
+# XXX this hack not necessary with db-4.2.52 (which does not use O_DIRECT).
 perl -pi -e 's/#define HAVE_O_DIRECT 1/#undef HAVE_O_DIRECT/' db3/db_config.h
 
 make
@@ -224,7 +217,18 @@ exit 0
 %post
 %ifos linux
 /sbin/ldconfig
+
+# Establish correct rpmdb ownership.
 /bin/chown rpm.rpm /var/lib/rpm/[A-Z]*
+
+# XXX Detect (and remove) incompatible dbenv files during db-4.2.52 upgrade.
+# XXX Removing dbenv files in %%post opens a lock race window, a tolerable
+# XXX risk compared to the support issues involved with upgrading Berkeley DB.
+[ -w /var/lib/rpm/__db.001 ] &&
+/usr/lib/rpm/rpmdb_stat -CA -h /var/lib/rpm 2>&1 |
+grep "db_stat: Program version 4.2 doesn't match environment version" 2>&1 > /dev/null &&
+	rm -f /var/lib/rpm/__db*
+
 %endif
 exit 0
 
@@ -402,6 +406,15 @@ exit 0
 %rpmattr	%{__prefix}/lib/rpm/vpkg-provides.sh
 %rpmattr	%{__prefix}/lib/rpm/vpkg-provides2.sh
 
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_deadlock
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_dump
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_load
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_loadcvt
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_stat
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_svc
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_verify
+%rpmattr	%{__prefix}/lib/rpm/rpmfile
+
 %{__mandir}/man8/rpmbuild.8*
 %{__mandir}/man8/rpmdeps.8*
 
@@ -433,14 +446,6 @@ exit 0
 %{__mandir}/man8/rpmcache.8*
 %{__mandir}/man8/rpmgraph.8*
 %rpmattr	%{__prefix}/lib/rpm/rpmcache
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_deadlock
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_dump
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_load
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_loadcvt
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_svc
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_stat
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_verify
-%rpmattr	%{__prefix}/lib/rpm/rpmfile
 %rpmattr	%{__bindir}/rpmgraph
 
 %files -n popt
@@ -484,6 +489,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Dec 17 2003 Jeff Johnson <jbj@jbj.org> 4.2.2-0.5
+- detect (and remove) dbenv files while upgrading to db-4.2.52.
+- ensure that librpmdb links against just built, not system, librpmio.
+
 * Mon Dec 15 2003 Jeff Johnson <jbj@jbj.org> 4.2.2-0.3
 - make peace with libtool-1.5, autoconf-2.59, automake-1.8.
 - build with db-4.2.52 internal.

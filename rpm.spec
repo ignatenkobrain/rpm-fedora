@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.3.3
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 1
+Release: 8
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -495,18 +495,16 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
-* Wed Nov 10 2004 Jeff Johnson <jbj@jbj.org>
+* Tue Dec  7 2004 Jeff Johnson <jbj@jbj.org> 4.3.3-8
+- automagically detect and emit "python(abi) = 2.4" dependencies.
+- port to internal file-4.10 libmagic rather than libfmagic.
+
+* Sun Dec  5 2004 Jeff Johnson <jbj@jbj.org> 4.3.3-3
+- force *.py->*.pyo byte code compilation with brp-python-bytecompile.
+
+* Wed Nov 10 2004 Jeff Johnson <jbj@jbj.org> 4.3.3-1
 - bump micro version.
 - make peace with libtool-1.5.10 and automake-1.9.3.
 - python: add python 2.4 support.
 - selinux: use rpm_execcon, not execv, to run scriptlets (#136848).
 - fix: segfault on --verifydb (#138589).
-
-* Mon Nov  8 2004 Jeremy Katz <katzj@redhat.com> - 4.3.2-23
-- PyDictIter_Type is no more
-
-* Mon Nov  8 2004 Jeremy Katz <katzj@redhat.com> - 4.3.2-22
-- rebuild for python 2.4
-
-* Mon Nov  1 2004 Bill Nottingham <notting@redhat.com> 4.3.2-21
-- remove excess rpmIncreaseVerbosity() calls (fixes #137834)

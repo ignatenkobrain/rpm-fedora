@@ -20,13 +20,13 @@ Name: rpm
 %define version 4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.69
+Release: 1
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
 Conflicts: patch < 2.5
 %ifos linux
-Prereq: gawk fileutils textutils mktemp shadow-utils
+Prereq: fileutils shadow-utils
 %endif
 Requires: popt = 1.8
 Obsoletes: rpm-perl < %{version}
@@ -73,7 +73,7 @@ will manipulate RPM packages and databases.
 Summary: Scripts and executable programs used to build packages.
 Group: Development/Tools
 Requires: rpm = %{rpm_version}, patch >= 2.5, file
-Provides: rpmbuild(VendorConfig) = %{version}
+Provides: rpmbuild(VendorConfig) = 4.1-1
 
 %description build
 The rpm-build package contains the scripts and executable programs
@@ -117,7 +117,7 @@ shell-like rules.
 %build
 
 # XXX rpm needs functioning nptl for configure tests
-unset LD_ASSUME_KERNEL
+unset LD_ASSUME_KERNEL || :
 
 %if %{with_python_subpackage}
 WITH_PYTHON="--with-python=%{with_python_version}"
@@ -134,17 +134,20 @@ CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} --sysconfdir=/etc \
 	--localstatedir=/var --infodir='${prefix}%{__share}/info' \
 	--mandir='${prefix}%{__share}/man' \
-	$WITH_PYTHON --enable-posixmutexes --without-javaglue
+	$WITH_PYTHON --without-javaglue
 %else
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} $WITH_PYTHON \
 	--without-javaglue
 %endif
 
+# XXX hack out O_DIRECT support in db4 for now.
+perl -pi -e 's/#define HAVE_O_DIRECT 1/#undef HAVE_O_DIRECT/' db3/db_config.h
+
 make
 
 %install
 # XXX rpm needs functioning nptl for configure tests
-unset LD_ASSUME_KERNEL
+unset LD_ASSUME_KERNEL || :
 
 rm -rf $RPM_BUILD_ROOT
 
@@ -183,8 +186,6 @@ gzip -9n apidocs/man/man*/* || :
 { cd $RPM_BUILD_ROOT
   rm -rf .%{__includedir}/beecrypt
   rm -f .%{__libdir}/libbeecrypt.{a,la,so.2.2.0}
-  rm -rf .%{__includedir}/libelf
-  rm -f .%{__libdir}/libelf.{a,la}
   rm -f .%{__prefix}/lib/rpm/{Specfile.pm,cpanflute,cpanflute2,rpmdiff,rpmdiff.cgi,sql.prov,sql.req,tcl.req}
   rm -rf .%{__mandir}/{fr,ko}
 }
@@ -424,6 +425,7 @@ exit 0
 %rpmattr	%{__prefix}/lib/rpm/rpmdb_deadlock
 %rpmattr	%{__prefix}/lib/rpm/rpmdb_dump
 %rpmattr	%{__prefix}/lib/rpm/rpmdb_load
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_loadcvt
 %rpmattr	%{__prefix}/lib/rpm/rpmdb_svc
 %rpmattr	%{__prefix}/lib/rpm/rpmdb_stat
 %rpmattr	%{__prefix}/lib/rpm/rpmdb_verify
@@ -471,6 +473,20 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Mar 19 2003 Jeff Johnson <jbj@redhat.com> 4.2-1
+- release candidate.
+- hack out O_DIRECT support in db4 for now.
+
+* Fri Mar 14 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.73
+- fix: short option help missing string terminator.
+
+* Fri Mar 14 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.72
+- fix: close db cursors to remove rpmdb references on signal exit.
+
+* Fri Mar  7 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.70
+- fix: memory leak (85522).
+- build with internal elfutils if not installed.
+
 * Thu Feb 27 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.69
 - file: check size read from elf header (#85297).
 

@@ -19,7 +19,7 @@ Name: rpm
 %define version 4.0.3
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.88
+Release: 0.88.1
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -159,13 +159,15 @@ shell-like rules.
 #RPM_OPT_FLAGS="-O0"
 %endif
 
+RPM_OPT_FLAGS="$RPM_OPT_FLAGS -D_REENTRANT"
+
 %ifos linux
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} --sysconfdir=/etc --localstatedir=/var --infodir='${prefix}%{__share}/info' --mandir='${prefix}%{__share}/man'
 %else
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix}
 %endif
 
-make
+make %{?_smp_mflags}
 
 %if %{with_perl_subpackage}
 { cd Perl-RPM
@@ -505,6 +507,9 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Tue Aug  7 2001 Elliot Lee <sopwith@redhat.com>
+- Build with -D_REENTRANT
+
 * Mon Aug  6 2001 Jeff Johnson <jbj@redhat.com>
 - python: add hiesenbug patch.
 

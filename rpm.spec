@@ -413,6 +413,7 @@ exit 0
 %rpmattr	%{__prefix}/lib/rpm/perldeps.pl
 %rpmattr	%{__prefix}/lib/rpm/perl.prov
 %rpmattr	%{__prefix}/lib/rpm/perl.req
+%rpmattr	%{__prefix}/lib/rpm/pythondeps.sh
 
 %rpmattr	%{__prefix}/lib/rpm/rpm[bt]
 %rpmattr	%{__prefix}/lib/rpm/rpmdeps

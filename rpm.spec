@@ -1,26 +1,26 @@
 %define	with_python_subpackage	1%{nil}
-%define	with_python_version	1.5%{nil}
-%define with_perl_subpackage	0
+%define	with_python_version	2.2%{nil}
 %define	with_bzip2		1%{nil}
 %define	with_apidocs		1%{nil}
-%define with_internal_db	1%{nil}
-%define strip_binaries		1
-
-# XXX enable at your own risk, CDB access to rpmdb isn't cooked yet.
-%define	enable_cdb		create cdb
 
 # XXX legacy requires './' payload prefix to be omitted from rpm packages.
 %define	_noPayloadPrefix	1
 
 %define	__prefix	/usr
+%{?!_lib: %define _lib lib}
 %{expand: %%define __share %(if [ -d %{__prefix}/share/man ]; then echo /share ; else echo %%{nil} ; fi)}
+
+%define __bindir	%{__prefix}/bin
+%define __includedir	%{__prefix}/include
+%define __libdir	%{__prefix}/%{_lib}
+%define __mandir	%{__prefix}%{__share}/man
 
 Summary: The RPM package management system.
 Name: rpm
-%define version 4.0.5
+%define version 4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 1.7x
+Release: 0.69
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -28,28 +28,20 @@ Conflicts: patch < 2.5
 %ifos linux
 Prereq: gawk fileutils textutils mktemp shadow-utils
 %endif
-Requires: popt = 1.6.5
+Requires: popt = 1.8
+Obsoletes: rpm-perl < %{version}
 
-%if !%{with_internal_db}
-BuildRequires: db3-devel
-
-# XXX glibc-2.1.92 has incompatible locale changes that affect statically
-# XXX linked binaries like /bin/rpm.
-%ifnarch ia64
-Requires: glibc >= 2.1.92
-%endif
-%endif
+# XXX necessary only to drag in /usr/lib/libelf.a, otherwise internal elfutils.
+BuildRequires: elfutils-libelf
 
 BuildRequires: zlib-devel
+
 # XXX Red Hat 5.2 has not bzip2 or python
 %if %{with_bzip2}
 BuildRequires: bzip2 >= 0.9.0c-2
 %endif
 %if %{with_python_subpackage}
 BuildRequires: python-devel >= %{with_python_version}
-%endif
-%if %{with_perl_subpackage}
-BuildRequires: perl >= 0:5.00503
 %endif
 
 BuildRoot: %{_tmppath}/%{name}-root
@@ -62,9 +54,9 @@ package consists of an archive of files along with information about
 the package like its version, a description, etc.
 
 %package devel
-Summary: Development files for manipulating RPM packages.
+Summary:  Development files for manipulating RPM packages.
 Group: Development/Libraries
-Requires: rpm = %{rpm_version}, popt = 1.6.5
+Requires: rpm = %{rpm_version}
 
 %description devel
 This package contains the RPM C library and header files. These
@@ -80,8 +72,8 @@ will manipulate RPM packages and databases.
 %package build
 Summary: Scripts and executable programs used to build packages.
 Group: Development/Tools
-Requires: rpm = %{rpm_version}
-Provides: perl(Specfile)
+Requires: rpm = %{rpm_version}, patch >= 2.5, file
+Provides: rpmbuild(VendorConfig) = %{version}
 
 %description build
 The rpm-build package contains the scripts and executable programs
@@ -93,52 +85,21 @@ Summary: Python bindings for apps which will manipulate RPM packages.
 Group: Development/Libraries
 Requires: rpm = %{rpm_version}
 Requires: python >= %{with_python_version}
-Requires: popt = 1.6.5
+Requires: elfutils >= 0.55
 
 %description python
 The rpm-python package contains a module that permits applications
 written in the Python programming language to use the interface
-supplied by the RPM Package Manager libraries.
+supplied by RPM Package Manager libraries.
 
 This package should be installed if you want to develop Python
 programs that will manipulate RPM packages and databases.
-
 %endif
-%if %{with_perl_subpackage}
-%package perl
-Summary: Native bindings to the RPM API for Perl.
-Group: Development/Languages
-URL: http://www.cpan.org
-Provides: perl(RPM::Database) = %{rpm_version}
-Provides: perl(RPM::Header) = %{rpm_version}
-Requires: rpm = %{rpm_version}
-Requires: perl >= 0:5.00503
-Requires: popt = 1.6.5
-Obsoletes: perl-Perl-RPM
 
-%description perl
-The Perl-RPM module is an attempt to provide Perl-level access to the
-complete application programming interface that is a part of the Red
-Hat Package Manager (RPM). Rather than have scripts rely on executing
-RPM commands and parse the resulting output, this module aims to give
-Perl programmers the ability to do anything that would otherwise have
-been done in C or C++.
-
-The interface is being designed and laid out as a collection of
-classes, at least some of which are also available as tied-hash
-implementations.
-
-At this time, the interface only provides access to the database of
-installed packages, and header data retrieval for RPM and SRPM files
-is not yet installed. Error management and the export of most defined
-constants, through RPM::Error and RPM::Constants, respectively, are
-also available.
-
-%endif
 %package -n popt
 Summary: A C library for parsing command line parameters.
 Group: Development/Libraries
-Version: 1.6.5
+Version: 1.8
 
 %description -n popt
 Popt is a C library for parsing command line parameters. Popt was
@@ -155,29 +116,36 @@ shell-like rules.
 
 %build
 
-%ifos linux
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} --sysconfdir=/etc --localstatedir=/var --infodir='${prefix}%{__share}/info' --mandir='${prefix}%{__share}/man' --with-python=%{with_python_version} --without-javaglue
+# XXX rpm needs functioning nptl for configure tests
+unset LD_ASSUME_KERNEL
+
+%if %{with_python_subpackage}
+WITH_PYTHON="--with-python=%{with_python_version}"
 %else
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix}
+WITH_PYTHON="--without-python"
 %endif
 
-# XXX workaround ia64 gcc-3.1-0.18 miscompilation
-%ifarch ia64
-make CFLAGS="-g -O0 -DIA64_SUCKS_ROCKS" files.o files.lo -C build
+%ifos linux
+%ifarch x86_64 s390 s390x 
+CFLAGS="$RPM_OPT_FLAGS -fPIC"; export CFLAGS
+%else
+CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
+%endif
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} --sysconfdir=/etc \
+	--localstatedir=/var --infodir='${prefix}%{__share}/info' \
+	--mandir='${prefix}%{__share}/man' \
+	$WITH_PYTHON --enable-posixmutexes --without-javaglue
+%else
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} $WITH_PYTHON \
+	--without-javaglue
 %endif
 
 make
 
-%if %{with_perl_subpackage}
-{ cd Perl-RPM
-  CFLAGS="$RPM_OPT_FLAGS" perl Makefile.PL
-  export SUBDIR="%{_builddir}/%{buildsubdir}"
-  make INC="-I. -I$SUBDIR/lib -I$SUBDIR/rpmdb -I$SUBDIR/rpmio -I$SUBDIR/popt" \
-    LDDLFLAGS="-shared -L$SUBDIR/lib/.libs -L$SUBDIR/rpmdb/.libs -L$SUBDIR/rpmio/.libs -L$SUBDIR/popt/.libs" %{?_smp_mflags}
-}
-%endif
-
 %install
+# XXX rpm needs functioning nptl for configure tests
+unset LD_ASSUME_KERNEL
+
 rm -rf $RPM_BUILD_ROOT
 
 make DESTDIR="$RPM_BUILD_ROOT" install
@@ -192,18 +160,13 @@ mkdir -p ${RPM_BUILD_ROOT}/etc/logrotate.d
 install -m 644 scripts/rpm.log ${RPM_BUILD_ROOT}/etc/logrotate.d/rpm
 
 mkdir -p $RPM_BUILD_ROOT/etc/rpm
-cat << E_O_F > $RPM_BUILD_ROOT/etc/rpm/macros.db1
-%%_dbapi		1
-E_O_F
-cat << E_O_F > $RPM_BUILD_ROOT/etc/rpm/macros.cdb
-%{?enable_cdb:#%%__dbi_cdb	%{enable_cdb}}
-E_O_F
 
+mkdir -p $RPM_BUILD_ROOT/var/spool/repackage
 mkdir -p $RPM_BUILD_ROOT/var/lib/rpm
 for dbi in \
-	Basenames Conflictname Dirnames Group Installtid Name Providename \
-	Provideversion Removetid Requirename Requireversion Triggername \
-	Sigmd5 Sha1header Filemd5s Packages \
+	Basenames Conflictname Dirnames Group Installtid Name Packages \
+	Providename Provideversion Requirename Requireversion Triggername \
+	Filemd5s Pubkeys Sha1header Sigmd5 \
 	__db.001 __db.002 __db.003 __db.004 __db.005 __db.006 __db.007 \
 	__db.008 __db.009
 do
@@ -216,41 +179,30 @@ done
 gzip -9n apidocs/man/man*/* || :
 %endif
 
-%if %{with_perl_subpackage}
-{ cd Perl-RPM
-  eval `perl '-V:installsitearch'`
-  eval `perl '-V:installarchlib'`
-  mkdir -p $RPM_BUILD_ROOT/$installarchlib
-  make PREFIX=${RPM_BUILD_ROOT}%{__prefix} \
-    INSTALLMAN1DIR=${RPM_BUILD_ROOT}%{__prefix}%{__share}/man/man1 \
-    INSTALLMAN3DIR=${RPM_BUILD_ROOT}%{__prefix}%{__share}/man/man3 \
-	install
-  rm -f $RPM_BUILD_ROOT/$installarchlib/perllocal.pod
-  rm -f $RPM_BUILD_ROOT/$installsitearch/auto/RPM/.packlist
-  cd ..
-}
-%endif
-
-%if %{strip_binaries}
+# Get rid of unpackaged files
 { cd $RPM_BUILD_ROOT
-  %{__strip} ./bin/rpm
-  %{__strip} .%{__prefix}/bin/rpm2cpio
+  rm -rf .%{__includedir}/beecrypt
+  rm -f .%{__libdir}/libbeecrypt.{a,la,so.2.2.0}
+  rm -rf .%{__includedir}/libelf
+  rm -f .%{__libdir}/libelf.{a,la}
+  rm -f .%{__prefix}/lib/rpm/{Specfile.pm,cpanflute,cpanflute2,rpmdiff,rpmdiff.cgi,sql.prov,sql.req,tcl.req}
+  rm -rf .%{__mandir}/{fr,ko}
 }
-%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %pre
 %ifos linux
-if [ -f /var/lib/rpm/Packages -a -f /var/lib/rpm/packages.rpm ]; then
+if [ -f /var/lib/rpm/packages.rpm ]; then
     echo "
-You have both
+You have (unsupported)
 	/var/lib/rpm/packages.rpm	db1 format installed package headers
-	/var/lib/rpm/Packages		db3 format installed package headers
-Please remove (or at least rename) one of those files, and re-install.
+Please install rpm-4.0.4 first, and do
+	rpm --rebuilddb
+to convert your database from db1 to db3 format.
 "
-    exit 1
+#    exit 1
 fi
 /usr/sbin/groupadd -g 37 rpm				> /dev/null 2>&1
 /usr/sbin/useradd  -r -d /var/lib/rpm -u 37 -g 37 rpm	> /dev/null 2>&1
@@ -260,17 +212,7 @@ exit 0
 %post
 %ifos linux
 /sbin/ldconfig
-if [ -f /var/lib/rpm/packages.rpm ]; then
-    /bin/chown rpm.rpm /var/lib/rpm/*.rpm
-elif [ -f /var/lib/rpm/Packages ]; then
-    # undo db1 configuration
-    rm -f /etc/rpm/macros.db1
-    /bin/chown rpm.rpm /var/lib/rpm/[A-Z]*
-else
-    # initialize db3 database
-    rm -f /etc/rpm/macros.db1
-    /bin/rpm --initdb
-fi
+/bin/chown rpm.rpm /var/lib/rpm/[A-Z]*
 %endif
 exit 0
 
@@ -281,7 +223,7 @@ if [ $1 = 0 ]; then
     /usr/sbin/userdel rpm
     /usr/sbin/groupdel rpm
 fi
-
+exit 0
 
 %post devel -p /sbin/ldconfig
 %postun devel -p /sbin/ldconfig
@@ -299,49 +241,37 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc RPM-PGP-KEY RPM-GPG-KEY CHANGES GROUPS doc/manual/[a-z]*
+%doc RPM-PGP-KEY RPM-GPG-KEY BETA-GPG-KEY CHANGES GROUPS doc/manual/[a-z]*
+# XXX comment these lines out if building with rpm that knows not %pubkey attr
+%pubkey RPM-PGP-KEY
+%pubkey RPM-GPG-KEY
+%pubkey BETA-GPG-KEY
 %attr(0755, rpm, rpm)	/bin/rpm
 
 %ifos linux
 %config(noreplace,missingok)	/etc/cron.daily/rpm
 %config(noreplace,missingok)	/etc/logrotate.d/rpm
 %dir				/etc/rpm
-%config(noreplace,missingok)	/etc/rpm/macros.*
+#%config(noreplace,missingok)	/etc/rpm/macros.*
 %attr(0755, rpm, rpm)	%dir /var/lib/rpm
+%attr(0755, rpm, rpm)	%dir /var/spool/repackage
 
 %define	rpmdbattr %attr(0644, rpm, rpm) %verify(not md5 size mtime) %ghost %config(missingok,noreplace)
-%rpmdbattr	/var/lib/rpm/Basenames
-%rpmdbattr	/var/lib/rpm/Conflictname
-%rpmdbattr	/var/lib/rpm/__db.0*
-%rpmdbattr	/var/lib/rpm/Dirnames
-%rpmdbattr	/var/lib/rpm/Filemd5s
-%rpmdbattr	/var/lib/rpm/Group
-%rpmdbattr	/var/lib/rpm/Installtid
-%rpmdbattr	/var/lib/rpm/Name
-%rpmdbattr	/var/lib/rpm/Packages
-%rpmdbattr	/var/lib/rpm/Providename
-%rpmdbattr	/var/lib/rpm/Provideversion
-%rpmdbattr	/var/lib/rpm/Removetid
-%rpmdbattr	/var/lib/rpm/Requirename
-%rpmdbattr	/var/lib/rpm/Requireversion
-%rpmdbattr	/var/lib/rpm/Sigmd5
-%rpmdbattr	/var/lib/rpm/Sha1header
-%rpmdbattr	/var/lib/rpm/Triggername
-
+%rpmdbattr	/var/lib/rpm/*
 %endif
 
-%rpmattr	%{__prefix}/bin/rpm2cpio
-%rpmattr	%{__prefix}/bin/gendiff
-%rpmattr	%{__prefix}/bin/rpmdb
-#%rpmattr	%{__prefix}/bin/rpm[eiu]
-%rpmattr	%{__prefix}/bin/rpmsign
-%rpmattr	%{__prefix}/bin/rpmquery
-%rpmattr	%{__prefix}/bin/rpmverify
+%rpmattr	%{__bindir}/rpm2cpio
+%rpmattr	%{__bindir}/gendiff
+%rpmattr	%{__bindir}/rpmdb
+#%rpmattr	%{__bindir}/rpm[eiu]
+%rpmattr	%{__bindir}/rpmsign
+%rpmattr	%{__bindir}/rpmquery
+%rpmattr	%{__bindir}/rpmverify
 
-%{__prefix}/lib/librpm-4.0.4.so
-%{__prefix}/lib/librpmdb-4.0.4.so
-%{__prefix}/lib/librpmio-4.0.4.so
-%{__prefix}/lib/librpmbuild-4.0.4.so
+%{__libdir}/librpm-4.2.so
+%{__libdir}/librpmdb-4.2.so
+%{__libdir}/librpmio-4.2.so
+%{__libdir}/librpmbuild-4.2.so
 
 %attr(0755, rpm, rpm)	%dir %{__prefix}/lib/rpm
 %rpmattr	%{__prefix}/lib/rpm/config.guess
@@ -352,9 +282,7 @@ fi
 %rpmattr	%{__prefix}/lib/rpm/rpm.*
 %rpmattr	%{__prefix}/lib/rpm/rpm2cpio.sh
 %rpmattr	%{__prefix}/lib/rpm/rpm[deiukqv]
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_dump
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_load
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_loadcvt
+%rpmattr	%{__prefix}/lib/rpm/tgpg
 %attr(0644, rpm, rpm)	%{__prefix}/lib/rpm/rpmpopt*
 %attr(0644, rpm, rpm)	%{__prefix}/lib/rpm/rpmrc
 
@@ -371,7 +299,7 @@ fi
 %ifarch ia64
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/ia64*
 %endif
-%ifarch powerpc ppc ppciseries ppcpseries ppcmac
+%ifarch powerpc ppc ppciseries ppcpseries ppcmac ppc64
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/ppc*
 %endif
 %ifarch s390 s390x
@@ -383,15 +311,17 @@ fi
 %ifarch mips mipsel
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/mips*
 %endif
+%ifarch x86_64
+%attr(-, rpm, rpm)		%{__prefix}/lib/rpm/x86_64*
+%endif
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/noarch*
-
-#%attr(-, rpm, rpm)		%{__prefix}/lib/rpm/redhat
 
 %lang(cs)	%{__prefix}/*/locale/cs/LC_MESSAGES/rpm.mo
 %lang(da)	%{__prefix}/*/locale/da/LC_MESSAGES/rpm.mo
 %lang(de)	%{__prefix}/*/locale/de/LC_MESSAGES/rpm.mo
 %lang(fi)	%{__prefix}/*/locale/fi/LC_MESSAGES/rpm.mo
 %lang(fr)	%{__prefix}/*/locale/fr/LC_MESSAGES/rpm.mo
+%lang(gl)	%{__prefix}/*/locale/gl/LC_MESSAGES/rpm.mo
 %lang(is)	%{__prefix}/*/locale/is/LC_MESSAGES/rpm.mo
 %lang(ja)	%{__prefix}/*/locale/ja/LC_MESSAGES/rpm.mo
 %lang(ko)	%{__prefix}/*/locale/ko/LC_MESSAGES/rpm.mo
@@ -407,12 +337,13 @@ fi
 %lang(sv)	%{__prefix}/*/locale/sv/LC_MESSAGES/rpm.mo
 %lang(tr)	%{__prefix}/*/locale/tr/LC_MESSAGES/rpm.mo
 
-%{__prefix}%{__share}/man/man1/gendiff.1*
-%{__prefix}%{__share}/man/man8/rpm.8*
-%{__prefix}%{__share}/man/man8/rpm2cpio.8*
-%lang(pl)	%{__prefix}%{__share}/man/pl/man[18]/*.[18]*
-%lang(ru)	%{__prefix}%{__share}/man/ru/man[18]/*.[18]*
-%lang(sk)	%{__prefix}%{__share}/man/sk/man[18]/*.[18]*
+%{__mandir}/man1/gendiff.1*
+%{__mandir}/man8/rpm.8*
+%{__mandir}/man8/rpm2cpio.8*
+%lang(ja)	%{__mandir}/ja/man[18]/*.[18]*
+%lang(pl)	%{__mandir}/pl/man[18]/*.[18]*
+%lang(ru)	%{__mandir}/ru/man[18]/*.[18]*
+%lang(sk)	%{__mandir}/sk/man[18]/*.[18]*
 
 %files build
 %defattr(-,root,root)
@@ -423,13 +354,14 @@ fi
 %dir %{__prefix}/src/redhat/SRPMS
 %dir %{__prefix}/src/redhat/RPMS
 %{__prefix}/src/redhat/RPMS/*
-%rpmattr	%{__prefix}/bin/rpmbuild
+%rpmattr	%{__bindir}/rpmbuild
 %rpmattr	%{__prefix}/lib/rpm/brp-*
+%rpmattr	%{__prefix}/lib/rpm/check-files
 %rpmattr	%{__prefix}/lib/rpm/check-prereqs
 %rpmattr	%{__prefix}/lib/rpm/config.site
-%rpmattr	%{__prefix}/lib/rpm/cpanflute
-%rpmattr	%{__prefix}/lib/rpm/cpanflute2
 %rpmattr	%{__prefix}/lib/rpm/cross-build
+%rpmattr	%{__prefix}/lib/rpm/debugedit
+%rpmattr	%{__prefix}/lib/rpm/find-debuginfo.sh
 %rpmattr	%{__prefix}/lib/rpm/find-lang.sh
 %rpmattr	%{__prefix}/lib/rpm/find-prov.pl
 %rpmattr	%{__prefix}/lib/rpm/find-provides
@@ -441,40 +373,31 @@ fi
 %rpmattr	%{__prefix}/lib/rpm/getpo.sh
 %rpmattr	%{__prefix}/lib/rpm/http.req
 %rpmattr	%{__prefix}/lib/rpm/javadeps
+%rpmattr	%{__prefix}/lib/rpm/magic
+%rpmattr	%{__prefix}/lib/rpm/magic.mgc
+%rpmattr	%{__prefix}/lib/rpm/magic.mime
+%rpmattr	%{__prefix}/lib/rpm/magic.mime.mgc
 %rpmattr	%{__prefix}/lib/rpm/magic.prov
 %rpmattr	%{__prefix}/lib/rpm/magic.req
+%rpmattr	%{__prefix}/lib/rpm/perldeps.pl
 %rpmattr	%{__prefix}/lib/rpm/perl.prov
-%rpmattr	%{__prefix}/lib/rpm/Specfile.pm
-
-# XXX remove executable bit to disable autogenerated perl requires for now.
-#%rpmattr	%{__prefix}/lib/rpm/perl.req
-%attr(0644, rpm, rpm) %{__prefix}/lib/rpm/perl.req
+%rpmattr	%{__prefix}/lib/rpm/perl.req
 
 %rpmattr	%{__prefix}/lib/rpm/rpm[bt]
-%rpmattr	%{__prefix}/lib/rpm/rpmdiff
-%rpmattr	%{__prefix}/lib/rpm/rpmdiff.cgi
+%rpmattr	%{__prefix}/lib/rpm/rpmdeps
 %rpmattr	%{__prefix}/lib/rpm/trpm
 %rpmattr	%{__prefix}/lib/rpm/u_pkg.sh
 %rpmattr	%{__prefix}/lib/rpm/vpkg-provides.sh
 %rpmattr	%{__prefix}/lib/rpm/vpkg-provides2.sh
 
-%{__prefix}%{__share}/man/man8/rpmbuild.8*
+%{__mandir}/man8/rpmbuild.8*
+%{__mandir}/man8/rpmdeps.8*
 
 %if %{with_python_subpackage}
 %files python
 %defattr(-,root,root)
-%{__prefix}/lib/python%{with_python_version}/site-packages/rpmmodule.so
-%endif
-
-%if %{with_perl_subpackage}
-%files perl
-%defattr(-,root,root)
-%rpmattr	%{__prefix}/bin/rpmprune
-%{perl_sitearch}/auto/*
-%{perl_sitearch}/RPM
-%{perl_sitearch}/RPM.pm
-%{__prefix}%{__share}/man/man1/rpmprune.1*
-%{__prefix}%{__share}/man/man3/RPM*
+%{__libdir}/python%{with_python_version}/site-packages/rpmmodule.so
+%{__libdir}/python%{with_python_version}/site-packages/rpmdb
 %endif
 
 %files devel
@@ -482,227 +405,308 @@ fi
 %if %{with_apidocs}
 %doc apidocs
 %endif
-%{__prefix}/include/rpm
-%{__prefix}/lib/librpm.a
-%{__prefix}/lib/librpm.la
-%{__prefix}/lib/librpm.so
-%{__prefix}/lib/librpmdb.a
-%{__prefix}/lib/librpmdb.la
-%{__prefix}/lib/librpmdb.so
-%{__prefix}/lib/librpmio.a
-%{__prefix}/lib/librpmio.la
-%{__prefix}/lib/librpmio.so
-%{__prefix}/lib/librpmbuild.a
-%{__prefix}/lib/librpmbuild.la
-%{__prefix}/lib/librpmbuild.so
+%{__includedir}/rpm
+%{__libdir}/librpm.a
+%{__libdir}/librpm.la
+%{__libdir}/librpm.so
+%{__libdir}/librpmdb.a
+%{__libdir}/librpmdb.la
+%{__libdir}/librpmdb.so
+%{__libdir}/librpmio.a
+%{__libdir}/librpmio.la
+%{__libdir}/librpmio.so
+%{__libdir}/librpmbuild.a
+%{__libdir}/librpmbuild.la
+%{__libdir}/librpmbuild.so
+%{__mandir}/man8/rpmcache.8*
+%{__mandir}/man8/rpmgraph.8*
+%rpmattr	%{__prefix}/lib/rpm/rpmcache
 %rpmattr	%{__prefix}/lib/rpm/rpmdb_deadlock
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_dump
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_load
 %rpmattr	%{__prefix}/lib/rpm/rpmdb_svc
 %rpmattr	%{__prefix}/lib/rpm/rpmdb_stat
 %rpmattr	%{__prefix}/lib/rpm/rpmdb_verify
+%rpmattr	%{__prefix}/lib/rpm/rpmfile
+%rpmattr	%{__bindir}/rpmgraph
 
 %files -n popt
 %defattr(-,root,root)
-%{__prefix}/lib/libpopt.so.*
-%{__prefix}%{__share}/man/man3/popt.3*
+%{__libdir}/libpopt.so.*
+%{__mandir}/man3/popt.3*
 %lang(cs)	%{__prefix}/*/locale/cs/LC_MESSAGES/popt.mo
 %lang(da)	%{__prefix}/*/locale/da/LC_MESSAGES/popt.mo
+%lang(de)	%{__prefix}/*/locale/de/LC_MESSAGES/popt.mo
+%lang(es)	%{__prefix}/*/locale/es/LC_MESSAGES/popt.mo
+%lang(eu_ES)	%{__prefix}/*/locale/eu_ES/LC_MESSAGES/popt.mo
+%lang(fi)	%{__prefix}/*/locale/fi/LC_MESSAGES/popt.mo
+%lang(fr)	%{__prefix}/*/locale/fr/LC_MESSAGES/popt.mo
 %lang(gl)	%{__prefix}/*/locale/gl/LC_MESSAGES/popt.mo
 %lang(hu)	%{__prefix}/*/locale/hu/LC_MESSAGES/popt.mo
+%lang(id)	%{__prefix}/*/locale/id/LC_MESSAGES/popt.mo
 %lang(is)	%{__prefix}/*/locale/is/LC_MESSAGES/popt.mo
+%lang(it)	%{__prefix}/*/locale/it/LC_MESSAGES/popt.mo
+%lang(ja)	%{__prefix}/*/locale/ja/LC_MESSAGES/popt.mo
 %lang(ko)	%{__prefix}/*/locale/ko/LC_MESSAGES/popt.mo
 %lang(no)	%{__prefix}/*/locale/no/LC_MESSAGES/popt.mo
+%lang(pl)	%{__prefix}/*/locale/pl/LC_MESSAGES/popt.mo
 %lang(pt)	%{__prefix}/*/locale/pt/LC_MESSAGES/popt.mo
+%lang(pt_BR)	%{__prefix}/*/locale/pt_BR/LC_MESSAGES/popt.mo
 %lang(ro)	%{__prefix}/*/locale/ro/LC_MESSAGES/popt.mo
 %lang(ru)	%{__prefix}/*/locale/ru/LC_MESSAGES/popt.mo
 %lang(sk)	%{__prefix}/*/locale/sk/LC_MESSAGES/popt.mo
 %lang(sl)	%{__prefix}/*/locale/sl/LC_MESSAGES/popt.mo
+%lang(sr)	%{__prefix}/*/locale/sr/LC_MESSAGES/popt.mo
 %lang(sv)	%{__prefix}/*/locale/sv/LC_MESSAGES/popt.mo
 %lang(tr)	%{__prefix}/*/locale/tr/LC_MESSAGES/popt.mo
 %lang(uk)	%{__prefix}/*/locale/uk/LC_MESSAGES/popt.mo
 %lang(wa)	%{__prefix}/*/locale/wa/LC_MESSAGES/popt.mo
+%lang(zh)	%{__prefix}/*/locale/zh/LC_MESSAGES/popt.mo
 %lang(zh_CN)	%{__prefix}/*/locale/zh_CN.GB2312/LC_MESSAGES/popt.mo
 
-# XXX These may end up in popt-devel but it hardly seems worth the effort now.
-%{__prefix}/lib/libpopt.a
-%{__prefix}/lib/libpopt.la
-%{__prefix}/lib/libpopt.so
-%{__prefix}/include/popt.h
+# XXX These may end up in popt-devel but it hardly seems worth the effort.
+%{__libdir}/libpopt.a
+%{__libdir}/libpopt.la
+%{__libdir}/libpopt.so
+%{__includedir}/popt.h
 
 %changelog
-* Tue Mar 25 2003 Jeff Johnson <jbj@redhat.com> 4.0.5-1
-- bump rpm/popt versions, hardwire 4.0.4 in libraries.
-- link rpm libraries together, move symbols to achieve forward linkage.
-- use db-4.1.25, not db-4.0.14, internally.
-- add rpmdb_loadcvt script, rpmdb_foo utilities.
-- use current autotools,
-- use splint, not lclint.
-- delete rpm-4.1 header-only signatures/digests when signing.
+* Thu Feb 27 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.69
+- file: check size read from elf header (#85297).
 
-* Tue Nov  5 2002 Jeff Johnson <jbj@redhat.com> 4.0.4-7x.26
-- backport /etc/rpm/platform changes.
-- backport db-4.1.17 changes.
-- add _noDirTokens macro for 6x builds.
+* Thu Feb  6 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.66
+- popt: diddle doxygen/splint annotations, corrected doco.
+- file: fix ogg/vorbis file classification problems.
+- skip fingerprints in /usr/share/doc and /usr/src/debug.
+- add file(1) as /usr/lib/rpm/rpmfile.
+- enable transaction coloring for s390x/ppc64.
 
-* Sat Jun 15 2002 Jeff Johnson <jbj@redhat.com> 4.0.4-7x.24
-- beecrypt: revert cpu/arch compile option mixup (#66752).
+* Fri Jan 31 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.65
+- fix: trap SIGPIPE, close database(s).
+- configurable default query output format.
 
-* Sun Jun  9 2002 Jeff Johnson <jbj@redhat.com> 4.0.4-7x.23
-- make peace with automake-1.6.1 et al.
-- backport all beecrypt/rpmio bits from 4.1 that don't break the API.
-- use /etc/rpm/platform (if it exists), rather than uname(2), for arch.
-- add /usr/lib/rpm/redhat/* per-vendor configuration.
+* Wed Jan 29 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.64
+- pay attention to package color when upgrading identical packages.
 
-* Thu May  2 2002 Jeff Johnson <jbj@redhat.com>
-- fix: include <sys/time.h> for 6.2 python modules.
+* Tue Jan 28 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.63
+- fix: clean relocation path for --prefix=/.
+- python: permit stdout/stderr to be remapped to install.log.
 
-* Fri Apr 26 2002 Jeff Johnson <jbj@redhat.com>
-- fix: rpmdb iterator memory leak in python bindings.
+* Mon Jan 27 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.62
+- fix: more debugedit.c problems.
 
-* Fri Apr 19 2002 Jeff Johnson <jbj@redhat.com>
-- fix: packages produced by rpm-4.0 dinna merge signature tags.
+* Sat Jan 25 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.61
+- permit anaconda to choose "presentation order".
 
-* Thu Apr 18 2002 Jeff Johnson <jbj@redhat.com>
-- fix: queries that evaluated to "" incorrectly returned NULL.
+* Wed Jan 22 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.60
+- fix: debugedit.c problem.
 
-* Thu Apr 11 2002 Jeff Johnson <jbj@redhat.com>
-- fix: generate config file md5 as ascii, not binary (#62542).
+* Fri Jan 17 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.58
+- duplicate package checks with arch/os checks if colored.
+- file conflict checks with colors.
 
-* Fri Apr  5 2002 Jeff Johnson <jbj@redhat.com>
-- non-glibc: on upgrade, mergesort is much faster than quicksort.
+* Mon Jan 13 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.57
+- teach rpmquery to return "owning" package(s) in spite of alternatives.
 
-* Thu Apr  4 2002 Jeff Johnson <jbj@redhat.com>
-- speedup large queries by ~50%.
-- revert to presentation ordering Yet Again (#62158).
+* Sun Jan 12 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.56
+- file: *really* read elf64 notes correctly.
+- python: restore thread context on errorCB (#80744).
 
-* Wed Mar 27 2002 Jeff Johnson <jbj@redhat.com>
-- fix: look for "/path" in Providename as well as Basenames (#59665).
-- fix: avoid /dev/log installation more carefully (#62012).
-- fix: don't compile beecrypt java bindings (#61992).
-- solaris: save main() envp in global environ for use with gpg.
-- don't add empty md5 strings to Filemd5's index.
-- create Filemd5 index with binary, not ascii, keys.
+* Fri Jan 10 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.55
+- fix: obscure corner case(s) with rpmvercmp (#50977).
 
-* Fri Mar 22 2002 Jeff Johnson <jbj@redhat.com>
-- fix: make sure that .rpmsave files are created (#57078).
+* Wed Jan  8 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.54
+- python: put rpmmodule.so where python expects to find.
+- add brp-strip-static-archive build root policy helper.
+- add -lelf to rpm LDFLAGS, not LDADD, since there is no libelf.la now.
 
-* Mon Mar 18 2002 Jeff Johnson <jbj@redhat.com>
-- fix: one-step-too-far when searching added package provides (#61388).
-- fix: avoid libio misconfiguration with bleeding edge glibc.
-- fix: add quotes around [:blank:] in linux find-provides.
-- make --addsign and --resign behave exactly the same.
-- *really* dump signature header immutable region.
-- fix: don't overflow result buffer if gpg/pgp gives copious output.
+* Tue Jan  7 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.53
+- file: read elf64 notes correctly.
 
-* Fri Mar 15 2002 Jeff Johnson <jbj@redhat.com>
-- re-enable FD_CLOEXEC, the problem is in zlib through mmap.
-- add toy python callbacks for payload unpacking failure(s).
+* Mon Jan  6 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.52
+- portabilitly: solaris fixes.
+- for DSO's, provide the file basename if DT_SONAME not found.
+- add perldeps.pl, start to replace perl.{prov,req}.
 
-* Wed Feb 13 2002 Jeff Johnson <jbj@redhat.com>
-- don't do close-on-exec, 2 powertools packages cannot be read when doing.
-- reapply Berkeley DB patch #4491.
+* Sun Jan  5 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.51
+- file: avoid ogg/vorbis file classification problems.
 
-* Thu Feb  7 2002 Jeff Johnson <jbj@redhat.com>
-- rpm-4.0.4 release candidate.
-- add cpanflute2, another perl.req fiddle.
-- another cpanflute2 patch.
+* Wed Jan  1 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.49
+- add rpmts/rpmte/rpmfi/rpmds element colors.
+- ignore items not in our rainbow (i.e. colors are functional).
+- fix: dependency helpers now rate limited at 10ms, not 1s.
+- add per-arch canonical color, only x86_64 enabled for now.
 
-* Mon Feb  4 2002 Jeff Johnson <jbj@redhat.com>
-- generate index for pkgid (aka Sigmd5) tag, query/verify by pkgid.
-- generate index for hdrid (aka Sha1header) tag, query/verify by hdrid.
-- generate index for fileid (aka Filemd5s) tag, query/verify by fileid.
-- query/verify by install transaction id.
+* Sun Dec 29 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.46
+- don't segfault with packages produced by rpm-2.93 (#80618).
+- python: eliminate hash.[ch] and upgrade.[ch], methods too.
+- fix :armor query extension, tgpg mktmp handling (#80684).
+- use rpmfiFClass() underneath --fileclass.
+- use rpmfiFDepends() underneath --fileprovide and --filerequire.
+- python: add fi.FColor() and fi.FClass() methods.
+- calculate dependency color and refernces.
+- python: add ds.Color() and ds.Refs() methods.
+- fix: typo in assertion.
 
-* Sun Feb  3 2002 Jeff Johnson <jbj@redhat.com>
-- transaction rollbacks are functional.
+* Sat Dec 28 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.45
+- error if querying with iterator on different sized arrays.
+- add rpmfi methods to access color, class, and dependencies.
 
-* Sat Feb  2 2002 Jeff Johnson <jbj@redhat.com>
-- fix: drop header region when writing repackaged legacy header.
-- bail on %files macro.
+* Fri Dec 27 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.42
+- add BETA-GPG-KEY (but not in headers using %%pubkey yet).
+- disable perl module magic rule.
+- ignore ENOENT return from db->close (#80514,#79314).
+- fix builddir relative inclusion, add %%pubkeys to rpm header.
+- fix: package relocations were broken (#75057).
 
-* Fri Feb  1 2002 Jeff Johnson <jbj@redhat.com>
-- macro for %%files, always include %%defattr(), redhat config only.
+* Thu Dec 26 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.39
+- add Red Hat pubkeys to rpm header.
+- resurrect automagic perl(foo) dependency generation.
 
-* Thu Jan 31 2002 Jeff Johnson <jbj@redhat.com>
-- permit args to be hidden within %%__find_{requires,provides}.
-- a couple more perl.{prov,req} fiddles.
+* Tue Dec 24 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.38
+- add %%pubkey attribute to read armored pubkey files into header.
+- permit both relative/absolute paths, display 'P' when verifying.
 
-* Wed Jan 30 2002 Jeff Johnson <jbj@redhat.com>
-- legacy: configurable whiteout for known Red Hat dependency loops.
-- perl.req: don't mis-generate dependencies like perl(::path/to/foo.pl).
-- use chainsaw algorithm for dependency tree decimation when ordering.
+* Mon Dec 23 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.36
+- add matching "config(N) = EVR"  dependencies iff %%config is found.
 
-* Tue Jan 29 2002 Jeff Johnson <jbj@redhat.com>
-- transaction rollback code in rpmRollback().
-- Red Hat 6.2 portability cruft.
+* Sun Dec 22 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.35
+- fix: remove rpmfi scareMem so that headers can be reloaded on ia64.
+- fix: set DB_PRIVATE, not DB_ENV_PRIVATE, if unshared posix mutexes.
+- remove useless (and now unnecessary) kernel/glibc dependencies (#79872).
 
-* Sun Jan 27 2002 Jeff Johnson <jbj@redhat.com>
-- fix: fancy hash fiddles if not a tty.
-- fix: handle /.../ correctly in rpmCleanPath().
+* Sat Dec 21 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.34
+- add --enable-posixmutexes when configuring on linux.
+- add rpmdb_{deadlock,dump,load,svc,stat,verify} utilities.
+- include srpm pkgid in binary headers (#71460).
+- add %%check scriptlet to run after %%install (#64137).
+- simplify specfile query linkage loop.
+- drill rpmts into parseSpec(), carrying Spec along.
 
-* Sat Jan 26 2002 Jeff Johnson <jbj@redhat.com>
-- fix: %exclude functional (again).
-- trap SIGILL for ppc64 inline asm voodoo fix from cross-dressed ppc32.
-- rpm-perl: force numeric comparison on rpm version (#58882).
+* Fri Dec 20 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.33
+- dynamically link /bin/rpm, link against good old -lpthread.
+- test pthread_{mutex,cond}attr_setpshared(), add DB_ENV_PRIVATE if not.
+- error on exclusive Packages fcntl lock if DB_ENV_PRIVATE is set.
+- copy compressFilelist to convertdb1.c, remove internal legacy.h.
 
-* Tue Jan 22 2002 Jeff Johnson <jbj@redhat.com>
-- fix: query format qualifiers needed header.c merge.
-- ppc64 arch added (#58634,#58636).
-- turn on auto-generated perl requirements (#58519, #58536, #58537).
-- add internal (customized) version of zlib.
+* Thu Dec 19 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.31
+- statically link against /usr/lib/nptl/libpthread.a, if present.
+- remove popt aliases for -U et al.
+- add -I/usr/include/nptl, Conflicts: kernel < 2.4.20.
 
-* Mon Jan 21 2002 Jeff Johnson <jbj@redhat.com>
-- sync rpmdb and build with rpm-4.1, lots of splint annotations.
-- add :armor and :base64 query format qualifiers for binary signatures.
+* Wed Dec 18 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.29nptl
+- popt aliases for -U et al to achieve dynamic link with nptl.
+- add --file{class,provide,require} popt aliases and header extensions.
 
-* Sat Jan 19 2002 Jeff Johnson <jbj@redhat.com>
-- use beecrypt routines to calculate digests in rpm.
-- dump legacy support for broken md5 signatures.
-- sync popt and rpmio with rpm-4.1, rpmio has OpenPGP API.
+* Tue Dec 17 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.28nptl
+- re-enable CDB locking, removing "private" from %%__dbi_cdb macro.
 
-* Thu Jan 17 2002 Jeff Johnson <jbj@redhat.com>
-- missing key(s) on keyring when verifying a signature is now an error.
-- remove dependency whiteout.
-- calculate rpm-4.1 ordering/orientation metrics in rpmdepOrder().
+* Mon Dec 16 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.27+nptl
+- rebuild against glibc with fcntl fixed in libpthread.
 
-* Fri Jan 11 2002 Jeff Johnson <jbj@redhat.com>
-- permit subset installs for %lang colored hardlink file sets.
+* Sun Dec 15 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.26+nptl
+- disable fcntl(2) lock on Packages until glibc+nptl is fixed.
+- make cdb locks "private" for pthreads compatibility w/o NPTL.
+- add --enable-posixmutexes to use NPTL.
+- make dependency generation "opt-out" everywhere.
 
-* Thu Jan 10 2002 Jeff Johnson <jbj@redhat.com>
-- fix: signing multiple times dinna work, discard immutable region.
-- remove poptmodule.so for separate packaging.
+* Sat Dec 14 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.25
+- rebuild rpm with internal dependency generation enabled.
+- fix: make sure each library has DT_NEEDED for all unresolved syms.
+- generate Elf provides even if file is not executable.
 
-* Wed Jan  9 2002 Jeff Johnson <jbj@redhat.com>
-- permit gpg/pgp/pgp5 execs to be reconfigured.
+* Fri Dec 13 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.24
+- debug_packages "works", but non-noarch w/o %setup has empty payload.
+- make dependency generation "opt-in" in order to build in distro.
 
-* Tue Jan  8 2002 Jeff Johnson <jbj@redhat.com>
-- use db-4.0.14 final internally.
-- make rpm-perl package self-hosting (#57748).
+* Thu Dec 12 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.23
+- fix: add rpmlib(VersionedDependencies) if versioned Provides: found.
+- fix: add %%ifnarch noarch to debug_package macro.
 
-* Mon Jan  7 2002 Jeff Johnson <jbj@redhat.com>
-- Depends should use CDB if configured.
-- autodetect python 1.5/2.2.
+* Wed Dec 11 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.22
+- rebuild against glibc with TLS support.
 
-* Sun Jan  6 2002 Jeff Johnson <jbj@redhat.com>
-- handle lazy db open's in chroot with absolute path, not prefix strip.
+* Tue Dec 10 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.21
+- don't generate dependencies unless execute bit is set.
+- enable internal automagic dependency generation as default.
 
-* Sat Jan  5 2002 Jeff Johnson <jbj@redhat.com>
-- sparc: make dbenv per-rpmdb, not per-dbi.
+* Sat Dec  7 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.19
+- resurrect  AutoReq: and AutoProv:.
 
-* Thu Dec 20 2001 Jeff Johnson <jbj@redhat.com>
-- tru64 compiler message cleanup.
-- add buildarch lines for hppa (#57728).
+* Tue Dec  2 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.18
+- internal automagic dependency generation (disabled for now).
 
-* Wed Dec 19 2001 Jeff Johnson <jbj@redhat.com>
-- look for PY_VERSION 2.2c1.
-- fix: typo in find-requires.
+* Mon Dec  1 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.17
+- late rpmts reference causes premature free (#78862).
 
-* Sun Dec  9 2001 Jeff Johnson <jbj@redhat.com>
-- solaris: translate i86pc to i386 (#57182).
-- fix: %%GNUconfigure breaks with single quotes (#57264).
+* Sun Dec  1 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.16
+- link rpm libraries together, use shared helpers with external -lelf.
+- move libfmagic to librpmio.
+- use libtool-1.4.3, autoconf-2.56.
+- add explicit -L/lib64 -L/usr/lib64 for libtool mode=relink on x86_64.
+- use usrlib_LTLIBRARIES to install directly in /usr/lib64 instead.
 
-* Mon Dec  3 2001 Jeff Johnson <jbj@redhat.com>
-- rpm-4.0.4 started.
-- turn off rpm-perl until it's self-hosting.
-- jigger up rpm-python with python-2.2b2 for now.
-- remove libtoolize from %%configure for now (#57039).
-- teach find-requires to autogenerate GCC_3.0 dependencies.
+* Sat Nov 30 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.14
+- upgrade to elfutils-0.63.
+
+* Fri Nov 29 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.13
+- bundle libfmagic into librpmbuild for now.
+- apply patches 7 and 8 to db-4.1.24.
+- upgrade to elfutils-0.59.
+- add -g to all platforms optflags.
+- build with external elfutils (preferred), if available.
+
+* Wed Nov 20 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.12
+- use rpmdeps rather than find-{requires,provides}.
+
+* Tue Nov 19 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.11
+- fix: option conflict error message (#77373).
+- add AC_SYS_LARGFILE throughout.
+- statically link rpmdeps against (internal) libfmagic.
+
+* Fri Nov 15 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.10
+- update to elfutils-0.56.
+- have debug sub-subpackage use external, not internal, elfutils.
+- apply patches 1-6 to db-4.1.24.
+- resurrect availablePackages one more time.
+
+* Wed Nov 13 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.8
+- fix: bash must have functional libtermcap.so.2.
+
+* Sat Nov  9 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.7
+- add _javadir/_javadocdir/_javaclasspath macros.
+
+* Fri Nov  8 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.6
+- fix: /dev/initctl has not MD5 segfault (#76718).
+- rpm.8: gpg uses GNUPGHOME, not GPGPATH (#76691).
+- use %%{_lib} for libraries.
+- fix: permit build with --disable-nls (#76258).
+- add error message on glob failure (#76012).
+- remove dependency on libelf.
+
+* Thu Oct 24 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.5
+- add /usr/lib/rpm/rpmdeps.
+- add /usr/lib/rpm/magic.
+
+* Wed Oct 23 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.4
+- resurrect genhdlist "greased lightning" pathway for now.
+- elfutils: avoid gcc-3.2 ICE on x86_64 for now.
+
+* Fri Oct 18 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.2
+- add debug sub-package patch.
+- re-add elfutils/libdwarf (for dwarf.h), eliminate tools/dwarf2.h.
+
+* Thu Oct 17 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.1
+- set cachesize without a dbenv, the default is far too small.
+- db: don't return EACCES on db->close w/o environment.
+- unify cachesize configuration, with (or without) a dbenv.
+- comments regarding unsupported (yet) db-4.1.17 functionality.
+- requirement on libelf >= 0.8.2 to work around incompatible soname (#72792).
+- fix: common sanity check on headers, prevent segfault (#72590).
+- limit number of NOKEY/UNTRUSTED keys that will be warned once.
+- libadd -lelf to rpmdb (#73024).
+- update to db-4.1.24 final.
+- eliminate myftw, use Fts(3) instead.
+- dump libelf, gulp elfutils, for now.
+- python: permit headers to be hashed.
+- use %%{_lib} for libraries.

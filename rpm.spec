@@ -19,7 +19,7 @@ Name: rpm
 %define version 4.0.3
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.91
+Release: 0.93
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -271,7 +271,7 @@ exit 0
 %ifos linux
 %postun
 /sbin/ldconfig
-if [ $1 == 0 ]; then
+if [ $1 = 0 ]; then
     /usr/sbin/userdel rpm
     /usr/sbin/groupdel rpm
 fi
@@ -506,6 +506,15 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Thu Aug 16 2001 Jeff Johnson <jbj@redhat.com>
+- python: add exception to detect bad data in hdrUnload.
+- change dir creation message from warning to debug for now.
+
+* Wed Aug 15 2001 Jeff Johnson <jbj@redhat.com>
+- always use dl size in regionSwab() return.
+- ppc: revert ppcmac to ppc.
+- ppc: autoconf test for va_copy.
+
 * Mon Aug 13 2001 Jeff Johnson <jbj@redhat.com>
 - fix: segfault on headerFree given malicious data.
 - fix: don't verify hash page nelem.

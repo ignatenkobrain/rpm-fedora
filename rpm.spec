@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.21
+Release: 0.22
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -518,6 +518,7 @@ fi
 %changelog
 * Tue Jan 29 2002 Jeff Johnson <jbj@redhat.com>
 - transaction rollback code in rpmRollback().
+- Red Hat 6.2 portability cruft.
 
 * Sun Jan 27 2002 Jeff Johnson <jbj@redhat.com>
 - fix: fancy hash fiddles if not a tty.

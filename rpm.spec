@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.3.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.4
+Release: 0.5
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -485,6 +485,13 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Jul  5 2004 Jeff Johnson <jbj@jbj.org> 4.3.2-0.5
+- change default behavior to resolve file conflicts as LIFO.
+- add --fileconflicts to recover rpm traditional behavior.
+- prefer elf64 over elf32 files, everywhere and always (#126853).
+- ia64: auto-relocate entire, not partial, directory contents (#126905).
+- ia64: auto-relocate glibc.ix86 interpreter path (#100563).
+
 * Wed Jun 16 2004 Jeff Johnson <jbj@jbj.org> 4.3.2-0.4
 - add ppc8[25]60 arches.
 

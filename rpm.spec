@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.3.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 13
+Release: 17
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -494,6 +494,16 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Fri Oct 29 2004 Jeff Johnson <jbj@redhat.com> rpm-4.2.3-17
+- python: fix RPMPROB_BADRELOCATE segfault return in ts.check (#137116).
+- revert selinux patch until fc3 release.
+
+* Fri Oct 22 2004 Jeff Johnson <jbj@redhat.com> rpm-4.3.2-15
+- selinux: set "ldconfig_t" for /sbin/ldconfig, else "rpm_script_t".
+
+* Sun Oct 17 2004 Jeff Johnson <jbj@jbj.org> 4.3.2-14
+- don't add time stamp to compressed man pages (#132526).
+
 * Fri Oct 15 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-13
 - fix: don't set handler if SIG_IGN is already set (#134474).
 

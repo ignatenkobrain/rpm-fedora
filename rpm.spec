@@ -14,7 +14,7 @@ Summary: The Red Hat package management system.
 Name: rpm
 %define version 4.0.3
 Version: %{version}
-Release: 0.63
+Release: 0.64
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{version}.tar.gz
 Copyright: GPL
@@ -432,6 +432,7 @@ fi
 * Tue Jul 10 2001 Jeff Johnson <jbj@redhat.com>
 - fix: -i CLI context broken Yet Again.
 - fix: --rebuild broken.
+- unlink all _db.nnn files before 1st db open.
 
 * Mon Jul  9 2001 Jeff Johnson <jbj@redhat.com>
 - package version now configureable, default v3.

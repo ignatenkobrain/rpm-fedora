@@ -14,7 +14,7 @@ Summary: The Red Hat package management system.
 Name: rpm
 %define version 4.0.3
 Version: %{version}
-Release: 0.50
+Release: 0.51
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{version}.tar.gz
 Copyright: GPL
@@ -285,6 +285,7 @@ fi
 
 %ifarch i386 i486 i586 i686 athlon
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/i[3456]86*
+%attr(-, rpm, rpm)		%{__prefix}/lib/rpm/athlon*
 %endif
 %ifarch alpha
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/alpha*
@@ -424,6 +425,12 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Thu Jun 21 2001 Jeff Johnson <jbj@redhat.com>
+- propagate %%{_gnu} to per-platform configuration.
+- fix: parameterized macros with massive mumber of options need
+  "optind = 1" "Dmitry V. Levin" <ldv@alt-linux.org>.
+- add athlon per-platform configuration.
+
 * Wed Jun 20 2001 Jeff Johnson <jbj@redhat.com>
 - fix: partial sets of hardlinked files permitted in payload.
 - fix: mark rpmdb files with %config to prevent erasure on downgrade.
@@ -431,9 +438,9 @@ fi
 - fix: rpm -qlv link count for directories dinna include '..'.
 - fix: rpm -qlv size for directories should be zero.
 - add --noghost to filter non-payload files from rpm -qlv output.
-- add %{_gnu} macro to append "-gnu" to %{_target_platform} to
-  support --target/--host flavored %configure. Legacy behavior
-  available by undefining %{_gnu}.
+- add %%{_gnu} macro to append "-gnu" to %%{_target_platform} to
+  support --target/--host flavored %%configure. Legacy behavior
+  available by undefining %%{_gnu}.
 
 * Tue Jun 19 2001 Jeff Johnson <jbj@redhat.com>
 - finalize per-header methods, accessing headerFoo through vector.

@@ -1,0 +1,12 @@
+--- rpm-4.4.1/lib/poptI.c.conflicts	2005-03-21 10:19:45.000000000 +0000
++++ rpm-4.4.1/lib/poptI.c	2005-03-21 10:19:52.000000000 +0000
+@@ -16,8 +16,7 @@
+ /*@unchecked@*/
+ struct rpmInstallArguments_s rpmIArgs = {
+     0,			/* transFlags */
+-			/* probFilter */
+-    (RPMPROB_FILTER_REPLACEOLDFILES | RPMPROB_FILTER_REPLACENEWFILES),
++    0,			/* probFilter */
+     0,			/* installInterfaceFlags */
+     0,			/* eraseInterfaceFlags */
+     0,			/* qva_flags */

@@ -1,3 +1,4 @@
+%undefine files
 %define	with_python_subpackage	1%{nil}
 %define	with_python_version	2.2%{nil}
 %define with_perl_subpackage	1
@@ -20,7 +21,7 @@ Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.26
+Release: 0.27
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -518,6 +519,7 @@ fi
 %changelog
 * Sat Feb  2 2002 Jeff Johnson <jbj@redhat.com>
 - fix: drop header region when writing repackaged legacy header.
+- bail on %files macro.
 
 * Fri Feb  1 2002 Jeff Johnson <jbj@redhat.com>
 - macro for %%files, always include %%defattr(), redhat config only.

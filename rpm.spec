@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.3.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 8
+Release: 9
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -494,6 +494,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Oct  5 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-9
+- fix: revert Obsoletes: "fix" (#134497).
+- fix: work around for dangling symlinks not globbed (#134362).
+
 * Fri Oct  1 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-8
 - disable static linking until libc*.a provides symbols.
 

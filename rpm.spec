@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.18
+Release: 0.19
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -521,13 +521,11 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
-* Wed Jan 23 2002 Jeff Johnson <jbj@redhat.com>
-- flip the perl.req bit for 8.0, auto-generated perl requirements go live.
-
 * Tue Jan 22 2002 Jeff Johnson <jbj@redhat.com>
 - fix: query format qualifiers needed header.c merge.
 - ppc64 arch added (#58634,#58636).
-- turn on auto-generated perl reuirements (#58519, #58536, #58537).
+- turn on auto-generated perl requirements (#58519, #58536, #58537).
+- add internal (customized) version of zlib.
 
 * Mon Jan 21 2002 Jeff Johnson <jbj@redhat.com>
 - sync rpmdb and build with rpm-4.1, lots of splint annotations.

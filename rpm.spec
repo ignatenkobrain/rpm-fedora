@@ -13,9 +13,10 @@ Summary: The Red Hat package management system.
 Name: rpm
 %define version 4.0.2
 Version: %{version}
-Release: 7x
+Release: 8
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{version}.tar.gz
+Patch0: rpm-4.0.2-kernel-whiteout.patch
 Copyright: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -113,6 +114,7 @@ capabilities.
 
 %prep
 %setup -q
+%patch0 -p1 -b .kernel-whiteout
 
 %build
 %ifos linux
@@ -344,6 +346,10 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Sun Apr  8 2001 Matt Wilson <msw@redhat.com>
+- remove the kernel->initscripts whiteout, we actually need this as a
+  kernel Prereq now.
+
 * Tue Mar 13 2001 Jeff Johnson <jbj@redhat.com>
 - map i686-like (i.e. w/o CMOV) platforms to better alternatives.
 

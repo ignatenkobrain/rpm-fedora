@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.20
+Release: 0.22
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -71,11 +71,9 @@ This package contains the RPM shared libraries.
 Summary:  Development files for manipulating RPM packages.
 Group: Development/Libraries
 Requires: rpm = %{rpm_version}-%{release}
-Requires: beecrypt-devel >= 4.1.2
+Requires: beecrypt >= 4.1.2
 Requires: neon-devel
 Requires: sqlite3-devel
-Requires: elfutils-libelf
-Requires: zlib-devel
 
 %description devel
 This package contains the RPM C library and header files. These
@@ -184,7 +182,7 @@ mkdir -p $RPM_BUILD_ROOT/var/lib/rpm
 for dbi in \
 	Basenames Conflictname Dirnames Group Installtid Name Packages \
 	Providename Provideversion Requirename Requireversion Triggername \
-	Filemd5s Pubkeys Sha1header Sigmd5 __db.000 \
+	Filemd5s Pubkeys Sha1header Sigmd5 \
 	__db.001 __db.002 __db.003 __db.004 __db.005 __db.006 __db.007 \
 	__db.008 __db.009
 do
@@ -502,6 +500,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Fri Feb 11 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-0.22
+- permit build scriptlet interpreters to be individually overridden.
+
 * Thu Feb 10 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-0.20
 - perform callbacks as always (#147537).
 

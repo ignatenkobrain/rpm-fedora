@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.3.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.10
+Release: 1
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -57,18 +57,10 @@ verifying, querying, and updating software packages. Each software
 package consists of an archive of files along with information about
 the package like its version, a description, etc.
 
-%package libs
-Summary:  Libraries for manipulating RPM packages.
-Group: Development/Libraries
-Requires: rpm = %{rpm_version}-%{release}
-
-%description libs
-This package contains the RPM shared libraries.
-
 %package devel
 Summary:  Development files for manipulating RPM packages.
 Group: Development/Libraries
-Requires: rpm = %{rpm_version}-%{release}
+Requires: rpm = %{rpm_version}
 
 %description devel
 This package contains the RPM C library and header files. These
@@ -84,7 +76,7 @@ will manipulate RPM packages and databases.
 %package build
 Summary: Scripts and executable programs used to build packages.
 Group: Development/Tools
-Requires: rpm = %{rpm_version}-%{release}, patch >= 2.5, file
+Requires: rpm = %{rpm_version}, patch >= 2.5, file
 Provides: rpmbuild(VendorConfig) = 4.1-1
 
 %description build
@@ -95,7 +87,7 @@ that are used to build packages using the RPM Package Manager.
 %package python
 Summary: Python bindings for apps which will manipulate RPM packages.
 Group: Development/Libraries
-Requires: rpm = %{rpm_version}-%{release}
+Requires: rpm = %{rpm_version}
 Requires: python >= %{with_python_version}
 Requires: elfutils >= 0.55
 
@@ -288,6 +280,11 @@ exit 0
 %rpmattr	%{__bindir}/rpmquery
 %rpmattr	%{__bindir}/rpmverify
 
+%{__libdir}/librpm-4.3.so
+%{__libdir}/librpmdb-4.3.so
+%{__libdir}/librpmio-4.3.so
+%{__libdir}/librpmbuild-4.3.so
+
 %attr(0755, rpm, rpm)	%dir %{__prefix}/lib/rpm
 %rpmattr	%{__prefix}/lib/rpm/config.guess
 %rpmattr	%{__prefix}/lib/rpm/config.sub
@@ -368,13 +365,6 @@ exit 0
 %lang(pl)	%{__mandir}/pl/man[18]/*.[18]*
 %lang(ru)	%{__mandir}/ru/man[18]/*.[18]*
 %lang(sk)	%{__mandir}/sk/man[18]/*.[18]*
-
-%files libs
-%defattr(-,root,root)
-%{__libdir}/librpm-4.3.so
-%{__libdir}/librpmdb-4.3.so
-%{__libdir}/librpmio-4.3.so
-%{__libdir}/librpmbuild-4.3.so
 
 %files build
 %defattr(-,root,root)
@@ -495,28 +485,8 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
-* Fri Aug 20 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-0.9
-- fix: static glibc/libgcc helpers always installed (#127522).
-- fix: defattr for rpm-libs (#130461).
-
-* Thu Aug 19 2004 Jeff Johnson <jbj@jbj.org> 4.3.2-0.7
-- shared libraries in separate rpm-libs package.
-- avoid "can't happen" recursion while retrieving pubkeys.
-- add ppc32dy4 arch.
-- make peace with automake 1.9.1.
-
-* Fri Jul  9 2004 Jeff Johnson <jbj@jbj.org> 4.3.2-0.6
-- fix: evaluate rather than default file_contexts path. (#127501).
-
-* Mon Jul  5 2004 Jeff Johnson <jbj@jbj.org> 4.3.2-0.5
-- change default behavior to resolve file conflicts as LIFO.
-- add --fileconflicts to recover rpm traditional behavior.
-- prefer elf64 over elf32 files, everywhere and always (#126853).
-- ia64: auto-relocate entire, not partial, directory contents (#126905).
-- ia64: auto-relocate glibc.ix86 interpreter path (#100563).
-
-* Wed Jun 16 2004 Jeff Johnson <jbj@jbj.org> 4.3.2-0.4
-- add ppc8[25]60 arches.
+* Tue Jun 15 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
 
 * Mon Jun 14 2004 Jeff Johnson <jbj@jbj.org> 4.3.2-0.3
 - add 'requires' and 'conflicts' tag aliases.

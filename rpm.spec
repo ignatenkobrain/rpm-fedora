@@ -19,7 +19,7 @@ Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.2
+Release: 0.3
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -512,6 +512,14 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Wed Dec 19 2001 Jeff Johnson <jbj@redhat.com>
+- look for PY_VERSION 2.2c1.
+- fix: typo in find-requires.
+
+* Sun Dec  9 2001 Jeff Johnson <jbj@redhat.com>
+- solaris: translate i86pc to i386 (#57182).
+- fix: %GNUconfigure breaks with single quotes (#57264).
+
 * Mon Dec  3 2001 Jeff Johnson <jbj@redhat.com>
 - rpm-4.0.4 started.
 - turn off rpm-perl until it's self-hosting.

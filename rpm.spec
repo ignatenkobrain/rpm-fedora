@@ -151,6 +151,9 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} $WITH_PYTHON \
 	--without-javaglue
 %endif
 
+# XXX hack around minigzip borkage for the moment
+make -C zlib || :
+
 make %{?_smp_mflags}
 
 %install
@@ -177,7 +180,7 @@ mkdir -p $RPM_BUILD_ROOT/var/lib/rpm
 for dbi in \
 	Basenames Conflictname Dirnames Group Installtid Name Packages \
 	Providename Provideversion Requirename Requireversion Triggername \
-	Filemd5s Pubkeys Sha1header Sigmd5 \
+	Filemd5s Pubkeys Sha1header Sigmd5 __db.000 \
 	__db.001 __db.002 __db.003 __db.004 __db.005 __db.006 __db.007 \
 	__db.008 __db.009
 do

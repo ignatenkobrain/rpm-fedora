@@ -20,9 +20,10 @@ Name: rpm
 %define version 4.3
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.9
+Release: 0.9.1
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
+Patch0: rpm-py-selinux.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -117,6 +118,7 @@ shell-like rules.
 
 %prep
 %setup -q
+%patch0 -p1 -b .sel
 
 %build
 
@@ -482,6 +484,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Jan 27 2004 Jeremy Katz <katzj@redhat.com> - 4.3-0.9.1
+- add patch to setup selinux contexts from python
+
 * Mon Jan 19 2004 Jeff Johnson <jbj@jbj.org> 4.2-0.9
 - python: return None for NEVRAO, [] for everything else.
 

@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.14
+Release: 0.15
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -167,6 +167,11 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix}
 # XXX workaround alpha sha1 digest miscompilation
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 make CFLAGS="-g -O0" digest.o digest.lo -C rpmio
+%endif
+
+# XXX workaround ia64 gcc-3.1-0.18 miscompilation
+%ifarch ia64
+make CFLAGS="-g -O0 -DIA64_SUCKS_ROCKS" files.o files.lo -C build
 %endif
 
 make
@@ -517,12 +522,13 @@ fi
 
 %changelog
 * Mon Jan 21 2002 Jeff Johnson <jbj@redhat.com>
-- build for 8.0.
+- sync rpmdb and build with rpm-4.1, lots of splint annotations.
+- add :armor and :base64 query format qualifiers for binary signatures.
 
 * Sat Jan 19 2002 Jeff Johnson <jbj@redhat.com>
 - use beecrypt routines to calculate digests in rpm.
 - dump legacy support for broken md5 signatures.
-- sync popt and rpmio with rpm-4.1.
+- sync popt and rpmio with rpm-4.1, rpmio has OpenPGP API.
 
 * Thu Jan 17 2002 Jeff Johnson <jbj@redhat.com>
 - missing key(s) on keyring when verifying a signature is now an error.

@@ -14,7 +14,7 @@ Summary: The Red Hat package management system.
 Name: rpm
 %define version 4.0.3
 Version: %{version}
-Release: 0.57
+Release: 0.59
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{version}.tar.gz
 Copyright: GPL
@@ -429,6 +429,17 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Sun Jul  8 2001 Jeff Johnson <jbj@redhat.com>
+- python: rhnLoad/rhnUnload to check header digest.
+
+* Sat Jul  7 2001 Jeff Johnson <jbj@redhat.com>
+- expose rpmShowProgress() and rpmVerifyDigest() in rpmcli.h.
+- portability: avoid st_mtime, gendiff uses basename, etc (#47497).
+- glibc-2.0.x has not __va_copy().
+- popthelp.c: don't use stpcpy to avoid portability grief (#47500).
+- permit alias/exec description/arg text to be set from popt config.
+- use rpmqv.c, not rpm.c, as rpm's main() routine.
+
 * Wed Jul  4 2001 Jeff Johnson <jbj@redhat.com>
 - add removetid to header during --repackage.
 

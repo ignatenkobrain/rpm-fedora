@@ -20,13 +20,14 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 7
+Release: 8
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-posttrans.patch
 Patch1: rpm-4.4.1-gcc4.patch
 Patch2: rpm-4.4.1-hkp-disable.patch
 Patch3: rpm-4.4.1-read-macro.patch
+Patch4: rpm-4.4.1-fileconflicts.patch 
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -78,6 +79,7 @@ Requires: rpm = %{rpm_version}-%{release}
 Requires: beecrypt >= 4.1.2
 Requires: neon-devel
 Requires: sqlite-devel
+Requires: libselinux-devel
 
 %description devel
 This package contains the RPM C library and header files. These
@@ -138,6 +140,7 @@ shell-like rules.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1 
+%patch4 -p1  -b .fileconflicts
 
 %build
 
@@ -508,6 +511,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Mar 21 2005 Paul Nasrat <pnasrat@redhat.com> 4.4.1-8
+- Add devel requires libselinux-devel
+- Fileconflicts as FC3 (#151609)
+
 * Wed Mar  9 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-7
 - rebuild against renamed sqlite package (#149719).
 

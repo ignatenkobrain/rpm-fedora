@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.15
+Release: 0.16
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -521,6 +521,10 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Tue Jan 22 2002 Heff Johnson <jbj@redhat.com>
+- fix: query format qualifiers needed header.c merge.
+- ppc64 arch added (#58634,#58636).
+
 * Mon Jan 21 2002 Jeff Johnson <jbj@redhat.com>
 - sync rpmdb and build with rpm-4.1, lots of splint annotations.
 - add :armor and :base64 query format qualifiers for binary signatures.

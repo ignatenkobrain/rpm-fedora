@@ -13,10 +13,12 @@ Summary: The Red Hat package management system.
 Name: rpm
 %define version 4.0.2
 Version: %{version}
-Release: 8
+Release: 9
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{version}.tar.gz
 Patch0: rpm-4.0.2-kernel-whiteout.patch
+Patch1: rpm-4.0.2-perlprov.patch
+Source1: perl.prov
 Copyright: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -115,6 +117,7 @@ capabilities.
 %prep
 %setup -q
 %patch0 -p1 -b .kernel-whiteout
+%patch1 -p1 -b .sopwith
 
 %build
 %ifos linux
@@ -145,6 +148,8 @@ gzip -9n apidocs/man/man*/* || :
   strip .%{__prefix}/bin/rpm2cpio
 }
 %endif
+
+install -m555 $RPM_SOURCE_DIR/perl.prov $RPM_BUILD_ROOT/usr/lib/rpm/perl.prov
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -346,6 +351,9 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Sun Jun 24 2001 Elliot Lee <sopwith@redhat.com> 4.0.2-9
+- Hack in the perl.prov script so we can get a working rpm for 7.2-build.
+
 * Sun Apr  8 2001 Matt Wilson <msw@redhat.com>
 - remove the kernel->initscripts whiteout, we actually need this as a
   kernel Prereq now.

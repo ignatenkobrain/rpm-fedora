@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.2.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.5
+Release: 0.6
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -332,6 +332,15 @@ exit 0
 %endif
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/noarch*
 
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_deadlock
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_dump
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_load
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_loadcvt
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_svc
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_stat
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_verify
+%rpmattr	%{__prefix}/lib/rpm/rpmfile
+
 %lang(cs)	%{__prefix}/*/locale/cs/LC_MESSAGES/rpm.mo
 %lang(da)	%{__prefix}/*/locale/da/LC_MESSAGES/rpm.mo
 %lang(de)	%{__prefix}/*/locale/de/LC_MESSAGES/rpm.mo
@@ -405,15 +414,6 @@ exit 0
 %rpmattr	%{__prefix}/lib/rpm/u_pkg.sh
 %rpmattr	%{__prefix}/lib/rpm/vpkg-provides.sh
 %rpmattr	%{__prefix}/lib/rpm/vpkg-provides2.sh
-
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_deadlock
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_dump
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_load
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_loadcvt
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_stat
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_svc
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_verify
-%rpmattr	%{__prefix}/lib/rpm/rpmfile
 
 %{__mandir}/man8/rpmbuild.8*
 %{__mandir}/man8/rpmdeps.8*
@@ -489,9 +489,11 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
-* Wed Dec 17 2003 Jeff Johnson <jbj@jbj.org> 4.2.2-0.5
+* Wed Dec 17 2003 Jeff Johnson <jbj@jbj.org> 4.2.2-0.6
 - detect (and remove) dbenv files while upgrading to db-4.2.52.
 - ensure that librpmdb links against just built, not system, librpmio.
+- fix: dangling pointer brain fart (#107835).
+- fix: ds.Single() method needs malloc'd elements (#109919).
 
 * Mon Dec 15 2003 Jeff Johnson <jbj@jbj.org> 4.2.2-0.3
 - make peace with libtool-1.5, autoconf-2.59, automake-1.8.

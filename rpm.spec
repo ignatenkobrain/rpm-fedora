@@ -14,12 +14,12 @@
 %define	__prefix	/usr
 %{expand: %%define __share %(if [ -d %{__prefix}/share/man ]; then echo /share ; else echo %%{nil} ; fi)}
 
-Summary: The Red Hat package management system.
+Summary: The RPM package management system.
 Name: rpm
 %define version 4.0.3
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.84
+Release: 0.88
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -54,9 +54,9 @@ BuildRequires: perl >= 0:5.00503
 BuildRoot: %{_tmppath}/%{name}-root
 
 %description
-The Red Hat Package Manager (RPM) is a powerful command line driven
+The RPM Package Manager (RPM) is a powerful command line driven
 package management system capable of installing, uninstalling,
-verifying, querying, and updating software packages.  Each software
+verifying, querying, and updating software packages. Each software
 package consists of an archive of files along with information about
 the package like its version, a description, etc.
 
@@ -66,7 +66,7 @@ Group: Development/Libraries
 Requires: rpm = %{rpm_version}, popt = 1.6.3
 
 %description devel
-This package contains the RPM C library and header files.  These
+This package contains the RPM C library and header files. These
 development files will simplify the process of writing programs that
 manipulate RPM packages and databases. These files are intended to
 simplify the process of creating graphical package managers or any
@@ -83,8 +83,7 @@ Requires: rpm = %{rpm_version}
 
 %description build
 The rpm-build package contains the scripts and executable programs
-that are used to build packages using the Red Hat Package Manager
-(RPM).
+that are used to build packages using the RPM Package Manager.
 
 %if %{with_python_subpackage}
 %package python
@@ -97,7 +96,7 @@ Requires: popt = 1.6.3
 %description python
 The rpm-python package contains a module that permits applications
 written in the Python programming language to use the interface
-supplied by RPM (Red Hat Package Manager) libraries.
+supplied by the RPM Package Manager libraries.
 
 This package should be installed if you want to develop Python
 programs that will manipulate RPM packages and databases.
@@ -108,6 +107,8 @@ programs that will manipulate RPM packages and databases.
 Summary: Native bindings to the RPM API for Perl.
 Group: Development/Languages
 URL: http://www.cpan.org
+Provides: perl(RPM::Database) = %{rpm_version}
+Provides: perl(RPM::Header) = %{rpm_version}
 Requires: rpm = %{rpm_version}
 Requires: perl >= 0:5.00503
 Requires: popt = 1.6.3
@@ -127,7 +128,7 @@ implementations.
 
 At this time, the interface only provides access to the database of
 installed packages, and header data retrieval for RPM and SRPM files
-is not yet installed.  Error management and the export of most defined
+is not yet installed. Error management and the export of most defined
 constants, through RPM::Error and RPM::Constants, respectively, are
 also available.
 
@@ -138,11 +139,11 @@ Group: Development/Libraries
 Version: 1.6.3
 
 %description -n popt
-Popt is a C library for parsing command line parameters.  Popt was
+Popt is a C library for parsing command line parameters. Popt was
 heavily influenced by the getopt() and getopt_long() functions, but it
-improves on them by allowing more powerful argument expansion.  Popt
+improves on them by allowing more powerful argument expansion. Popt
 can parse arbitrary argv[] style arrays and automatically set
-variables based on command line arguments.  Popt allows command line
+variables based on command line arguments. Popt allows command line
 arguments to be aliased via configuration files and includes utility
 functions for parsing arbitrary strings into argv[] arrays using
 shell-like rules.
@@ -226,8 +227,8 @@ gzip -9n apidocs/man/man*/* || :
 
 %if %{strip_binaries}
 { cd $RPM_BUILD_ROOT
-  strip ./bin/rpm
-  strip .%{__prefix}/bin/rpm2cpio
+  %{__strip} ./bin/rpm
+  %{__strip} .%{__prefix}/bin/rpm2cpio
 }
 %endif
 
@@ -347,16 +348,16 @@ fi
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/i[3456]86*
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/athlon*
 %endif
-%ifarch alpha
+%ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/alpha*
 %endif
-%ifarch sparc sparc64
+%ifarch sparc sparcv9 sparc64
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/sparc*
 %endif
 %ifarch ia64
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/ia64*
 %endif
-%ifarch powerpc ppc
+%ifarch powerpc ppc ppciseries ppcpseries ppcmac
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/ppc*
 %endif
 %ifarch s390 s390x
@@ -364,6 +365,9 @@ fi
 %endif
 %ifarch armv3l armv4l
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/armv[34][lb]*
+%endif
+%ifarch mips mipsel mipseb
+%attr(-, rpm, rpm)		%{__prefix}/lib/rpm/mips*
 %endif
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/noarch*
 
@@ -501,8 +505,29 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Mon Aug  6 2001 Jeff Johnson <jbj@redhat.com>
+- python: add hiesenbug patch.
+
+* Sun Aug  5 2001 Jeff Johnson <jbj@redhat.com>
+- portability: some compilers squawk at return ((void) foo()) (#50419).
+- remove fdFileno() from librpmio, use inline version instead (#50420).
+- fix: linux find-requires needs quotes around [:blank:].
+- remove /var/lib/rpm/__db* cache files if %%__dbi_cdb is not configured.
+
+* Sat Aug  4 2001 Jeff Johnson <jbj@redhat.com>
+- fix: i18n tags not terminated correctly with NUL (#50304).
+- add explicit casts to work around a s390 compiler problem.
+- fix: autoconf glob tests (#50845).
+
+* Tue Jul 31 2001 Jeff Johnson <jbj@redhat.com>
+- detailed build package error messages.
+
 * Mon Jul 30 2001 Tim Powers <timp@redhat.com>
-- added all of the perl modules to the files list for the rpm-perl package
+- added all of the perl modules to the files list for the rpm-perl package.
+
+* Sat Jul 28 2001 Jeff Johnson <jbj@redhat.com>
+- add support for mips (#49283).
+- add __as, _build_arch, and __cxx macros (#36662, #36663, #49280).
 
 * Fri Jul 27 2001 Jeff Johnson <jbj@redhat.com>
 - fix: --noscripts is another multimode option.

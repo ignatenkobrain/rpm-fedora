@@ -15,7 +15,7 @@
 %define __libdir	%{__prefix}/%{_lib}
 %define __mandir	%{__prefix}%{__share}/man
 
-Summary: The RPM package management system.
+Summary: The RPM package management system
 Name: rpm
 %define version 4.4.1
 Version: %{version}

@@ -6,7 +6,7 @@
 # XXX legacy requires './' payload prefix to be omitted from rpm packages.
 %define	_noPayloadPrefix	1
 
-%define	__prefix	/usr
+%define	__prefix	%{?_prefix}%{!?_prefix:/usr}
 %{?!_lib: %define _lib lib}
 %{expand: %%define __share %(if [ -d %{__prefix}/share/man ]; then echo /share ; else echo %%{nil} ; fi)}
 
@@ -17,18 +17,18 @@
 
 Summary: The RPM package management system.
 Name: rpm
-%define version 4.3.3
+%define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 8
+Release: 0.18
 Group: System Environment/Base
-Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
+Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
 Prereq: fileutils shadow-utils
 %endif
-Requires: popt = 1.9.1
+Requires: popt = 1.10.1
 Obsoletes: rpm-perl < %{version}
 
 # XXX necessary only to drag in /usr/lib/libelf.a, otherwise internal elfutils.
@@ -37,8 +37,11 @@ BuildRequires: elfutils-devel
 
 BuildRequires: zlib-devel
 
-BuildRequires: beecrypt-devel >= 3.0.1
-Requires: beecrypt >= 3.0.1
+BuildRequires: beecrypt-devel >= 4.1.2
+Requires: beecrypt >= 4.1.2
+
+BuildRequires: neon-devel
+BuildRequires: sqlite3-devel
 
 # XXX Red Hat 5.2 has not bzip2 or python
 %if %{with_bzip2}
@@ -110,7 +113,7 @@ programs that will manipulate RPM packages and databases.
 %package -n popt
 Summary: A C library for parsing command line parameters.
 Group: Development/Libraries
-Version: 1.9.1
+Version: 1.10.1
 
 %description -n popt
 Popt is a C library for parsing command line parameters. Popt was
@@ -143,11 +146,12 @@ CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
 	--mandir='${prefix}%{__share}/man' \
 	$WITH_PYTHON --enable-posixmutexes --without-javaglue
 %else
+export CPPFLAGS=-I%{__prefix}/include 
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} $WITH_PYTHON \
 	--without-javaglue
 %endif
 
-make %{_smp_mflags}
+make %{?_smp_mflags}
 
 %install
 # XXX rpm needs functioning nptl for configure tests
@@ -180,8 +184,6 @@ do
     touch $RPM_BUILD_ROOT/var/lib/rpm/$dbi
 done
 
-# - serialize rpmtsRun() using fcntl on /var/lock/rpm/transaction.
-mkdir -p ${RPM_BUILD_ROOT}/var/lock/rpm
 %endif
 
 %if %{with_apidocs}
@@ -190,10 +192,12 @@ gzip -9n apidocs/man/man*/* || :
 
 # Get rid of unpackaged files
 { cd $RPM_BUILD_ROOT
-  rm -rf .%{__includedir}/beecrypt
-  rm -f .%{__libdir}/libbeecrypt.{a,la,so.2.2.0}
   rm -f .%{__prefix}/lib/rpm/{Specfile.pm,cpanflute,cpanflute2,rpmdiff,rpmdiff.cgi,sql.prov,sql.req,tcl.req}
   rm -rf .%{__mandir}/{fr,ko}
+%if %{with_python_subpackage}
+  rm -f .%{__libdir}/python%{with_python_version}/site-packages/*.{a,la}
+  rm -f .%{__libdir}/python%{with_python_version}/site-packages/rpm/*.{a,la}
+%endif
 }
 
 %clean
@@ -223,12 +227,12 @@ exit 0
 # Establish correct rpmdb ownership.
 /bin/chown rpm.rpm /var/lib/rpm/[A-Z]*
 
-# XXX Detect (and remove) incompatible dbenv files during db-4.2.52 upgrade.
+# XXX Detect (and remove) incompatible dbenv files during db-4.3.14 upgrade.
 # XXX Removing dbenv files in %%post opens a lock race window, a tolerable
 # XXX risk compared to the support issues involved with upgrading Berkeley DB.
 [ -w /var/lib/rpm/__db.001 ] &&
 /usr/lib/rpm/rpmdb_stat -CA -h /var/lib/rpm 2>&1 |
-grep "db_stat: Program version 4.2 doesn't match environment version" 2>&1 > /dev/null &&
+grep "db_stat: Program version 4.3 doesn't match environment version" 2>&1 > /dev/null &&
 	rm -f /var/lib/rpm/__db*
                                                                                 
 %endif
@@ -273,7 +277,6 @@ exit 0
 #%config(noreplace,missingok)	/etc/rpm/macros.*
 %attr(0755, rpm, rpm)	%dir /var/lib/rpm
 %attr(0755, rpm, rpm)	%dir /var/spool/repackage
-%attr(0755, rpm, rpm)	%dir /var/lock/rpm
 
 %define	rpmdbattr %attr(0644, rpm, rpm) %verify(not md5 size mtime) %ghost %config(missingok,noreplace)
 %rpmdbattr	/var/lib/rpm/*
@@ -301,9 +304,10 @@ exit 0
 %attr(0644, rpm, rpm)	%{__prefix}/lib/rpm/rpmpopt*
 %attr(0644, rpm, rpm)	%{__prefix}/lib/rpm/rpmrc
 
-%ifarch i386 i486 i586 i686 athlon
+%ifarch i386 i486 i586 i686 athlon pentium3 pentium4
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/i[3456]86*
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/athlon*
+%attr(-, rpm, rpm)		%{__prefix}/lib/rpm/pentium*
 %endif
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/alpha*
@@ -331,13 +335,7 @@ exit 0
 %endif
 %attr(-, rpm, rpm)		%{__prefix}/lib/rpm/noarch*
 
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_deadlock
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_dump
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_load
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_loadcvt
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_svc
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_stat
-%rpmattr	%{__prefix}/lib/rpm/rpmdb_verify
+%rpmattr	%{__prefix}/lib/rpm/rpmdb_*
 %rpmattr	%{__prefix}/lib/rpm/rpmfile
 
 %lang(cs)	%{__prefix}/*/locale/cs/LC_MESSAGES/rpm.mo
@@ -371,10 +369,10 @@ exit 0
 
 %files libs
 %defattr(-,root,root)
-%{__libdir}/librpm-4.3.so
-%{__libdir}/librpmdb-4.3.so
-%{__libdir}/librpmio-4.3.so
-%{__libdir}/librpmbuild-4.3.so
+%{__libdir}/librpm-4.4.so
+%{__libdir}/librpmdb-4.4.so
+%{__libdir}/librpmio-4.4.so
+%{__libdir}/librpmbuild-4.4.so
 
 %files build
 %defattr(-,root,root)
@@ -428,7 +426,8 @@ exit 0
 %if %{with_python_subpackage}
 %files python
 %defattr(-,root,root)
-%{__libdir}/python%{with_python_version}/site-packages/rpmmodule.so
+%{__libdir}/python%{with_python_version}/site-packages/poptmodule*
+%{__libdir}/python%{with_python_version}/site-packages/rpm
 %{__libdir}/python%{with_python_version}/site-packages/rpmdb
 %endif
 
@@ -496,16 +495,45 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
-* Tue Dec  7 2004 Jeff Johnson <jbj@jbj.org> 4.3.3-8
+* Wed Feb  2 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-0.16
+- fix: length of gpg V4 hash seed was incorrect (#146896).
+- add support for V4 rfc-2440 signatures.
+
+* Mon Jan 31 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-0.14
+- add sqlite internal (build still expects external sqlite3-3.0.8).
+- sqlite: revert to original narrow scoping of cOpen/cClose.
+
+* Fri Jan 28 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-0.12
+- python: force dbMatch() h# key to be 32 bit integer (#146477).
+
+* Tue Jan 25 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-0.10
+- more macosx fiddles.
+- move global /var/lock/rpm/transaction to dbpath.
+- permit fcntl path to be configured through rpmlock_path macro.
+- add missing #if defined(ENABLE_NLS) (#146184).
+
+* Mon Jan 17 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-0.8
+- changes to build on Mac OS X using darwinports neon/beecrypt.
+- add https://svn.uhulinux.hu/packages/dev/zlib/patches/02-rsync.patch
+
+* Sun Jan  9 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-0.7
+- build against external/internal neon.
+
+* Tue Jan  4 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-0.6
+- mac os x patches (#131943,#131944,#132924,#132926).
+- mac os x patches (#133611, #133612, #134637).
+
+* Sun Jan  2 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-0.5
+- upgrade to db-4.3.27.
+- revert MAGIC_COMPRESS, real fix is in libmagic (#143782).
+- upgrade to file-4.12 internal.
+
+* Tue Dec  7 2004 Jeff Johnson <jbj@jbj.org> 4.4.1-0.3
+- use package color as Obsoletes: color.
+
+* Mon Dec  6 2004 Jeff Johnson <jbj@jbj.org> 4.4.1-0.2
 - automagically detect and emit "python(abi) = 2.4" dependencies.
-- port to internal file-4.10 libmagic rather than libfmagic.
+- popt 1.10.1 to preserve newer.
 
-* Sun Dec  5 2004 Jeff Johnson <jbj@jbj.org> 4.3.3-3
+* Sun Dec  5 2004 Jeff Johnson <jbj@jbj.org> 4.4.1-0.1
 - force *.py->*.pyo byte code compilation with brp-python-bytecompile.
-
-* Wed Nov 10 2004 Jeff Johnson <jbj@jbj.org> 4.3.3-1
-- bump micro version.
-- make peace with libtool-1.5.10 and automake-1.9.3.
-- python: add python 2.4 support.
-- selinux: use rpm_execcon, not execv, to run scriptlets (#136848).
-- fix: segfault on --verifydb (#138589).

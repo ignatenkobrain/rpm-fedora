@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.3
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.6
+Release: 0.7
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -482,14 +482,17 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
-* Mon Jan  5 2004 Jeff Johnson <jbj@redhat.com> 4.2-0.6
+* Mon Jan 12 2004 Jeff Johnson <jbj@redhat.com> 4.3-0.7
+- fix: handle files w/o contexts correctly.
+
+* Mon Jan  5 2004 Jeff Johnson <jbj@redhat.com> 4.3-0.6
 - selinux phases 1 and 2 delivered.
 
-* Tue Dec 23 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.5
+* Tue Dec 23 2003 Jeff Johnson <jbj@redhat.com> 4.3-0.5
 - plug some rpmbuild memory leaks.
 - file security contexts added to package header.
 
-* Mon Dec 22 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.4
+* Mon Dec 22 2003 Jeff Johnson <jbj@redhat.com> 4.3-0.4
 - test build with methods needed for selinux.
 
 * Wed Dec 17 2003 Jeff Johnson <jbj@jbj.org> 4.3-0.3

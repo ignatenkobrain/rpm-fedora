@@ -20,10 +20,14 @@ Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 7x.18
+Release: 7x.18a
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
+Patch0: rpm-4.0.2-ferror.patch
+Patch1: rpm-4.0.3-s390-varargs.patch
+Patch2: rpm-4.0.3-config.patch
+Patch3: rpm-4.0.3-s390.patch
 Conflicts: patch < 2.5
 %ifos linux
 Prereq: gawk fileutils textutils mktemp shadow-utils
@@ -152,6 +156,10 @@ shell-like rules.
 
 %prep
 %setup -q
+%patch0 -p1 -b .ferror
+%patch1 -p1 -b .s390-varargs
+%patch2 -p1 -b .config
+%patch3 -p1 -b .s390
 
 %build
 

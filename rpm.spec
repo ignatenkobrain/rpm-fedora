@@ -1,5 +1,5 @@
 %define	with_python_subpackage	1%{nil}
-%define	with_python_version	2.3%{nil}
+%define	with_python_version	2.4%{nil}
 %define	with_bzip2		1%{nil}
 %define	with_apidocs		1%{nil}
 
@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.3.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 21
+Release: 22
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Patch: rpm-4.3.2-noverbosity.patch
@@ -495,6 +495,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Nov  8 2004 Jeremy Katz <katzj@redhat.com> - 4.3.2-22
+- rebuild for python 2.4
+
 * Mon Nov  1 2004 Bill Nottingham <notting@redhat.com> 4.3.2-21
 - remove excess rpmIncreaseVerbosity() calls (fixes #137834)
 

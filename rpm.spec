@@ -20,10 +20,11 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 3
+Release: 4
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-posttrans.patch
+Patch1: rpm-4.4.1-gcc4.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -132,6 +133,7 @@ shell-like rules.
 %prep
 %setup -q
 %patch0 -p0 
+%patch1 -p1
 
 %build
 
@@ -502,6 +504,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Mar  1 2005 Jeremy Katz <katzj@redhat.com> - 4.4.1-4
+- fix build with gcc 4
+
 * Mon Feb 28 2005 Jeremy Katz <katzj@redhat.com> - 4.4.1-3
 - fix posttrans callback check being backwards (#149524)
 

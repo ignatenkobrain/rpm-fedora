@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.3.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.8
+Release: 0.9
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -370,6 +370,7 @@ exit 0
 %lang(sk)	%{__mandir}/sk/man[18]/*.[18]*
 
 %files libs
+%defattr(-,root,root)
 %{__libdir}/librpm-4.3.so
 %{__libdir}/librpmdb-4.3.so
 %{__libdir}/librpmio-4.3.so
@@ -494,6 +495,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Fri Aug 20 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-0.9
+- fix: static glibc/libgcc helpers always installed (#127522).
+- fix: defattr for rpm-libs (#130461).
+
 * Thu Aug 19 2004 Jeff Johnson <jbj@jbj.org> 4.3.2-0.7
 - shared libraries in separate rpm-libs package.
 - avoid "can't happen" recursion while retrieving pubkeys.

@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.18
+Release: 0.20
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -45,7 +45,7 @@ BuildRequires: sqlite3-devel
 
 # XXX Red Hat 5.2 has not bzip2 or python
 %if %{with_bzip2}
-BuildRequires: bzip2 >= 0.9.0c-2
+BuildRequires: bzip2-devel >= 0.9.0c-2
 %endif
 %if %{with_python_subpackage}
 BuildRequires: python-devel >= %{with_python_version}
@@ -71,6 +71,11 @@ This package contains the RPM shared libraries.
 Summary:  Development files for manipulating RPM packages.
 Group: Development/Libraries
 Requires: rpm = %{rpm_version}-%{release}
+Requires: beecrypt-devel >= 4.1.2
+Requires: neon-devel
+Requires: sqlite3-devel
+Requires: elfutils-libelf
+Requires: zlib-devel
 
 %description devel
 This package contains the RPM C library and header files. These
@@ -151,7 +156,6 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} $WITH_PYTHON \
 	--without-javaglue
 %endif
 
-# XXX hack around minigzip borkage for the moment
 make -C zlib || :
 
 make %{?_smp_mflags}
@@ -498,6 +502,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Thu Feb 10 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-0.20
+- perform callbacks as always (#147537).
+
 * Wed Feb  2 2005 Jeff Johnson <jbj@jbj.org> 4.4.1-0.16
 - fix: length of gpg V4 hash seed was incorrect (#146896).
 - add support for V4 rfc-2440 signatures.

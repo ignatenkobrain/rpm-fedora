@@ -8,12 +8,13 @@ Summary: The Red Hat package management system.
 Name: rpm
 %define version 4.0
 Version: %{version}
-Release: 4
+Release: 4.3
 Group: System Environment/Base
-Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
+Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{version}.tar.gz
 Copyright: GPL
 Conflicts: patch < 2.5
 %ifos linux
+Patch: rpm-ia64.patch
 Prereq: gawk fileutils textutils sh-utils mktemp
 Requires: popt, bzip2 >= 0.9.0c-2
 # XXX glibc-2.1.92 has incompatible locale changes that affect statically
@@ -98,6 +99,7 @@ capabilities.
 
 %prep
 %setup -q
+%patch -p1
 
 %build
 %ifos linux
@@ -209,6 +211,7 @@ fi
 %{__prefix}%{__share}/man/man[18]/*.[18]*
 %lang(pl) %{__prefix}%{__share}/man/pl/man[18]/*.[18]*
 %lang(ru) %{__prefix}%{__share}/man/ru/man[18]/*.[18]*
+%lang(sk) %{__prefix}%{__share}/man/sk/man[18]/*.[18]*
 
 %files build
 %defattr(-,root,root)
@@ -271,8 +274,20 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
-* Wed Aug 30 2000 Matt Wilson <msw@redhat.com>
-- rebuild to cope with glibc locale binary incompatibility, again
+* Sun Oct 22 2000 Bill Nottingham <notting@redhat.com>
+- pull a couple of ia64 fixes from CVS in (find-provides, add arch_compat
+  for i686 to ia64)
+
+* Fri Oct  6 2000 Jakub Jelinek <jakub@redhat.com>
+- rebuild against glibc 2.1.94 to use its locale format.
+
+* Wed Sep 13 2000 Jeff Johnson <jbj@redhat.com>
+- popt: support for float/double args.
+- fix: honor --test when doing --freshen.
+- add alpha* architectures.
+
+* Tue Aug 29 2000 Jeff Johnson <jbj@redhat.com>
+- translate rpm.8 man page (Peter Ivanyi <ivanyi@internet.sk>).
 
 * Thu Aug 24 2000 Jeff Johnson <jbj@redhat.com>
 - Pass NULL as pkgKey on RPMCALLBACK_UNINST_*.

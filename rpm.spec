@@ -20,9 +20,10 @@ Name: rpm
 %define version 4.2.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.30
+Release: 0.30.1
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
+Patch: rpm-4.2.1-0.30-psmworks.patch
 Copyright: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -30,6 +31,8 @@ Prereq: fileutils shadow-utils
 %endif
 Requires: popt = 1.8.1
 Obsoletes: rpm-perl < %{version}
+
+BuildRequires: libtool automake autoconf
 
 # XXX necessary only to drag in /usr/lib/libelf.a, otherwise internal elfutils.
 BuildRequires: elfutils-libelf
@@ -116,6 +119,9 @@ shell-like rules.
 
 %prep
 %setup -q
+%patch -p1
+cd db/dist
+./s_config
 
 %build
 
@@ -134,12 +140,12 @@ CFLAGS="$RPM_OPT_FLAGS -fPIC"; export CFLAGS
 %else
 CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
 %endif
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} --sysconfdir=/etc \
+CFLAGS="$RPM_OPT_FLAGS" ./autogen.sh --prefix=%{__prefix} --sysconfdir=/etc \
 	--localstatedir=/var --infodir='${prefix}%{__share}/info' \
 	--mandir='${prefix}%{__share}/man' \
 	$WITH_PYTHON --without-javaglue
 %else
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} $WITH_PYTHON \
+CFLAGS="$RPM_OPT_FLAGS" ./autogen.sh --prefix=%{__prefix} $WITH_PYTHON \
 	--without-javaglue
 %endif
 
@@ -154,7 +160,7 @@ unset LD_ASSUME_KERNEL || :
 
 rm -rf $RPM_BUILD_ROOT
 
-make DESTDIR="$RPM_BUILD_ROOT" install
+make MKINSTALLDIRS=`pwd`/mkinstalldirs DESTDIR="$RPM_BUILD_ROOT" install
 
 %ifos linux
 
@@ -191,6 +197,7 @@ gzip -9n apidocs/man/man*/* || :
   rm -f .%{__libdir}/libbeecrypt.{a,la,so.2.2.0}
   rm -f .%{__prefix}/lib/rpm/{Specfile.pm,cpanflute,cpanflute2,rpmdiff,rpmdiff.cgi,sql.prov,sql.req,tcl.req}
   rm -rf .%{__mandir}/{fr,ko}
+  rm -rf .%{__libdir}/python*/site-packages/rpmmodule.*a
 }
 
 %clean
@@ -476,6 +483,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Fri Oct 10 2003 Elliot Lee <sopwith@redhat.com> 4.2.1-0.30.1
+- Add rpm-4.2-psmworks.patch
+
 * Wed Jul 16 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.30
 - repair find-debuginfo.sh to avoid recursing in /usr/lib/debug.
 - fix: ia64: don't attempt autorelocate on .src.rpm's.

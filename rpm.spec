@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.3.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 4
+Release: 5
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -60,7 +60,6 @@ the package like its version, a description, etc.
 %package libs
 Summary:  Libraries for manipulating RPM packages.
 Group: Development/Libraries
-Requires: rpm = %{rpm_version}-%{release}
 
 %description libs
 This package contains the RPM shared libraries.
@@ -495,6 +494,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Fri Sep 17 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-5
+- remove rpm <-> rpm-libs dependency loop.
+- print dependency whiteout iff --anaconda is specified.
+
 * Wed Sep 15 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-4
 - print dependency loops as warning iff --anaconda is specified.
 

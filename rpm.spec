@@ -14,7 +14,7 @@ Summary: The Red Hat package management system.
 Name: rpm
 %define version 4.0.3
 Version: %{version}
-Release: 0.53
+Release: 0.53.1
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{version}.tar.gz
 Copyright: GPL
@@ -429,6 +429,9 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Mon Jun 25 2001 Nalin Dahyabhai <nalin@redhat.com>
+- rebuild to fix dependency hysteresis
+
 * Mon Jun 25 2001 Jeff Johnson <jbj@redhat.com>
 - fix: remove executable bit on perl.req, not find-req.pl.
 - fix: permit partially enumerated hardlink file sets during build.

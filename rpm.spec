@@ -20,10 +20,11 @@ Name: rpm
 %define version 4.3.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 22
+Release: 23
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Patch: rpm-4.3.2-noverbosity.patch
+Patch1: rpm-4.3.2-python24.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -126,6 +127,7 @@ shell-like rules.
 %prep
 %setup -q
 %patch -p1
+%patch1 -p1
 %build
 
 # XXX rpm needs functioning nptl for configure tests
@@ -495,6 +497,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Nov  8 2004 Jeremy Katz <katzj@redhat.com> - 4.3.2-23
+- PyDictIter_Type is no more
+
 * Mon Nov  8 2004 Jeremy Katz <katzj@redhat.com> - 4.3.2-22
 - rebuild for python 2.4
 

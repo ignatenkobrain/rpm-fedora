@@ -20,12 +20,13 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 5
+Release: 6
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-posttrans.patch
 Patch1: rpm-4.4.1-gcc4.patch
 Patch2: rpm-4.4.1-hkp-disable.patch
+Patch3: rpm-4.4.1-read-macro.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -136,6 +137,7 @@ shell-like rules.
 %patch0 -p0 
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1 
 
 %build
 
@@ -506,6 +508,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Mar  7 2005 Jeremy Katz <katzj@redhat.com> - 4.4.1-6
+- fix build with new glibc
+
 * Mon Mar  7 2005 Jeremy Katz <katzj@redhat.com> - 4.4.1-5
 - disable hkp by default
 

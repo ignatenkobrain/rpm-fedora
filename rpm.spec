@@ -19,7 +19,7 @@ Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.1
+Release: 0.2
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -517,3 +517,4 @@ fi
 - turn off rpm-perl until it's self-hosting.
 - jigger up rpm-python with python-2.2b2 for now.
 - remove libtoolize from %%configure for now (#57039).
+- teach find-requires to autogenerate GCC_3.0 dependencies.

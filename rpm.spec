@@ -17,10 +17,10 @@
 
 Summary: The RPM package management system.
 Name: rpm
-%define version 4.2
+%define version 4.2.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 1
+Release: 0.30
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -28,13 +28,16 @@ Conflicts: patch < 2.5
 %ifos linux
 Prereq: fileutils shadow-utils
 %endif
-Requires: popt = 1.8
+Requires: popt = 1.8.1
 Obsoletes: rpm-perl < %{version}
 
 # XXX necessary only to drag in /usr/lib/libelf.a, otherwise internal elfutils.
 BuildRequires: elfutils-libelf
 
 BuildRequires: zlib-devel
+
+BuildRequires: beecrypt-devel >= 0:3.0.0-2
+Requires: beecrypt >= 0:3.0.0-2
 
 # XXX Red Hat 5.2 has not bzip2 or python
 %if %{with_bzip2}
@@ -99,7 +102,7 @@ programs that will manipulate RPM packages and databases.
 %package -n popt
 Summary: A C library for parsing command line parameters.
 Group: Development/Libraries
-Version: 1.8
+Version: 1.8.1
 
 %description -n popt
 Popt is a C library for parsing command line parameters. Popt was
@@ -203,10 +206,10 @@ Please install rpm-4.0.4 first, and do
 	rpm --rebuilddb
 to convert your database from db1 to db3 format.
 "
-#    exit 1
+    exit 1
 fi
 /usr/sbin/groupadd -g 37 rpm				> /dev/null 2>&1
-/usr/sbin/useradd  -r -d /var/lib/rpm -u 37 -g 37 rpm	> /dev/null 2>&1
+/usr/sbin/useradd  -r -d /var/lib/rpm -u 37 -g 37 rpm -s /sbin/nologin	> /dev/null 2>&1
 %endif
 exit 0
 
@@ -473,256 +476,69 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
-* Wed Mar 19 2003 Jeff Johnson <jbj@redhat.com> 4.2-1
-- release candidate.
+* Wed Jul 16 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.30
+- repair find-debuginfo.sh to avoid recursing in /usr/lib/debug.
+- fix: ia64: don't attempt autorelocate on .src.rpm's.
+- fix: debuginfo: -not -path /usr/lib/debug needed -prune too.
+
+* Thu Jul 10 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.26
+- apply debugedit patch necessary to produce kernel -debuginfo files.
+- zap zlib files so that apidocs gets included.
+
+* Wed Jul  9 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.21
+- resolve elf32/elf64 file conflicts to prefer elf64.
+
+* Tue Jul  8 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.20
+- resurrect manifests, RPMRC_NOTFOUND returned by readLead().
+- python: missed tuple refcount in IDTXload/IDTXglob.
+- fix: IDTXglob should return REMOVETID sorted headers (#89857).
+
+* Wed Jul  2 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.19
+- autorelocate ix86 package file paths on ia64.
+
+* Tue Jul  1 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.18
+- don't attempt to remove dbenv on --rebuilddb.
+- rebuild.
+
+* Tue Jun 24 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.17
+- update for fr.po (#97829).
+
+* Fri Jun 20 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.16
+- brp-python-bytecompile to automagically bytecode compile python.
+
+* Thu Jun 19 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.15
+- 2nd test release.
+
+* Thu Jun 12 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.13
+- fdCLose typo (#97257).
+- test release.
+
+* Mon Jun  9 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.12
+- gratuitous bump/rebuild to exclude ppc64 for the moment.
+
+* Thu Jun  5 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.11
+- update ja man pages (#92261).
+- backport rpmsw stopwatch, insturment rpmts operations.
+- toy method to enable --stats through bindings.
+
+* Wed Jun  4 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.8
+- pass structure pointer, not args, through headerSprintf call chain.
+- add ":xml" header format modifier.
+- --queryformat '[%%{*:xml}\n]' to dump header content in XML.
+- add ".arch" suffix to erase colored packages with identical NEVR.
+
+* Tue Jun  3 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.6
+- rebuild against fixes in beecrypt-3.0.0-0.20030603.
+- treat missing epoch's exactly the same as Epoch: 0.
+
+* Mon Jun  2 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.4
+- rebuild against fixes in beecrypt-3.0.0-0.20030602.
+
+* Thu May 29 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.3
+- build with external beecrypt-3.0.0.
+- blueprint beecrypt-3.0.0 changes against rpm-4.3.
+- x86_64 -> athlon, ppc64[ip]series -> ppc64 arch compatibility.
+
+* Thu Mar 27 2003 Jeff Johnson <jbj@redhat.com> 4.2.1-0.1
+- start rpm-4.2.1.
 - hack out O_DIRECT support in db4 for now.
-
-* Fri Mar 14 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.73
-- fix: short option help missing string terminator.
-
-* Fri Mar 14 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.72
-- fix: close db cursors to remove rpmdb references on signal exit.
-
-* Fri Mar  7 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.70
-- fix: memory leak (85522).
-- build with internal elfutils if not installed.
-
-* Thu Feb 27 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.69
-- file: check size read from elf header (#85297).
-
-* Thu Feb  6 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.66
-- popt: diddle doxygen/splint annotations, corrected doco.
-- file: fix ogg/vorbis file classification problems.
-- skip fingerprints in /usr/share/doc and /usr/src/debug.
-- add file(1) as /usr/lib/rpm/rpmfile.
-- enable transaction coloring for s390x/ppc64.
-
-* Fri Jan 31 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.65
-- fix: trap SIGPIPE, close database(s).
-- configurable default query output format.
-
-* Wed Jan 29 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.64
-- pay attention to package color when upgrading identical packages.
-
-* Tue Jan 28 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.63
-- fix: clean relocation path for --prefix=/.
-- python: permit stdout/stderr to be remapped to install.log.
-
-* Mon Jan 27 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.62
-- fix: more debugedit.c problems.
-
-* Sat Jan 25 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.61
-- permit anaconda to choose "presentation order".
-
-* Wed Jan 22 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.60
-- fix: debugedit.c problem.
-
-* Fri Jan 17 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.58
-- duplicate package checks with arch/os checks if colored.
-- file conflict checks with colors.
-
-* Mon Jan 13 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.57
-- teach rpmquery to return "owning" package(s) in spite of alternatives.
-
-* Sun Jan 12 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.56
-- file: *really* read elf64 notes correctly.
-- python: restore thread context on errorCB (#80744).
-
-* Fri Jan 10 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.55
-- fix: obscure corner case(s) with rpmvercmp (#50977).
-
-* Wed Jan  8 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.54
-- python: put rpmmodule.so where python expects to find.
-- add brp-strip-static-archive build root policy helper.
-- add -lelf to rpm LDFLAGS, not LDADD, since there is no libelf.la now.
-
-* Tue Jan  7 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.53
-- file: read elf64 notes correctly.
-
-* Mon Jan  6 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.52
-- portabilitly: solaris fixes.
-- for DSO's, provide the file basename if DT_SONAME not found.
-- add perldeps.pl, start to replace perl.{prov,req}.
-
-* Sun Jan  5 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.51
-- file: avoid ogg/vorbis file classification problems.
-
-* Wed Jan  1 2003 Jeff Johnson <jbj@redhat.com> 4.2-0.49
-- add rpmts/rpmte/rpmfi/rpmds element colors.
-- ignore items not in our rainbow (i.e. colors are functional).
-- fix: dependency helpers now rate limited at 10ms, not 1s.
-- add per-arch canonical color, only x86_64 enabled for now.
-
-* Sun Dec 29 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.46
-- don't segfault with packages produced by rpm-2.93 (#80618).
-- python: eliminate hash.[ch] and upgrade.[ch], methods too.
-- fix :armor query extension, tgpg mktmp handling (#80684).
-- use rpmfiFClass() underneath --fileclass.
-- use rpmfiFDepends() underneath --fileprovide and --filerequire.
-- python: add fi.FColor() and fi.FClass() methods.
-- calculate dependency color and refernces.
-- python: add ds.Color() and ds.Refs() methods.
-- fix: typo in assertion.
-
-* Sat Dec 28 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.45
-- error if querying with iterator on different sized arrays.
-- add rpmfi methods to access color, class, and dependencies.
-
-* Fri Dec 27 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.42
-- add BETA-GPG-KEY (but not in headers using %%pubkey yet).
-- disable perl module magic rule.
-- ignore ENOENT return from db->close (#80514,#79314).
-- fix builddir relative inclusion, add %%pubkeys to rpm header.
-- fix: package relocations were broken (#75057).
-
-* Thu Dec 26 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.39
-- add Red Hat pubkeys to rpm header.
-- resurrect automagic perl(foo) dependency generation.
-
-* Tue Dec 24 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.38
-- add %%pubkey attribute to read armored pubkey files into header.
-- permit both relative/absolute paths, display 'P' when verifying.
-
-* Mon Dec 23 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.36
-- add matching "config(N) = EVR"  dependencies iff %%config is found.
-
-* Sun Dec 22 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.35
-- fix: remove rpmfi scareMem so that headers can be reloaded on ia64.
-- fix: set DB_PRIVATE, not DB_ENV_PRIVATE, if unshared posix mutexes.
-- remove useless (and now unnecessary) kernel/glibc dependencies (#79872).
-
-* Sat Dec 21 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.34
-- add --enable-posixmutexes when configuring on linux.
-- add rpmdb_{deadlock,dump,load,svc,stat,verify} utilities.
-- include srpm pkgid in binary headers (#71460).
-- add %%check scriptlet to run after %%install (#64137).
-- simplify specfile query linkage loop.
-- drill rpmts into parseSpec(), carrying Spec along.
-
-* Fri Dec 20 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.33
-- dynamically link /bin/rpm, link against good old -lpthread.
-- test pthread_{mutex,cond}attr_setpshared(), add DB_ENV_PRIVATE if not.
-- error on exclusive Packages fcntl lock if DB_ENV_PRIVATE is set.
-- copy compressFilelist to convertdb1.c, remove internal legacy.h.
-
-* Thu Dec 19 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.31
-- statically link against /usr/lib/nptl/libpthread.a, if present.
-- remove popt aliases for -U et al.
-- add -I/usr/include/nptl, Conflicts: kernel < 2.4.20.
-
-* Wed Dec 18 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.29nptl
-- popt aliases for -U et al to achieve dynamic link with nptl.
-- add --file{class,provide,require} popt aliases and header extensions.
-
-* Tue Dec 17 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.28nptl
-- re-enable CDB locking, removing "private" from %%__dbi_cdb macro.
-
-* Mon Dec 16 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.27+nptl
-- rebuild against glibc with fcntl fixed in libpthread.
-
-* Sun Dec 15 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.26+nptl
-- disable fcntl(2) lock on Packages until glibc+nptl is fixed.
-- make cdb locks "private" for pthreads compatibility w/o NPTL.
-- add --enable-posixmutexes to use NPTL.
-- make dependency generation "opt-out" everywhere.
-
-* Sat Dec 14 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.25
-- rebuild rpm with internal dependency generation enabled.
-- fix: make sure each library has DT_NEEDED for all unresolved syms.
-- generate Elf provides even if file is not executable.
-
-* Fri Dec 13 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.24
-- debug_packages "works", but non-noarch w/o %setup has empty payload.
-- make dependency generation "opt-in" in order to build in distro.
-
-* Thu Dec 12 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.23
-- fix: add rpmlib(VersionedDependencies) if versioned Provides: found.
-- fix: add %%ifnarch noarch to debug_package macro.
-
-* Wed Dec 11 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.22
-- rebuild against glibc with TLS support.
-
-* Tue Dec 10 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.21
-- don't generate dependencies unless execute bit is set.
-- enable internal automagic dependency generation as default.
-
-* Sat Dec  7 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.19
-- resurrect  AutoReq: and AutoProv:.
-
-* Tue Dec  2 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.18
-- internal automagic dependency generation (disabled for now).
-
-* Mon Dec  1 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.17
-- late rpmts reference causes premature free (#78862).
-
-* Sun Dec  1 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.16
-- link rpm libraries together, use shared helpers with external -lelf.
-- move libfmagic to librpmio.
-- use libtool-1.4.3, autoconf-2.56.
-- add explicit -L/lib64 -L/usr/lib64 for libtool mode=relink on x86_64.
-- use usrlib_LTLIBRARIES to install directly in /usr/lib64 instead.
-
-* Sat Nov 30 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.14
-- upgrade to elfutils-0.63.
-
-* Fri Nov 29 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.13
-- bundle libfmagic into librpmbuild for now.
-- apply patches 7 and 8 to db-4.1.24.
-- upgrade to elfutils-0.59.
-- add -g to all platforms optflags.
-- build with external elfutils (preferred), if available.
-
-* Wed Nov 20 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.12
-- use rpmdeps rather than find-{requires,provides}.
-
-* Tue Nov 19 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.11
-- fix: option conflict error message (#77373).
-- add AC_SYS_LARGFILE throughout.
-- statically link rpmdeps against (internal) libfmagic.
-
-* Fri Nov 15 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.10
-- update to elfutils-0.56.
-- have debug sub-subpackage use external, not internal, elfutils.
-- apply patches 1-6 to db-4.1.24.
-- resurrect availablePackages one more time.
-
-* Wed Nov 13 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.8
-- fix: bash must have functional libtermcap.so.2.
-
-* Sat Nov  9 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.7
-- add _javadir/_javadocdir/_javaclasspath macros.
-
-* Fri Nov  8 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.6
-- fix: /dev/initctl has not MD5 segfault (#76718).
-- rpm.8: gpg uses GNUPGHOME, not GPGPATH (#76691).
-- use %%{_lib} for libraries.
-- fix: permit build with --disable-nls (#76258).
-- add error message on glob failure (#76012).
-- remove dependency on libelf.
-
-* Thu Oct 24 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.5
-- add /usr/lib/rpm/rpmdeps.
-- add /usr/lib/rpm/magic.
-
-* Wed Oct 23 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.4
-- resurrect genhdlist "greased lightning" pathway for now.
-- elfutils: avoid gcc-3.2 ICE on x86_64 for now.
-
-* Fri Oct 18 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.2
-- add debug sub-package patch.
-- re-add elfutils/libdwarf (for dwarf.h), eliminate tools/dwarf2.h.
-
-* Thu Oct 17 2002 Jeff Johnson <jbj@redhat.com> 4.2-0.1
-- set cachesize without a dbenv, the default is far too small.
-- db: don't return EACCES on db->close w/o environment.
-- unify cachesize configuration, with (or without) a dbenv.
-- comments regarding unsupported (yet) db-4.1.17 functionality.
-- requirement on libelf >= 0.8.2 to work around incompatible soname (#72792).
-- fix: common sanity check on headers, prevent segfault (#72590).
-- limit number of NOKEY/UNTRUSTED keys that will be warned once.
-- libadd -lelf to rpmdb (#73024).
-- update to db-4.1.24 final.
-- eliminate myftw, use Fts(3) instead.
-- dump libelf, gulp elfutils, for now.
-- python: permit headers to be hashed.
-- use %%{_lib} for libraries.

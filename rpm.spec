@@ -19,7 +19,7 @@ Name: rpm
 %define version 4.0.3
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 0.88.1
+Release: 0.91
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -159,15 +159,13 @@ shell-like rules.
 #RPM_OPT_FLAGS="-O0"
 %endif
 
-RPM_OPT_FLAGS="$RPM_OPT_FLAGS -D_REENTRANT"
-
 %ifos linux
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} --sysconfdir=/etc --localstatedir=/var --infodir='${prefix}%{__share}/info' --mandir='${prefix}%{__share}/man'
 %else
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix}
 %endif
 
-make %{?_smp_mflags}
+make
 
 %if %{with_perl_subpackage}
 { cd Perl-RPM
@@ -336,6 +334,7 @@ fi
 %{__prefix}/lib/librpmio-4.0.3.so
 %{__prefix}/lib/librpmbuild-4.0.3.so
 
+%attr(0755, rpm, rpm)	%dir %{__prefix}/lib/rpm
 %rpmattr	%{__prefix}/lib/rpm/config.guess
 %rpmattr	%{__prefix}/lib/rpm/config.sub
 %rpmattr	%{__prefix}/lib/rpm/convertrpmrc.sh
@@ -507,8 +506,15 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
-* Tue Aug  7 2001 Elliot Lee <sopwith@redhat.com>
-- Build with -D_REENTRANT
+* Mon Aug 13 2001 Jeff Johnson <jbj@redhat.com>
+- fix: segfault on headerFree given malicious data.
+- fix: don't verify hash page nelem.
+- better error messages for verification failures.
+- include directory /usr/lib/rpm in rpm package.
+
+* Wed Aug  8 2001 Jeff Johnson <jbj@redhat.com>
+- add legacy (compile only) wrappers for fdFileno et al.
+- add -D_REENTRANT (note rpmlib is still not thread safe).
 
 * Mon Aug  6 2001 Jeff Johnson <jbj@redhat.com>
 - python: add hiesenbug patch.

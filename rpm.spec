@@ -124,8 +124,7 @@ shell-like rules.
 
 %prep
 %setup -q
-%patch -p1
-%patch1 -p1
+
 %build
 
 # XXX rpm needs functioning nptl for configure tests

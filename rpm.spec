@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.3.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 6
+Release: 7
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -494,6 +494,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Thu Sep 30 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-7
+- ia64: add autorelocate_dcolor to macros.in.
+
 * Wed Sep 29 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-6
 - fix: mark uninstalled elf32 files in rpmdb to disable -Va checks.
 

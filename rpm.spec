@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.3.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 5
+Release: 6
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 License: GPL
@@ -494,9 +494,8 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
-* Fri Sep 17 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-5
-- remove rpm <-> rpm-libs dependency loop.
-- print dependency whiteout iff --anaconda is specified.
+* Wed Sep 29 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-6
+- fix: mark uninstalled elf32 files in rpmdb to disable -Va checks.
 
 * Wed Sep 15 2004 Jeff Johnson <jbj@redhat.com> 4.3.2-4
 - print dependency loops as warning iff --anaconda is specified.

@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.0.4
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 7x.12
+Release: 7x.16
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.0.x/rpm-%{rpm_version}.tar.gz
 Copyright: GPL
@@ -521,8 +521,11 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
-* Mon Apr  8 2002 Jeff Johnson <jbj@redhat.com>
-- rebuild for distro to uncouple from broken inheiritance.
+* Thu Apr 11 2002 Tim Powers <timp@redhat.com>
+- rebuilt in new environment
+
+* Thu Apr 11 2002 Jeff Johnson <jbj@redhat.com>
+- fix: generate config file md5 as ascii, not binary (#62542).
 
 * Fri Apr  5 2002 Jeff Johnson <jbj@redhat.com>
 - non-glibc: on upgrade, mergesort is much faster than quicksort.

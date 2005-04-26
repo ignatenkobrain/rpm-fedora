@@ -1,0 +1,19 @@
+--- rpm-4.4.1/lib/depends.c.prepostun	2004-12-07 14:09:16.000000000 +0000
++++ rpm-4.4.1/lib/depends.c	2005-04-26 14:12:23.000000000 +0100
+@@ -1294,14 +1294,12 @@
+ 	    switch (rpmteType(p)) {
+ 	    case TR_REMOVED:
+ 		/* Skip if not %preun/%postun requires or legacy prereq. */
+-		if (isInstallPreReq(Flags)
+-		 || !( isErasePreReq(Flags) || isLegacyPreReq(Flags) ) )
++		if (!( isErasePreReq(Flags) || isLegacyPreReq(Flags) ) )
+ 		    /*@innercontinue@*/ continue;
+ 		/*@switchbreak@*/ break;
+ 	    case TR_ADDED:
+ 		/* Skip if not %pre/%post requires or legacy prereq. */
+-		if (isErasePreReq(Flags)
+-		 || !( isInstallPreReq(Flags) || isLegacyPreReq(Flags) ) )
++		if (!( isInstallPreReq(Flags) || isLegacyPreReq(Flags) ) )
+ 		    /*@innercontinue@*/ continue;
+ 		/*@switchbreak@*/ break;
+ 	    }

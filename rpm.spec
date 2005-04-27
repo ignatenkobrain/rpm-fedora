@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 9
+Release: 10
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-posttrans.patch
@@ -29,6 +29,7 @@ Patch2: rpm-4.4.1-hkp-disable.patch
 Patch3: rpm-4.4.1-read-macro.patch
 Patch4: rpm-4.4.1-fileconflicts.patch 
 Patch5: rpm-4.4.1-prereq.patch
+Patch6: rpm-4.4.1-nonmerged.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -143,6 +144,7 @@ shell-like rules.
 %patch3 -p1 
 %patch4 -p1  -b .fileconflicts
 %patch5 -p1  -b .prereq
+%patch6 -p1
 
 %build
 
@@ -513,6 +515,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Apr 27 2005 Jeremy Katz <katzj@redhat.com> - 4.4.1-10
+- add patch to fix segfault with non-merged hdlists
+
 * Thu Mar 31 2005 Thomas Woerner <twoerner@redhat.com> 4.4.1-9
 - enabled prereqs again
 

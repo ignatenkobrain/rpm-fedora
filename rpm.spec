@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 10
+Release: 11
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-posttrans.patch
@@ -30,6 +30,8 @@ Patch3: rpm-4.4.1-read-macro.patch
 Patch4: rpm-4.4.1-fileconflicts.patch 
 Patch5: rpm-4.4.1-prereq.patch
 Patch6: rpm-4.4.1-nonmerged.patch
+Patch7: rpm-4.4.1-prepostun.patch
+Patch8: rpm-4.4.1-ordererase.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -145,6 +147,8 @@ shell-like rules.
 %patch4 -p1  -b .fileconflicts
 %patch5 -p1  -b .prereq
 %patch6 -p1
+%patch7 -p1  -b .prepostun
+%patch8 -p1  -b .ordererase
 
 %build
 
@@ -515,6 +519,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Apr 27 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-11
+- Fix for (pre,postun) (#155700)
+- Erase ordering
+
 * Wed Apr 27 2005 Jeremy Katz <katzj@redhat.com> - 4.4.1-10
 - add patch to fix segfault with non-merged hdlists
 

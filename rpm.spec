@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 11
+Release: 12
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-posttrans.patch
@@ -44,7 +44,7 @@ Obsoletes: rpm-perl < %{version}
 BuildRequires: elfutils-libelf
 BuildRequires: elfutils-devel
 
-BuildRequires: zlib-devel
+BuildRequires: sed readline-devel zlib-devel
 
 BuildRequires: beecrypt-devel >= 4.1.2
 Requires: beecrypt >= 4.1.2
@@ -185,6 +185,15 @@ rm -rf $RPM_BUILD_ROOT
 
 make DESTDIR="$RPM_BUILD_ROOT" install
 
+# Working around breakage from the -L$(RPM_BUILD_ROOT)... -L$(DESTDIR)...
+# workaround to #132435,
+# and from linking to included zlib
+for i in librpm.la librpmbuild.la librpmdb.la librpmio.la ; do
+	sed -i -e 's~-L'"$RPM_BUILD_ROOT"'[^ ]* ~~g' \
+		-e 's~-L'"$RPM_BUILD_DIR"'[^ ]* ~~g' \
+		"$RPM_BUILD_ROOT%{__libdir}/$i"
+done
+
 %ifos linux
 
 # Save list of packages through cron
@@ -221,6 +230,7 @@ gzip -9n apidocs/man/man*/* || :
 %if %{with_python_subpackage}
   rm -f .%{__libdir}/python%{with_python_version}/site-packages/*.{a,la}
   rm -f .%{__libdir}/python%{with_python_version}/site-packages/rpm/*.{a,la}
+  rm -f .%{__libdir}/python%{with_python_version}/site-packages/rpmdb/*.{a,la}
 %endif
 }
 
@@ -519,6 +529,11 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Sat Apr 30 2005 Miloslav Trmac <mitr@redhat.com> - 4.4.1-12
+- Remove $RPM_BUILD_ROOT and $RPM_BUILD_DIR from distribued .la files (#116891)
+- Don't ship static version of _rpmdb.so
+- BuildRequires: readline-devel
+
 * Wed Apr 27 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-11
 - Fix for (pre,postun) (#155700)
 - Erase ordering

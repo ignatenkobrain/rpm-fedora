@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 12
+Release: 13
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-posttrans.patch
@@ -32,6 +32,7 @@ Patch5: rpm-4.4.1-prereq.patch
 Patch6: rpm-4.4.1-nonmerged.patch
 Patch7: rpm-4.4.1-prepostun.patch
 Patch8: rpm-4.4.1-ordererase.patch
+Patch9: rpm-4.4.1-matchpathcon.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -149,6 +150,7 @@ shell-like rules.
 %patch6 -p1
 %patch7 -p1  -b .prepostun
 %patch8 -p1  -b .ordererase
+%patch9 -p1  -b .matchpathcon
 
 %build
 
@@ -529,6 +531,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon May 02 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-13
+- Use matchpathcon (#151870)
+
 * Sat Apr 30 2005 Miloslav Trmac <mitr@redhat.com> - 4.4.1-12
 - Remove $RPM_BUILD_ROOT and $RPM_BUILD_DIR from distribued .la files (#116891)
 - Don't ship static version of _rpmdb.so

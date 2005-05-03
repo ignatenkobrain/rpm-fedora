@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 14
+Release: 15
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-posttrans.patch
@@ -531,6 +531,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue May 03 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-15
+- Some more matchpathcon work
+
 * Mon May 02 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-14
 - matchpathcon fixup
 

@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 18
+Release: 18.1
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-posttrans.patch
@@ -531,6 +531,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed May 04 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-18.1
+- Fix typo
+- Fix typo
+
 * Wed May 04 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-18
 - Add missing fsm.c from matchpathcon patches 
 

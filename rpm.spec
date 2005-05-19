@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 18.1
+Release: 19
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-posttrans.patch
@@ -33,6 +33,8 @@ Patch6: rpm-4.4.1-nonmerged.patch
 Patch7: rpm-4.4.1-prepostun.patch
 Patch8: rpm-4.4.1-ordererase.patch
 Patch9: rpm-4.4.1-matchpathcon.patch
+Patch10: rpm-4.4.1-check-symlinks.patch
+Patch11: rpm-4.4.x-signature.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -151,6 +153,15 @@ shell-like rules.
 %patch7 -p1  -b .prepostun
 %patch8 -p1  -b .ordererase
 %patch9 -p1  -b .matchpathcon
+%patch10 -p1  -b .checklinks
+%patch11 -p1  -b .oldsig
+
+# XXX move zh_CN
+sed -i 's/zh_CN.GB2312/zh_CN/' popt/configure*
+mv po/zh_CN.GB2312.po po/zh_CN.po
+mv popt/po/zh_CN.GB2312.po popt/po/zh_CN.po
+mv popt/po/zh_CN.GB2312.gmo popt/po/zh_CN.gmo
+
 
 %build
 
@@ -522,7 +533,7 @@ exit 0
 %lang(uk)	%{__prefix}/*/locale/uk/LC_MESSAGES/popt.mo
 %lang(wa)	%{__prefix}/*/locale/wa/LC_MESSAGES/popt.mo
 %lang(zh)	%{__prefix}/*/locale/zh/LC_MESSAGES/popt.mo
-%lang(zh_CN)	%{__prefix}/*/locale/zh_CN.GB2312/LC_MESSAGES/popt.mo
+%lang(zh_CN)	%{__prefix}/*/locale/zh_CN/LC_MESSAGES/popt.mo
 
 # XXX These may end up in popt-devel but it hardly seems worth the effort.
 %{__libdir}/libpopt.a
@@ -531,6 +542,11 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue May 17 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-19
+- Check for symlinks in check-files (#108778)
+- Move zh_CN (#154623)
+- Test fix for signing old rpms (#127113)
+
 * Wed May 04 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-18.1
 - Fix typo
 - Fix typo

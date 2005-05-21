@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 18.1
+Release: 20
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-posttrans.patch

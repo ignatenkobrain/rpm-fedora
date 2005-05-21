@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 19
+Release: 20
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-posttrans.patch
@@ -154,7 +154,7 @@ shell-like rules.
 %patch8 -p1  -b .ordererase
 %patch9 -p1  -b .matchpathcon
 %patch10 -p1  -b .checklinks
-%patch11 -p1  -b .oldsig
+#patch11 -p1  -b .oldsig
 
 # XXX move zh_CN
 sed -i 's/zh_CN.GB2312/zh_CN/' popt/configure*
@@ -542,6 +542,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Sat May 21 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-20
+- Drop signature patch
+
 * Tue May 17 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-19
 - Check for symlinks in check-files (#108778)
 - Move zh_CN (#154623)

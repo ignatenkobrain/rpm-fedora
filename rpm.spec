@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 20
+Release: 18.1
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-posttrans.patch
@@ -34,7 +34,6 @@ Patch7: rpm-4.4.1-prepostun.patch
 Patch8: rpm-4.4.1-ordererase.patch
 Patch9: rpm-4.4.1-matchpathcon.patch
 Patch10: rpm-4.4.1-check-symlinks.patch
-Patch11: rpm-4.4.x-signature.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -154,7 +153,6 @@ shell-like rules.
 %patch8 -p1  -b .ordererase
 %patch9 -p1  -b .matchpathcon
 %patch10 -p1  -b .checklinks
-#patch11 -p1  -b .oldsig
 
 # XXX move zh_CN
 sed -i 's/zh_CN.GB2312/zh_CN/' popt/configure*
@@ -205,6 +203,16 @@ for i in librpm.la librpmbuild.la librpmdb.la librpmio.la ; do
 	sed -i -e 's~-L'"$RPM_BUILD_ROOT"'[^ ]* ~~g' \
 		-e 's~-L'"$RPM_BUILD_DIR"'[^ ]* ~~g' \
 		"$RPM_BUILD_ROOT%{__libdir}/$i"
+
+# Clean up dangling symlinks
+# XXX Fix in rpm tree
+for i in /usr/bin/rpme /usr/bin/rpmi /usr/bin/rpmu; do
+    rm -f "$RPM_BUILD_ROOT"/"$i"; 
+done
+
+# Clean up dangling symlinks
+for i in /usr/lib/rpmpopt /usr/lib/rpmrc; do
+    rm -f "$RPM_BUILD_ROOT"/"$i"; 
 done
 
 %ifos linux
@@ -544,6 +552,7 @@ exit 0
 %changelog
 * Sat May 21 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-20
 - Drop signature patch
+- dangling unpackaged symlinks
 
 * Tue May 17 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-19
 - Check for symlinks in check-files (#108778)

@@ -203,16 +203,17 @@ for i in librpm.la librpmbuild.la librpmdb.la librpmio.la ; do
 	sed -i -e 's~-L'"$RPM_BUILD_ROOT"'[^ ]* ~~g' \
 		-e 's~-L'"$RPM_BUILD_DIR"'[^ ]* ~~g' \
 		"$RPM_BUILD_ROOT%{__libdir}/$i"
+done
 
 # Clean up dangling symlinks
 # XXX Fix in rpm tree
 for i in /usr/bin/rpme /usr/bin/rpmi /usr/bin/rpmu; do
-    rm -f "$RPM_BUILD_ROOT"/"$i"; 
+    rm -f "$RPM_BUILD_ROOT"/"$i" 
 done
 
 # Clean up dangling symlinks
 for i in /usr/lib/rpmpopt /usr/lib/rpmrc; do
-    rm -f "$RPM_BUILD_ROOT"/"$i"; 
+    rm -f "$RPM_BUILD_ROOT"/"$i" 
 done
 
 %ifos linux

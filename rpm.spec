@@ -20,9 +20,11 @@ Name: rpm
 %define version 4.4.1
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 20
+Release: 21
 Group: System Environment/Base
 Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
+Source1: popt_zh_TW.po
+Source2: popt_zh_CN.po
 Patch0: rpm-4.4.1-posttrans.patch
 Patch1: rpm-4.4.1-gcc4.patch
 Patch2: rpm-4.4.1-hkp-disable.patch
@@ -155,11 +157,11 @@ shell-like rules.
 %patch10 -p1  -b .checklinks
 
 # XXX move zh_CN
-sed -i 's/zh_CN.GB2312/zh_CN/' popt/configure*
-mv po/zh_CN.GB2312.po po/zh_CN.po
-mv popt/po/zh_CN.GB2312.po popt/po/zh_CN.po
-mv popt/po/zh_CN.GB2312.gmo popt/po/zh_CN.gmo
-
+sed -i 's/zh_CN.GB2312/zh_CN zh_TW/' popt/configure*
+mv -f po/zh_CN.GB2312.po po/zh_CN.po
+rm -f popt/po/zh_CN.GB2312.po popt/po/zh_CN.GB2312.gmo
+cp %{SOURCE1} popt/po/zh_CN.po 
+cp %{SOURCE2} popt/po/zh_TW.po 
 
 %build
 
@@ -183,6 +185,12 @@ export CPPFLAGS=-I%{__prefix}/include
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} $WITH_PYTHON \
 	--without-javaglue
 %endif
+
+#XXX build gmo files - remove in next 4.4.x upstream release
+pushd popt/po
+make zh_CN.gmo
+make zh_TW.gmo
+popd
 
 make -C zlib || :
 
@@ -551,6 +559,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue May 24 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-21
+- Update translations (#154623)
+
 * Sat May 21 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-20
 - Drop signature patch
 - dangling unpackaged symlinks

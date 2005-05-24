@@ -551,6 +551,7 @@ exit 0
 %lang(wa)	%{__prefix}/*/locale/wa/LC_MESSAGES/popt.mo
 %lang(zh)	%{__prefix}/*/locale/zh/LC_MESSAGES/popt.mo
 %lang(zh_CN)	%{__prefix}/*/locale/zh_CN/LC_MESSAGES/popt.mo
+%lang(zh_TW)	%{__prefix}/*/locale/zh_TW/LC_MESSAGES/popt.mo
 
 # XXX These may end up in popt-devel but it hardly seems worth the effort.
 %{__libdir}/libpopt.a

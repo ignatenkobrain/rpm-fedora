@@ -17,25 +17,19 @@
 
 Summary: The RPM package management system.
 Name: rpm
-%define version 4.4.1
+%define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 21
+Release: 1
 Group: System Environment/Base
-Source: ftp://jbj.org/pub/rpm-devel/rpm-%{rpm_version}.tar.gz
-Source1: popt_zh_TW.po
-Source2: popt_zh_CN.po
-Patch0: rpm-4.4.1-posttrans.patch
-Patch1: rpm-4.4.1-gcc4.patch
-Patch2: rpm-4.4.1-hkp-disable.patch
-Patch3: rpm-4.4.1-read-macro.patch
-Patch4: rpm-4.4.1-fileconflicts.patch 
-Patch5: rpm-4.4.1-prereq.patch
-Patch6: rpm-4.4.1-nonmerged.patch
-Patch7: rpm-4.4.1-prepostun.patch
-Patch8: rpm-4.4.1-ordererase.patch
-Patch9: rpm-4.4.1-matchpathcon.patch
-Patch10: rpm-4.4.1-check-symlinks.patch
+Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
+Patch0: rpm-4.4.1-hkp-disable.patch
+Patch1: rpm-4.4.1-fileconflicts.patch 
+Patch2: rpm-4.4.1-prereq.patch
+Patch3: rpm-4.4.1-nonmerged.patch
+Patch4: rpm-4.4.1-prepostun.patch
+Patch5: rpm-4.4.1-ordererase.patch
+Patch6: rpm-4.4.2-matchpathcon.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -145,24 +139,14 @@ shell-like rules.
 
 %prep
 %setup -q
-%patch0 -p0 
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1 
-%patch4 -p1  -b .fileconflicts
-%patch5 -p1  -b .prereq
-%patch6 -p1
-%patch7 -p1  -b .prepostun
-%patch8 -p1  -b .ordererase
-%patch9 -p1  -b .matchpathcon
-%patch10 -p1  -b .checklinks
+%patch0 -p1  -b .nohkp
+%patch1 -p1  -b .fileconflicts
+%patch2 -p1  -b .prereq
+%patch3 -p1  -b .rpmal
+%patch4 -p1  -b .prepostun
+%patch5 -p1  -b .ordererase
+%patch6 -p1  -b .matchpathcon
 
-# XXX move zh_CN
-sed -i 's/zh_CN.GB2312/zh_CN zh_TW/' popt/configure*
-mv -f po/zh_CN.GB2312.po po/zh_CN.po
-rm -f popt/po/zh_CN.GB2312.po popt/po/zh_CN.GB2312.gmo
-cp %{SOURCE1} popt/po/zh_CN.po 
-cp %{SOURCE2} popt/po/zh_TW.po 
 
 %build
 
@@ -491,9 +475,7 @@ exit 0
 %if %{with_python_subpackage}
 %files python
 %defattr(-,root,root)
-%{__libdir}/python%{with_python_version}/site-packages/poptmodule*
 %{__libdir}/python%{with_python_version}/site-packages/rpm
-%{__libdir}/python%{with_python_version}/site-packages/rpmdb
 %endif
 
 %files devel
@@ -561,6 +543,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Thu Jul 21 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-1
+- Upgrade to upstream release
+
 * Tue May 24 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.1-21
 - Update translations (#154623)
 

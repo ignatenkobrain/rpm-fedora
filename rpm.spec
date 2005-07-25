@@ -171,12 +171,6 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{__prefix} $WITH_PYTHON \
 	--without-javaglue
 %endif
 
-#XXX build gmo files - remove in next 4.4.x upstream release
-pushd popt/po
-make zh_CN.gmo
-make zh_TW.gmo
-popd
-
 make -C zlib || :
 
 make %{?_smp_mflags}

@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 1
+Release: 2
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-hkp-disable.patch
@@ -30,6 +30,7 @@ Patch3: rpm-4.4.1-nonmerged.patch
 Patch4: rpm-4.4.1-prepostun.patch
 Patch5: rpm-4.4.1-ordererase.patch
 Patch6: rpm-4.4.2-matchpathcon.patch
+Patch7: rpm-4.4.2-perlreq.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -125,7 +126,7 @@ programs that will manipulate RPM packages and databases.
 %package -n popt
 Summary: A C library for parsing command line parameters.
 Group: Development/Libraries
-Version: 1.10.1
+Version: 1.10.2
 
 %description -n popt
 Popt is a C library for parsing command line parameters. Popt was
@@ -146,6 +147,7 @@ shell-like rules.
 %patch4 -p1  -b .prepostun
 %patch5 -p1  -b .ordererase
 %patch6 -p1  -b .matchpathcon
+%patch7 -p1  -b .perlreq
 
 
 %build
@@ -537,6 +539,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Jul 26 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-1
+- popt minor version bump
+- revert to perl.req/perl.prov for now
+
 * Thu Jul 21 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-1
 - Upgrade to upstream release
 

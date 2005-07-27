@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 2
+Release: 3
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-hkp-disable.patch
@@ -36,7 +36,7 @@ Conflicts: patch < 2.5
 %ifos linux
 Prereq: fileutils shadow-utils
 %endif
-Requires: popt = 1.10.1
+Requires: popt = 1.10.2
 Obsoletes: rpm-perl < %{version}
 
 # XXX necessary only to drag in /usr/lib/libelf.a, otherwise internal elfutils.
@@ -539,7 +539,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
-* Tue Jul 26 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-1
+* Wed Jul 27 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-2
+- popt minor version requires
+
+* Tue Jul 26 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-2
 - popt minor version bump
 - revert to perl.req/perl.prov for now
 

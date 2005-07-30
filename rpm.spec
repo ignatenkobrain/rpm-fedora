@@ -50,6 +50,7 @@ Requires: beecrypt >= 4.1.2
 
 BuildRequires: neon-devel
 BuildRequires: sqlite-devel
+BuildRequires: gettext-devel
 BuildRequires: libselinux-devel
 
 # XXX Red Hat 5.2 has not bzip2 or python

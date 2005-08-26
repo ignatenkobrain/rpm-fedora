@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 3
+Release: 4
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-hkp-disable.patch
@@ -31,6 +31,8 @@ Patch4: rpm-4.4.1-prepostun.patch
 Patch5: rpm-4.4.1-ordererase.patch
 Patch6: rpm-4.4.2-matchpathcon.patch
 Patch7: rpm-4.4.2-perlreq.patch
+Patch8: rpm-4.4.2-db3-param.patch
+Patch9: rpm-4.4.2-contextverify.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -149,6 +151,8 @@ shell-like rules.
 %patch5 -p1  -b .ordererase
 %patch6 -p1  -b .matchpathcon
 %patch7 -p1  -b .perlreq
+%patch8 -p1  -b .param
+%patch9 -p1  -b .contextverify
 
 
 %build
@@ -540,7 +544,11 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
-* Wed Jul 27 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-2
+* Fri Aug 26 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-4
+- Fix build with CFLAGS having --param
+- Fix for context verification in /tmp (#162037)
+
+* Wed Jul 27 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-3
 - popt minor version requires
 
 * Tue Jul 26 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-2

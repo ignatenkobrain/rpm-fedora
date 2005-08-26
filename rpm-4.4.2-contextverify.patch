@@ -1,0 +1,16 @@
+diff -u rpm-4.4.2/lib/verify.c rpm-4.4.2/lib/verify.c
+--- rpm-4.4.2/lib/verify.c	2005-07-21 16:47:11.000000000 -0400
++++ rpm-4.4.2/lib/verify.c	2005-08-26 12:23:35.000000000 -0400
+@@ -138,8 +138,10 @@
+ 
+ 	    if (fcontext == NULL || strcmp(fcontext, con))
+ 		*res |= RPMVERIFY_CONTEXTS;
+-	    freecon(con);
+-            freecon(fcontext); 
++            if (con != NULL)
++	        freecon(con);
++            if (fcontext != NULL)
++                freecon(fcontext); 
+ 
+ 	}
+     }

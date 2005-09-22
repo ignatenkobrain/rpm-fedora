@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 4
+Release: 5
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-hkp-disable.patch
@@ -544,6 +544,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Thu Sep 22 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-5
+- Actually fix context verification where matchpathcon fails (#162037)
+
 * Fri Aug 26 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-4
 - Fix build with CFLAGS having --param
 - Fix for context verification in /tmp (#162037)

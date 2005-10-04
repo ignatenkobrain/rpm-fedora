@@ -87,6 +87,7 @@ Requires: beecrypt >= 4.1.2
 Requires: neon-devel
 Requires: sqlite-devel
 Requires: libselinux-devel
+Requires: elfutils-libelf-devel
 
 %description devel
 This package contains the RPM C library and header files. These

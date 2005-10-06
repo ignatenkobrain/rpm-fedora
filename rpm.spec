@@ -242,6 +242,7 @@ gzip -9n apidocs/man/man*/* || :
 
 # Get rid of unpackaged files
 { cd $RPM_BUILD_ROOT
+  rm -f .%{_libdir}/lib*.la
   rm -f .%{__prefix}/lib/rpm/{Specfile.pm,cpanflute,cpanflute2,rpmdiff,rpmdiff.cgi,sql.prov,sql.req,tcl.req}
   rm -rf .%{__mandir}/{fr,ko}
 %if %{with_python_subpackage}
@@ -250,6 +251,7 @@ gzip -9n apidocs/man/man*/* || :
   rm -f .%{__libdir}/python%{with_python_version}/site-packages/rpmdb/*.{a,la}
 %endif
 }
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT

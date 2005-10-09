@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 5
+Release: 6
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-hkp-disable.patch
@@ -547,6 +547,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Sun Oct 09 2005 Florian La Roche <laroche@redhat.com>
+- rebuild for sqlite changes
+
 * Thu Sep 22 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-5
 - Actually fix context verification where matchpathcon fails (#162037)
 

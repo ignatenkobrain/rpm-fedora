@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 6
+Release: 7
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-hkp-disable.patch
@@ -546,6 +546,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Nov  8 2005 Tomas Mraz <tmraz@redhat.com> - 4.4.2-7
+- rebuilt with new openssl
+
 * Sun Oct 09 2005 Florian La Roche <laroche@redhat.com>
 - rebuild for sqlite changes
 

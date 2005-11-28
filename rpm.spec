@@ -541,11 +541,14 @@ exit 0
 
 # XXX These may end up in popt-devel but it hardly seems worth the effort.
 %{__libdir}/libpopt.a
-%{__libdir}/libpopt.la
+%exclude %{__libdir}/libpopt.la
 %{__libdir}/libpopt.so
 %{__includedir}/popt.h
 
 %changelog
+* Mon Nov 28 2005 Paul Nasrat <pnasrat@redhat.com> - NOTYETBUILT
+- Don't include .la file (#174261)
+
 * Tue Nov  8 2005 Tomas Mraz <tmraz@redhat.com> - 4.4.2-7
 - rebuilt with new openssl
 

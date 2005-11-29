@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 7
+Release: 8
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-hkp-disable.patch
@@ -33,6 +33,8 @@ Patch6: rpm-4.4.2-matchpathcon.patch
 Patch7: rpm-4.4.2-perlreq.patch
 Patch8: rpm-4.4.2-db3-param.patch
 Patch9: rpm-4.4.2-contextverify.patch
+Patch10: rpm-4.4.2-popt-charset.patch
+Patch11: rpm-4.4.2-ghost-conflicts.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -103,7 +105,7 @@ will manipulate RPM packages and databases.
 %package build
 Summary: Scripts and executable programs used to build packages.
 Group: Development/Tools
-Requires: rpm = %{rpm_version}-%{release}, patch >= 2.5, file
+Requires: rpm = %{rpm_version}-%{release}, patch >= 2.5, file, elfutils
 Provides: rpmbuild(VendorConfig) = 4.1-1
 
 %description build
@@ -154,6 +156,8 @@ shell-like rules.
 %patch7 -p1  -b .perlreq
 %patch8 -p1  -b .param
 %patch9 -p1  -b .contextverify
+%patch10 -p1  -b .charset
+%patch11 -p1  -b .ghostconflicts
 
 
 %build
@@ -546,7 +550,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
-* Mon Nov 28 2005 Paul Nasrat <pnasrat@redhat.com> - NOTYETBUILT
+* Mon Nov 28 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-8
+- Add elfutils Build Requires to rpmbuild (#155129)
+- Don't do conflicts if both files %ghost(#155256)
+- Fix popt charset for various languages (#172155)
 - Don't include .la file (#174261)
 
 * Tue Nov  8 2005 Tomas Mraz <tmraz@redhat.com> - 4.4.2-7

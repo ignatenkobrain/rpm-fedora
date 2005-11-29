@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 9
+Release: 10
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-hkp-disable.patch
@@ -36,6 +36,7 @@ Patch9: rpm-4.4.2-contextverify.patch
 Patch10: rpm-4.4.2-popt-charset.patch
 Patch11: rpm-4.4.2-ghost-conflicts.patch
 Patch12: rpm-4.4.2-exclude.patch
+Patch13: rpm-4.4.2-excluded-size.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -160,6 +161,7 @@ shell-like rules.
 %patch10 -p1  -b .charset
 %patch11 -p1  -b .ghostconflicts
 %patch12 -p1  -b .exclude
+%patch13 -p1  -b .excludedsize
 
 
 %build
@@ -552,6 +554,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Nov 29 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-10
+- Ignore excluded size (#89661)
+
 * Tue Nov 29 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-9
 - Don't skipDirs on erasures (#140055)
 

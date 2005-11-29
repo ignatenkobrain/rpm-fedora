@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 8
+Release: 9
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-hkp-disable.patch
@@ -35,6 +35,7 @@ Patch8: rpm-4.4.2-db3-param.patch
 Patch9: rpm-4.4.2-contextverify.patch
 Patch10: rpm-4.4.2-popt-charset.patch
 Patch11: rpm-4.4.2-ghost-conflicts.patch
+Patch12: rpm-4.4.2-exclude.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -158,6 +159,7 @@ shell-like rules.
 %patch9 -p1  -b .contextverify
 %patch10 -p1  -b .charset
 %patch11 -p1  -b .ghostconflicts
+%patch12 -p1  -b .exclude
 
 
 %build
@@ -550,6 +552,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Nov 29 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-9
+- Don't skipDirs on erasures (#140055)
+
 * Mon Nov 28 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-8
 - Add elfutils Build Requires to rpmbuild (#155129)
 - Don't do conflicts if both files %ghost(#155256)

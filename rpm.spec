@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 10
+Release: 11
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Patch0: rpm-4.4.1-hkp-disable.patch
@@ -37,6 +37,7 @@ Patch10: rpm-4.4.2-popt-charset.patch
 Patch11: rpm-4.4.2-ghost-conflicts.patch
 Patch12: rpm-4.4.2-exclude.patch
 Patch13: rpm-4.4.2-excluded-size.patch
+Patch14: rpm-4.4.2-cronpath.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -162,6 +163,7 @@ shell-like rules.
 %patch11 -p1  -b .ghostconflicts
 %patch12 -p1  -b .exclude
 %patch13 -p1  -b .excludedsize
+%patch14 -p1  -b .cronpath
 
 
 %build
@@ -250,7 +252,7 @@ gzip -9n apidocs/man/man*/* || :
 
 # Get rid of unpackaged files
 { cd $RPM_BUILD_ROOT
-  #rm -f .%{_libdir}/lib*.la
+  rm -f .%{_libdir}/lib*.la
   rm -f .%{__prefix}/lib/rpm/{Specfile.pm,cpanflute,cpanflute2,rpmdiff,rpmdiff.cgi,sql.prov,sql.req,tcl.req}
   rm -rf .%{__mandir}/{fr,ko}
 %if %{with_python_subpackage}
@@ -496,16 +498,12 @@ exit 0
 %endif
 %{__includedir}/rpm
 %{__libdir}/librpm.a
-%{__libdir}/librpm.la
 %{__libdir}/librpm.so
 %{__libdir}/librpmdb.a
-%{__libdir}/librpmdb.la
 %{__libdir}/librpmdb.so
 %{__libdir}/librpmio.a
-%{__libdir}/librpmio.la
 %{__libdir}/librpmio.so
 %{__libdir}/librpmbuild.a
-%{__libdir}/librpmbuild.la
 %{__libdir}/librpmbuild.so
 %{__mandir}/man8/rpmcache.8*
 %{__mandir}/man8/rpmgraph.8*
@@ -549,11 +547,14 @@ exit 0
 
 # XXX These may end up in popt-devel but it hardly seems worth the effort.
 %{__libdir}/libpopt.a
-%exclude %{__libdir}/libpopt.la
 %{__libdir}/libpopt.so
 %{__includedir}/popt.h
 
 %changelog
+* Thu Dec 01 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-11
+- Remove rpm .la files (#174261)
+- Cron job use paths (#174211)
+
 * Tue Nov 29 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-10
 - Ignore excluded size (#89661)
 

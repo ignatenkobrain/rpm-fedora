@@ -20,9 +20,11 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 11
+Release: 12
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
+Source1: mono-find-provides
+Source2: mono-find-requires
 Patch0: rpm-4.4.1-hkp-disable.patch
 Patch1: rpm-4.4.1-fileconflicts.patch 
 Patch2: rpm-4.4.1-prereq.patch
@@ -38,6 +40,8 @@ Patch11: rpm-4.4.2-ghost-conflicts.patch
 Patch12: rpm-4.4.2-exclude.patch
 Patch13: rpm-4.4.2-excluded-size.patch
 Patch14: rpm-4.4.2-cronpath.patch
+Patch15: rpm-4.4.2-mono.patch
+Patch16: rpm-4.4.2-file-softmagic.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -164,7 +168,8 @@ shell-like rules.
 %patch12 -p1  -b .exclude
 %patch13 -p1  -b .excludedsize
 %patch14 -p1  -b .cronpath
-
+%patch15 -p1  -b .mono
+%patch16 -p1 -b .magic
 
 %build
 
@@ -261,6 +266,10 @@ gzip -9n apidocs/man/man*/* || :
   rm -f .%{__libdir}/python%{with_python_version}/site-packages/rpmdb/*.{a,la}
 %endif
 }
+
+# Install mono find-provides/requires
+install -m 755 %{SOURCE1} $RPM_BUILD_ROOT/usr/lib/rpm
+install -m 755 %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/rpm
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -470,6 +479,8 @@ exit 0
 %rpmattr	%{__prefix}/lib/rpm/magic.mime.mgc
 %rpmattr	%{__prefix}/lib/rpm/magic.prov
 %rpmattr	%{__prefix}/lib/rpm/magic.req
+%rpmattr	%{__prefix}/lib/rpm/mono-find-provides
+%rpmattr	%{__prefix}/lib/rpm/mono-find-requires
 %rpmattr	%{__prefix}/lib/rpm/perldeps.pl
 %rpmattr	%{__prefix}/lib/rpm/perl.prov
 %rpmattr	%{__prefix}/lib/rpm/perl.req
@@ -551,6 +562,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Jan  9 2006 Alexander Larsson <alexl@redhat.com> - 4.4.2-12
+- Add mono req/provides support
+
 * Thu Dec 01 2005 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-11
 - Remove rpm .la files (#174261)
 - Cron job use paths (#174211)

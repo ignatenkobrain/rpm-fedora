@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 12
+Release: 13
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -42,6 +42,7 @@ Patch13: rpm-4.4.2-excluded-size.patch
 Patch14: rpm-4.4.2-cronpath.patch
 Patch15: rpm-4.4.2-mono.patch
 Patch16: rpm-4.4.2-file-softmagic.patch
+Patch17: rpm-4.4.2-no-large-mmap.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -170,6 +171,7 @@ shell-like rules.
 %patch14 -p1  -b .cronpath
 %patch15 -p1  -b .mono
 %patch16 -p1 -b .magic
+%patch17 -p1 -b .no_large_mmap
 
 %build
 
@@ -562,6 +564,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Jan 11 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-13
+- Don't mmap large files
+
 * Mon Jan  9 2006 Alexander Larsson <alexl@redhat.com> - 4.4.2-12
 - Add mono req/provides support
 

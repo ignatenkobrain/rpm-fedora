@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 13
+Release: 14
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -43,6 +43,7 @@ Patch14: rpm-4.4.2-cronpath.patch
 Patch15: rpm-4.4.2-mono.patch
 Patch16: rpm-4.4.2-file-softmagic.patch
 Patch17: rpm-4.4.2-no-large-mmap.patch
+Patch18: rpm-4.4.2-perlmainprov.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -172,6 +173,7 @@ shell-like rules.
 %patch15 -p1  -b .mono
 %patch16 -p1 -b .magic
 %patch17 -p1 -b .no_large_mmap
+%patch18 -p1 -b .perlmainprov
 
 %build
 
@@ -564,6 +566,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Jan 18 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-14
+- Don't emit perl(main) (#177960)
+
 * Wed Jan 11 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-13
 - Don't mmap large files
 

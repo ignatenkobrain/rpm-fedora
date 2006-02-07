@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 15
+Release: 15.1
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -568,6 +568,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> - 4.4.2-15.1
+- rebuilt for new gcc4.1 snapshot and glibc changes
+
 * Mon Jan 30 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-15
 - Rebuild for newer neon
 - Fix scriptlet deadlock (#146549)

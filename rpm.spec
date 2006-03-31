@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 15.2
+Release: 16
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -45,6 +45,9 @@ Patch16: rpm-4.4.2-file-softmagic.patch
 Patch17: rpm-4.4.2-no-large-mmap.patch
 Patch18: rpm-4.4.2-perlmainprov.patch
 Patch19: rpm-4.4.2-rpmsq-deadlock.patch
+Patch20: rpm-4.4.2-netsharedpath.patch
+Patch21: rpm-4.4.2-userlock.patch
+Patch22: rpm-4.4.2-vercmp.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -168,7 +171,7 @@ shell-like rules.
 %patch9 -p1  -b .contextverify
 %patch10 -p1  -b .charset
 %patch11 -p1  -b .ghostconflicts
-%patch12 -p1  -b .exclude
+#patch12 -p1  -b .exclude
 %patch13 -p1  -b .excludedsize
 %patch14 -p1  -b .cronpath
 %patch15 -p1  -b .mono
@@ -176,6 +179,9 @@ shell-like rules.
 %patch17 -p1 -b .no_large_mmap
 %patch18 -p1 -b .perlmainprov
 %patch19 -p1 -b .deadlock
+%patch20 -p1 -b .netsharedpath
+%patch21 -p1 -b .userlock
+%patch22 -p1 -b .vercmp
 
 %build
 
@@ -568,6 +574,12 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Fri Mar 31 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-16
+- Skipdirs on erase again (#187308)
+- Make fcntl lock sensitive to --root (#151255)
+- Fix netshared path comparison (#52725)
+- Fix rpm vercmp (#178798)
+
 * Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 4.4.2-15.2
 - bump again for double-long bug on ppc(64)
 

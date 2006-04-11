@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 16
+Release: 17
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -57,7 +57,6 @@ Requires: popt = 1.10.2
 Obsoletes: rpm-perl < %{version}
 
 # XXX necessary only to drag in /usr/lib/libelf.a, otherwise internal elfutils.
-BuildRequires: elfutils-libelf
 BuildRequires: elfutils-devel
 
 BuildRequires: sed readline-devel zlib-devel
@@ -131,7 +130,6 @@ Summary: Python bindings for apps which will manipulate RPM packages.
 Group: Development/Libraries
 Requires: rpm = %{rpm_version}-%{release}
 Requires: python >= %{with_python_version}
-Requires: elfutils >= 0.55
 
 %description python
 The rpm-python package contains a module that permits applications
@@ -574,6 +572,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Apr 11 2006 Jeremy Katz <katzj@redhat.com> - 4.4.2-17
+- remove redundant elfutils-libelf buildrequires
+- rpm-python doesn't require elfutils (related to #188495)
+
 * Fri Mar 31 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-16
 - Skipdirs on erase again (#187308)
 - Make fcntl lock sensitive to --root (#151255)

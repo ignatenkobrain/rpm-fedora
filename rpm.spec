@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 17
+Release: 18
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -48,6 +48,7 @@ Patch19: rpm-4.4.2-rpmsq-deadlock.patch
 Patch20: rpm-4.4.2-netsharedpath.patch
 Patch21: rpm-4.4.2-userlock.patch
 Patch22: rpm-4.4.2-vercmp.patch
+Patch23: rpm-4.4.2-doxy.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -180,6 +181,7 @@ shell-like rules.
 %patch20 -p1 -b .netsharedpath
 %patch21 -p1 -b .userlock
 %patch22 -p1 -b .vercmp
+%patch23 -p1 -b .doxy
 
 %build
 
@@ -572,6 +574,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Apr 12 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-18
+- Resurrect doxygen (#187714)
+
 * Tue Apr 11 2006 Jeremy Katz <katzj@redhat.com> - 4.4.2-17
 - remove redundant elfutils-libelf buildrequires
 - rpm-python doesn't require elfutils (related to #188495)

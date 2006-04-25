@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 18
+Release: 19
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -49,6 +49,7 @@ Patch20: rpm-4.4.2-netsharedpath.patch
 Patch21: rpm-4.4.2-userlock.patch
 Patch22: rpm-4.4.2-vercmp.patch
 Patch23: rpm-4.4.2-doxy.patch
+Patch24: rpm-4.4.2-trust.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -182,6 +183,7 @@ shell-like rules.
 %patch21 -p1 -b .userlock
 %patch22 -p1 -b .vercmp
 %patch23 -p1 -b .doxy
+%patch24 -p1 -b .trust
 
 %build
 
@@ -574,6 +576,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Apr 25 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-19
+- Add --trusted stubs from upstream
+
 * Wed Apr 12 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-18
 - Resurrect doxygen (#187714)
 

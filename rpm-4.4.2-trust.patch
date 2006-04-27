@@ -1,5 +1,5 @@
---- rpm-4.4.2/lib/poptQV.c.trust	2006-04-24 17:42:20.000000000 -0400
-+++ rpm-4.4.2/lib/poptQV.c	2006-04-24 17:44:05.000000000 -0400
+--- rpm-4.4.2/lib/poptQV.c.trust	2004-11-09 19:50:42.000000000 -0500
++++ rpm-4.4.2/lib/poptQV.c	2006-04-27 13:42:31.000000000 -0400
 @@ -31,6 +31,10 @@
  #define POPT_HDLIST		-1011
  #define POPT_FTSWALK		-1012
@@ -11,11 +11,10 @@
  /* ========== Query/Verify/Signature source args */
  static void rpmQVSourceArgCallback( /*@unused@*/ poptContext con,
  		/*@unused@*/ enum poptCallbackReason reason,
-@@ -87,6 +91,15 @@
- 	qva->qva_source |= RPMQV_DBOFFSET; 
- 	qva->qva_sourceCount++;
+@@ -240,6 +244,14 @@
+ 	qva->qva_flags |= VERIFY_SCRIPT;
  	break;
-+
+ 
 +    /* XXX perhaps POPT_ARG_INT instead of callback. */
 +    case POPT_TRUST:
 +    {	char * end = NULL;
@@ -27,7 +26,7 @@
      }
  }
  
-@@ -376,14 +389,6 @@
+@@ -376,14 +388,6 @@
          N_("don't verify package signature(s)"), NULL },
  #endif
  
@@ -42,7 +41,7 @@
      POPT_TABLEEND
  };
  
-@@ -408,6 +413,15 @@
+@@ -408,6 +412,15 @@
  	N_("sign package(s) (identical to --addsign)"), NULL },
   { "sign", '\0', POPT_ARGFLAG_DOC_HIDDEN, &rpmQVKArgs.sign, 0,
  	N_("generate signature"), NULL },
@@ -58,8 +57,8 @@
  
   { "nodigest", '\0', POPT_BIT_SET, &rpmQVKArgs.qva_flags, VERIFY_DIGEST,
          N_("don't verify package digest(s)"), NULL },
---- rpm-4.4.2/lib/rpmcli.h.trust	2006-04-24 17:42:28.000000000 -0400
-+++ rpm-4.4.2/lib/rpmcli.h	2006-04-24 17:42:33.000000000 -0400
+--- rpm-4.4.2/lib/rpmcli.h.trust	2005-01-04 11:35:05.000000000 -0500
++++ rpm-4.4.2/lib/rpmcli.h	2006-04-27 13:37:40.000000000 -0400
 @@ -280,6 +280,7 @@
  /*@only@*/ /*@null@*/
      const char * qva_queryFormat;/*!< Format for headerSprintf(). */

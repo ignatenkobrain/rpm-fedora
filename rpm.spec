@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 19
+Release: 20
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -576,6 +576,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Thu Apr 27 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-20
+- Update --trusted stubs for rpmk breakage
+
 * Tue Apr 25 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-19
 - Add --trusted stubs from upstream
 

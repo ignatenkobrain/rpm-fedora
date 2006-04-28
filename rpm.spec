@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 20
+Release: 21
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -50,6 +50,7 @@ Patch21: rpm-4.4.2-userlock.patch
 Patch22: rpm-4.4.2-vercmp.patch
 Patch23: rpm-4.4.2-doxy.patch
 Patch24: rpm-4.4.2-trust.patch
+Patch25: rpm-4.4.2-devel-autodep.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -184,6 +185,7 @@ shell-like rules.
 %patch22 -p1 -b .vercmp
 %patch23 -p1 -b .doxy
 %patch24 -p1 -b .trust
+%patch25 -p1 -b .develdeps
 
 %build
 
@@ -307,7 +309,6 @@ exit 0
 
 %post
 %ifos linux
-/sbin/ldconfig
 
 # Establish correct rpmdb ownership.
 /bin/chown rpm.rpm /var/lib/rpm/[A-Z]*
@@ -325,7 +326,6 @@ exit 0
 
 %ifos linux
 %postun
-/sbin/ldconfig
 if [ $1 = 0 ]; then
     /usr/sbin/userdel rpm
     /usr/sbin/groupdel rpm
@@ -334,6 +334,9 @@ exit 0
 
 %post devel -p /sbin/ldconfig
 %postun devel -p /sbin/ldconfig
+
+%post libs -p /sbin/ldconfig
+%postun libs -p /sbin/ldconfig
 
 %post -n popt -p /sbin/ldconfig
 %postun -n popt -p /sbin/ldconfig
@@ -576,6 +579,11 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Fri Apr 28 2006 Jeremy Katz <katzj@redhat.com> - 4.4.2-21
+- run ldconfig in -libs subpackage %%post, not main package
+- add patch to generate shared lib deps by following symlinks so that 
+  -devel packages sanely depend on main libs
+
 * Thu Apr 27 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-20
 - Update --trusted stubs for rpmk breakage
 

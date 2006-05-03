@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 21
+Release: 22
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -51,6 +51,7 @@ Patch22: rpm-4.4.2-vercmp.patch
 Patch23: rpm-4.4.2-doxy.patch
 Patch24: rpm-4.4.2-trust.patch
 Patch25: rpm-4.4.2-devel-autodep.patch
+Patch26: rpm-4.4.2-teCount-assert.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -186,6 +187,7 @@ shell-like rules.
 %patch23 -p1 -b .doxy
 %patch24 -p1 -b .trust
 %patch25 -p1 -b .develdeps
+%patch26 -p1 -b .assertte
 
 %build
 
@@ -579,6 +581,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed May  3 2006 Jeremy Katz <katzj@redhat.com> - 4.4.2-22
+- put in simple workaround for per-file deps with autoreq off (#190488) 
+  while pnasrat works on a real fix
+
 * Fri Apr 28 2006 Jeremy Katz <katzj@redhat.com> - 4.4.2-21
 - run ldconfig in -libs subpackage %%post, not main package
 - add patch to generate shared lib deps by following symlinks so that 

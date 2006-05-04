@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 22
+Release: 23
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -93,6 +93,7 @@ the package like its version, a description, etc.
 %package libs
 Summary:  Libraries for manipulating RPM packages.
 Group: Development/Libraries
+Requires: rpm = %{rpm_version}-%{release}
 
 %description libs
 This package contains the RPM shared libraries.
@@ -581,6 +582,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Thu May  4 2006 Jeremy Katz <katzj@redhat.com> - 4.4.2-23
+- make rpm-libs requires on base package stronger
+
 * Wed May  3 2006 Jeremy Katz <katzj@redhat.com> - 4.4.2-22
 - put in simple workaround for per-file deps with autoreq off (#190488) 
   while pnasrat works on a real fix

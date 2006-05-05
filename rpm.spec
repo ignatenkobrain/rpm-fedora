@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 23
+Release: 24
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -51,7 +51,7 @@ Patch22: rpm-4.4.2-vercmp.patch
 Patch23: rpm-4.4.2-doxy.patch
 Patch24: rpm-4.4.2-trust.patch
 Patch25: rpm-4.4.2-devel-autodep.patch
-Patch26: rpm-4.4.2-teCount-assert.patch
+Patch26: rpm-4.4.2-rpmfc-skip.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -188,7 +188,7 @@ shell-like rules.
 %patch23 -p1 -b .doxy
 %patch24 -p1 -b .trust
 %patch25 -p1 -b .develdeps
-%patch26 -p1 -b .assertte
+%patch26 -p1 -b .fcskip
 
 %build
 
@@ -582,6 +582,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Thu May 04 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-24
+- File classification with autoReq off (#190488)
+
 * Thu May  4 2006 Jeremy Katz <katzj@redhat.com> - 4.4.2-23
 - make rpm-libs requires on base package stronger
 

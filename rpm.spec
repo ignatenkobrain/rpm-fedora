@@ -60,8 +60,7 @@ Prereq: fileutils shadow-utils
 Requires: popt = 1.10.2
 Obsoletes: rpm-perl < %{version}
 
-# XXX necessary only to drag in /usr/lib/libelf.a, otherwise internal elfutils.
-BuildRequires: elfutils-devel
+BuildRequires: elfutils-devel >= 0.112
 
 BuildRequires: sed readline-devel zlib-devel
 

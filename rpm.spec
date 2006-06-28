@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 24
+Release: 25
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -52,6 +52,7 @@ Patch23: rpm-4.4.2-doxy.patch
 Patch24: rpm-4.4.2-trust.patch
 Patch25: rpm-4.4.2-devel-autodep.patch
 Patch26: rpm-4.4.2-rpmfc-skip.patch
+Patch27: rpm-4.4.2-noselinux-verify.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -167,10 +168,9 @@ shell-like rules.
 %patch3 -p1  -b .rpmal
 %patch4 -p1  -b .prepostun
 %patch5 -p1  -b .ordererase
-%patch6 -p1  -b .matchpathcon
+# patch 6 moved
 %patch7 -p1  -b .perlreq
 %patch8 -p1  -b .param
-%patch9 -p1  -b .contextverify
 %patch10 -p1  -b .charset
 %patch11 -p1  -b .ghostconflicts
 #patch12 -p1  -b .exclude
@@ -188,6 +188,8 @@ shell-like rules.
 %patch24 -p1 -b .trust
 %patch25 -p1 -b .develdeps
 %patch26 -p1 -b .fcskip
+%patch27 -p0 -b .nosever
+%patch6 -p1  -b .matchpathcon
 
 %build
 
@@ -581,6 +583,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Jun 28 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-25
+- Remove SELinux context verification (#193488)
+
 * Thu May 04 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-24
 - File classification with autoReq off (#190488)
 

@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 25
+Release: 26
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -53,6 +53,7 @@ Patch24: rpm-4.4.2-trust.patch
 Patch25: rpm-4.4.2-devel-autodep.patch
 Patch26: rpm-4.4.2-rpmfc-skip.patch
 Patch27: rpm-4.4.2-noselinux-verify.patch
+Patch28: rpm-4.4.2-python-aslist.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -190,6 +191,7 @@ shell-like rules.
 %patch26 -p1 -b .fcskip
 %patch27 -p0 -b .nosever
 %patch6 -p1  -b .matchpathcon
+%patch28 -p1 -b .aslist
 
 %build
 
@@ -583,6 +585,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Jun 28 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-26
+- Force CHANGELOGTIME to be a list in rpm-python
+
 * Wed Jun 28 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-25
 - Remove SELinux context verification (#193488)
 

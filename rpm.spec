@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 26
+Release: 27
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -54,6 +54,7 @@ Patch25: rpm-4.4.2-devel-autodep.patch
 Patch26: rpm-4.4.2-rpmfc-skip.patch
 Patch27: rpm-4.4.2-noselinux-verify.patch
 Patch28: rpm-4.4.2-python-aslist.patch
+Patch29: rpm-4.4.2-rpmio-ipv6.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -62,6 +63,7 @@ Prereq: fileutils shadow-utils
 Requires: popt = 1.10.2
 Obsoletes: rpm-perl < %{version}
 
+BuildRequires: autoconf
 BuildRequires: elfutils-devel >= 0.112
 
 BuildRequires: sed readline-devel zlib-devel
@@ -190,8 +192,12 @@ shell-like rules.
 %patch25 -p1 -b .develdeps
 %patch26 -p1 -b .fcskip
 %patch27 -p0 -b .nosever
-%patch6 -p1  -b .matchpathcon
+#patch6 -p1  -b .matchpathcon
 %patch28 -p1 -b .aslist
+%patch29 -p1 -b .ipv6
+
+# rebuild configure for ipv6
+autoconf
 
 %build
 
@@ -585,6 +591,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Jul 05 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-27
+- IPv4/6 and EPSV support by Arkadiusz Miskiewicz <misiek@pld.org.pl>
+
 * Wed Jun 28 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-26
 - Force CHANGELOGTIME to be a list in rpm-python
 

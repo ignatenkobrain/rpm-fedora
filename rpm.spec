@@ -76,6 +76,8 @@ BuildRequires: neon-devel
 BuildRequires: sqlite-devel
 BuildRequires: gettext-devel
 BuildRequires: libselinux-devel
+#XXX: lua fix this
+BuildRequires: ncurses-devel
 
 # XXX Red Hat 5.2 has not bzip2 or python
 %if %{with_bzip2}

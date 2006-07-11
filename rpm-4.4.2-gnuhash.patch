@@ -1,0 +1,53 @@
+--- rpm-4.4.2/build/rpmfc.c.gnuhash	2006-07-11 07:05:43.000000000 -0400
++++ rpm-4.4.2/build/rpmfc.c	2006-07-11 07:09:08.000000000 -0400
+@@ -879,6 +879,8 @@
+     int isDSO;
+     int gotSONAME = 0;
+     int gotDEBUG = 0;
++    int gotHASH = 0;
++    int gotGNUHASH = 0;
+     static int filter_GLIBC_PRIVATE = 0;
+     static int oneshot = 0;
+ 
+@@ -1051,6 +1053,12 @@
+ 		    default:
+ 			/*@innercontinue@*/ continue;
+ 			/*@notreached@*/ /*@switchbreak@*/ break;
++                    case DT_HASH:    
++			gotHASH= 1;
++			/*@innercontinue@*/ continue;
++                    case DT_GNU_HASH:
++			gotGNUHASH= 1;
++			/*@innercontinue@*/ continue;
+                     case DT_DEBUG:    
+ 			gotDEBUG = 1;
+ 			/*@innercontinue@*/ continue;
+@@ -1107,6 +1115,16 @@
+     }
+     /*@=branchstate =uniondef @*/
+ 
++    /* For DSOs which use the .gnu_hash section and don't have a .hash
++     * section, we need to ensure that we have a new enough glibc. */ 
++    if (gotGNUHASH && !gotHASH) {
++        ds = rpmdsSingle(RPMTAG_REQUIRENAME, "rtld(GNU_HASH)", "", 
++                         RPMSENSE_FIND_REQUIRES);
++        rpmdsMerge(&fc->requires, ds);
++        rpmfcSaveArg(&fc->ddict, rpmfcFileDep(t, fc->ix, ds));
++        ds = rpmdsFree(ds);
++    }
++
+     /* For DSO's, provide the basename of the file if DT_SONAME not found. */
+     if (!fc->skipProv && isDSO && !gotDEBUG && !gotSONAME) {
+ 	depsp = &fc->provides;
+--- rpm-4.4.2/rpmdb/legacy.c.gnuhash	2006-07-11 07:07:18.000000000 -0400
++++ rpm-4.4.2/rpmdb/legacy.c	2006-07-11 07:07:44.000000000 -0400
+@@ -14,6 +14,9 @@
+ #if !defined(DT_GNU_LIBLIST)
+ #define	DT_GNU_LIBLIST		0x6ffffef9
+ #endif
++#if !defined(DT_GNU_HASH)
++#define	DT_GNU_HASH		0x6ffffef5
++#endif
+ 
+ #endif
+ 

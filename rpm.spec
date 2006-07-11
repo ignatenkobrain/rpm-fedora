@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 27
+Release: 28
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -55,6 +55,7 @@ Patch26: rpm-4.4.2-rpmfc-skip.patch
 Patch27: rpm-4.4.2-noselinux-verify.patch
 Patch28: rpm-4.4.2-python-aslist.patch
 Patch29: rpm-4.4.2-rpmio-ipv6.patch
+Patch30: rpm-4.4.2-gnuhash.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -195,6 +196,7 @@ shell-like rules.
 #patch6 -p1  -b .matchpathcon
 %patch28 -p1 -b .aslist
 %patch29 -p1 -b .ipv6
+%patch30 -p1 -b .gnuhash
 
 # rebuild configure for ipv6
 autoconf
@@ -591,6 +593,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Jul 11 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-28
+- Detect and provide a requirement for DT_GNU_HASH 
+
 * Wed Jul 05 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-27
 - IPv4/6 and EPSV support by Arkadiusz Miskiewicz <misiek@pld.org.pl>
 

@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 28
+Release: 29
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -595,6 +595,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Fri Jul 14 2006 David Cantrell <dcantrell@redhat.com> - 4.4.2-29
+- Fixed null pointer problem in rpmfcELF() DT_GNU_HASH handling
+
 * Tue Jul 11 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-28
 - Detect and provide a requirement for DT_GNU_HASH 
 

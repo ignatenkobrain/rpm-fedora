@@ -1,5 +1,5 @@
---- rpm-4.4.2/build/rpmfc.c.gnuhash	2006-07-11 07:32:22.000000000 -0400
-+++ rpm-4.4.2/build/rpmfc.c	2006-07-11 07:53:46.000000000 -0400
+--- rpm-4.4.2/build/rpmfc.c.gnuhash	2006-07-14 16:59:43.000000000 -0400
++++ rpm-4.4.2/build/rpmfc.c	2006-07-14 17:01:40.000000000 -0400
 @@ -12,6 +12,11 @@
  
  #if HAVE_GELF_H
@@ -34,7 +34,7 @@
                      case DT_DEBUG:    
  			gotDEBUG = 1;
  			/*@innercontinue@*/ continue;
-@@ -1107,6 +1120,16 @@
+@@ -1107,6 +1120,18 @@
      }
      /*@=branchstate =uniondef @*/
  
@@ -44,6 +44,8 @@
 +        ds = rpmdsSingle(RPMTAG_REQUIRENAME, "rtld(GNU_HASH)", "", 
 +                         RPMSENSE_FIND_REQUIRES);
 +        rpmdsMerge(&fc->requires, ds);
++        buf[0] = '\0';
++        t = buf;
 +        rpmfcSaveArg(&fc->ddict, rpmfcFileDep(t, fc->ix, ds));
 +        ds = rpmdsFree(ds);
 +    }

@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 29
+Release: 30
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -56,6 +56,7 @@ Patch27: rpm-4.4.2-noselinux-verify.patch
 Patch28: rpm-4.4.2-python-aslist.patch
 Patch29: rpm-4.4.2-rpmio-ipv6.patch
 Patch30: rpm-4.4.2-gnuhash.patch
+Patch31: rpm-4.4.2-debugedit-ppc-reloc.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -199,6 +200,7 @@ shell-like rules.
 %patch28 -p1 -b .aslist
 %patch29 -p1 -b .ipv6
 %patch30 -p1 -b .gnuhash
+%patch31 -p0 -b .dbgppc
 
 # rebuild configure for ipv6
 autoconf
@@ -595,6 +597,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Jul 19 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-30
+- Fix debugedit for ppc relocations (#199473)
+
 * Fri Jul 14 2006 David Cantrell <dcantrell@redhat.com> - 4.4.2-29
 - Fixed null pointer problem in rpmfcELF() DT_GNU_HASH handling
 

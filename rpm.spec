@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 30
+Release: 31
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -196,7 +196,7 @@ shell-like rules.
 %patch25 -p1 -b .develdeps
 %patch26 -p1 -b .fcskip
 %patch27 -p0 -b .nosever
-#patch6 -p1  -b .matchpathcon
+%patch6 -p1  -b .matchpathcon
 %patch28 -p1 -b .aslist
 %patch29 -p1 -b .ipv6
 %patch30 -p1 -b .gnuhash
@@ -597,6 +597,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Fri Jul 21 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-31
+- Apply matchpathcon patch
+
 * Wed Jul 19 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-30
 - Fix debugedit for ppc relocations (#199473)
 

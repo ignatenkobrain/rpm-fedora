@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 31
+Release: 32
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -57,6 +57,7 @@ Patch28: rpm-4.4.2-python-aslist.patch
 Patch29: rpm-4.4.2-rpmio-ipv6.patch
 Patch30: rpm-4.4.2-gnuhash.patch
 Patch31: rpm-4.4.2-debugedit-ppc-reloc.patch
+Patch32: rpm-4.4.2-debugpaths.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -201,6 +202,7 @@ shell-like rules.
 %patch29 -p1 -b .ipv6
 %patch30 -p1 -b .gnuhash
 %patch31 -p0 -b .dbgppc
+%patch32 -p1 -b .dbgpaths
 
 # rebuild configure for ipv6
 autoconf
@@ -597,6 +599,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Thu Sep 07 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-32
+- Various debuginfo fixes (#165434, #165418, #149113, #205339)
+
 * Fri Jul 21 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-31
 - Apply matchpathcon patch
 

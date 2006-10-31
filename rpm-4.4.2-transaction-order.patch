@@ -1,0 +1,18 @@
+--- rpm-4.4.2/lib/depends.c.order	2006-10-25 10:24:39.000000000 +0100
++++ rpm-4.4.2/lib/depends.c	2006-10-25 10:28:07.000000000 +0100
+@@ -1421,7 +1421,14 @@
+ 	(void) rpmteSetDegree(q, 0);
+ 	tsbytes += rpmtePkgFileSize(q);
+ 
+-	ordering[orderingCount] = rpmteAddedKey(q);
++	switch (rpmteType(q)) {
++	case TR_ADDED:
++            ordering[orderingCount] = rpmteAddedKey(q);
++            /*@switchbreak@*/ break;
++	case TR_REMOVED:
++            ordering[orderingCount] = RPMAL_NOMATCH;
++            /*@switchbreak@*/ break;
++        }
+ 	orderingCount++;
+ 	qlen--;
+ 	loopcheck--;

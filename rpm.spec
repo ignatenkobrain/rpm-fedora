@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 32
+Release: 34%{?dist}
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -58,6 +58,8 @@ Patch29: rpm-4.4.2-rpmio-ipv6.patch
 Patch30: rpm-4.4.2-gnuhash.patch
 Patch31: rpm-4.4.2-debugedit-ppc-reloc.patch
 Patch32: rpm-4.4.2-debugpaths.patch
+Patch33: rpm-4.4.2-transaction-order.patch
+Patch34: rpm-4.4.2-debugopt.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -203,6 +205,8 @@ shell-like rules.
 %patch30 -p1 -b .gnuhash
 %patch31 -p0 -b .dbgppc
 %patch32 -p1 -b .dbgpaths
+%patch33 -p1 -b .order
+%patch34 -p1 -b .dbgopt
 
 # rebuild configure for ipv6
 autoconf
@@ -219,7 +223,8 @@ WITH_PYTHON="--without-python"
 %endif
 
 %ifos linux
-CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
+CFLAGS=$(echo "$RPM_OPT_FLAGS" | sed 's/O2/O0/')
+export CFLAGS
 ./configure --prefix=%{__prefix} --sysconfdir=/etc \
 	--localstatedir=/var --infodir='${prefix}%{__share}/info' \
 	--mandir='${prefix}%{__share}/man' \
@@ -599,6 +604,12 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Oct 31 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-34
+- Debuginfo extraction with O0
+
+* Wed Oct 25 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-33
+- Fix for ordering (#202540, #202542, #202543, #202544)
+
 * Thu Sep 07 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-32
 - Various debuginfo fixes (#165434, #165418, #149113, #205339)
 

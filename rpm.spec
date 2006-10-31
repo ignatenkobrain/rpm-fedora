@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 34%{?dist}
+Release: 35%{?dist}
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -60,6 +60,7 @@ Patch31: rpm-4.4.2-debugedit-ppc-reloc.patch
 Patch32: rpm-4.4.2-debugpaths.patch
 Patch33: rpm-4.4.2-transaction-order.patch
 Patch34: rpm-4.4.2-debugopt.patch
+Patch35: rpm-4.4.2-query-flushbuffer.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -207,6 +208,7 @@ shell-like rules.
 %patch32 -p1 -b .dbgpaths
 %patch33 -p1 -b .order
 %patch34 -p1 -b .dbgopt
+%patch35 -p1 -b .flush
 
 # rebuild configure for ipv6
 autoconf
@@ -223,8 +225,7 @@ WITH_PYTHON="--without-python"
 %endif
 
 %ifos linux
-CFLAGS=$(echo "$RPM_OPT_FLAGS" | sed 's/O2/O0/')
-export CFLAGS
+CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
 ./configure --prefix=%{__prefix} --sysconfdir=/etc \
 	--localstatedir=/var --infodir='${prefix}%{__share}/info' \
 	--mandir='${prefix}%{__share}/man' \
@@ -604,6 +605,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Oct 31 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-35
+- Flush query buffer patch from jbj (#212833)
+
 * Tue Oct 31 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-34
 - Debuginfo extraction with O0
 

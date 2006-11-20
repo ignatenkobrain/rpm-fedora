@@ -606,7 +606,7 @@ exit 0
 
 %changelog
 * Mon Nov 20 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-36
-- Fix ordering issues (#214747)
+- Fix ordering issues (#196590)
 
 * Tue Oct 31 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-35
 - Flush query buffer patch from jbj (#212833)

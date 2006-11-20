@@ -1,5 +1,5 @@
---- rpm-4.4.2/lib/depends.c.order	2006-10-25 10:24:39.000000000 +0100
-+++ rpm-4.4.2/lib/depends.c	2006-10-25 10:28:07.000000000 +0100
+--- rpm-4.4.2/lib/depends.c.order	2006-11-20 11:17:13.000000000 +0000
++++ rpm-4.4.2/lib/depends.c	2006-11-20 11:19:19.000000000 +0000
 @@ -1421,7 +1421,14 @@
  	(void) rpmteSetDegree(q, 0);
  	tsbytes += rpmtePkgFileSize(q);
@@ -16,3 +16,12 @@
  	orderingCount++;
  	qlen--;
  	loopcheck--;
+@@ -1618,7 +1625,7 @@
+ 	    continue;
+ 
+ 	j = needle->orIndex;
+-	if ((q = ts->order[j]) == NULL)
++	if ((q = ts->order[j]) == NULL || needle->pkgKey == RPMAL_NOMATCH)
+ 	    continue;
+ 
+ 	newOrder[newOrderCount++] = q;

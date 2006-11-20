@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 35%{?dist}
+Release: 36%{?dist}
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -605,6 +605,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Nov 20 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-36
+- Fix ordering issues (#214747)
+
 * Tue Oct 31 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-35
 - Flush query buffer patch from jbj (#212833)
 

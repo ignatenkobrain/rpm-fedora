@@ -1,5 +1,5 @@
 %define	with_python_subpackage	1%{nil}
-%define	with_python_version	2.4%{nil}
+%define	with_python_version	2.5%{nil}
 %define	with_bzip2		1%{nil}
 %define	with_apidocs		1%{nil}
 
@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 36%{?dist}
+Release: 37%{?dist}
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -605,6 +605,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Dec  6 2006 Jeremy Katz <katzj@redhat.com> - 4.4.2-37
+- rebuild for python 2.5
+
 * Mon Nov 20 2006 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-36
 - Fix ordering issues (#196590)
 

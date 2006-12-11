@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 37%{?dist}
+Release: 38%{?dist}
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -61,6 +61,7 @@ Patch32: rpm-4.4.2-debugpaths.patch
 Patch33: rpm-4.4.2-transaction-order.patch
 Patch34: rpm-4.4.2-debugopt.patch
 Patch35: rpm-4.4.2-query-flushbuffer.patch
+Patch36: rpm-4.4.2-unicodekey.patch
 License: GPL
 Conflicts: patch < 2.5
 %ifos linux
@@ -209,6 +210,7 @@ shell-like rules.
 %patch33 -p1 -b .order
 %patch34 -p1 -b .dbgopt
 %patch35 -p1 -b .flush
+%patch36 -p1 -b .unicode
 
 # rebuild configure for ipv6
 autoconf
@@ -605,6 +607,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Dec 11 2006 Jeremy Katz <katzj@redhat.com> - 4.4.2-38
+- python: dbmatch keys can be unicode objects also (#219008)
+
 * Wed Dec  6 2006 Jeremy Katz <katzj@redhat.com> - 4.4.2-37
 - rebuild for python 2.5
 

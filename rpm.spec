@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 38%{?dist}
+Release: 39%{?dist}
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -72,6 +72,7 @@ Obsoletes: rpm-perl < %{version}
 
 BuildRequires: autoconf
 BuildRequires: elfutils-devel >= 0.112
+BuildRequires: elfutils-libelf-devel-static
 
 BuildRequires: sed readline-devel zlib-devel
 
@@ -607,6 +608,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Jan 17 2007 Deepak Bhole <dbhole@redhat.com> 4.4.2-39%{?dist}
+- Added a missing BR for elfutils-libelf-devel-static (needed for -lelf)
+
 * Mon Dec 11 2006 Jeremy Katz <katzj@redhat.com> - 4.4.2-38
 - python: dbmatch keys can be unicode objects also (#219008)
 

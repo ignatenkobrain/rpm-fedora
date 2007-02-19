@@ -20,7 +20,7 @@ Name: rpm
 %define version 4.4.2
 Version: %{version}
 %{expand: %%define rpm_version %{version}}
-Release: 39%{?dist}
+Release: 40%{?dist}
 Group: System Environment/Base
 Source: ftp://wraptastic.org/pub/rpm-4.4.x/rpm-%{rpm_version}.tar.gz
 Source1: mono-find-provides
@@ -136,6 +136,7 @@ will manipulate RPM packages and databases.
 Summary: Scripts and executable programs used to build packages.
 Group: Development/Tools
 Requires: rpm = %{rpm_version}-%{release}, patch >= 2.5, file, elfutils
+Requires: findutils
 Provides: rpmbuild(VendorConfig) = 4.1-1
 
 %description build
@@ -608,6 +609,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Feb 19 2007 Jeremy Katz <katzj@redhat.com> - 4.4.2-40
+- rpm-build should require findutils
+
 * Wed Jan 17 2007 Deepak Bhole <dbhole@redhat.com> 4.4.2-39%{?dist}
 - Added a missing BR for elfutils-libelf-devel-static (needed for -lelf)
 

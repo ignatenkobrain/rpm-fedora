@@ -1,5 +1,4 @@
-%define with_python_subpackage  1%{nil}
-%define with_python_version     2.5%{nil}
+%define with_python_version     2.4%{nil}
 %define with_apidocs            1%{nil}
 
 # XXX legacy requires './' payload prefix to be omitted from rpm packages.
@@ -16,10 +15,9 @@
 
 Summary: The RPM package management system
 Name: rpm
-%define version 4.4.2
-Version: %{version}
+Version: 4.4.2
 %{expand: %%define rpm_version %{version}}
-Release: 40%{?dist}
+Release: 41%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -62,11 +60,13 @@ Patch33: rpm-4.4.2-transaction-order.patch
 Patch34: rpm-4.4.2-debugopt.patch
 Patch35: rpm-4.4.2-query-flushbuffer.patch
 Patch36: rpm-4.4.2-unicodekey.patch
+Patch37: rpm-4.4.2-noneon.patch
+Patch38: rpm-4.4.2-debugedit-canonicalize-path.patch
 License: GPL
 Requires: patch > 2.5
 Prereq: shadow-utils
 Requires: popt = 1.10.2
-Requires: crontab
+Requires: crontabs
 
 BuildRequires: autoconf
 BuildRequires: elfutils-devel >= 0.112
@@ -77,16 +77,13 @@ BuildRequires: readline-devel zlib-devel
 BuildRequires: beecrypt-devel >= 4.1.2
 Requires: beecrypt >= 4.1.2
 
-BuildRequires: neon-devel
+BuildConflicts: neon-devel
 BuildRequires: sqlite-devel
 BuildRequires: gettext-devel
 BuildRequires: libselinux-devel
 BuildRequires: ncurses-devel
 BuildRequires: bzip2-devel >= 0.9.0c-2
-
-%if %{with_python_subpackage}
 BuildRequires: python-devel >= %{with_python_version}
-%endif
 
 BuildRoot: %{_tmppath}/%{name}-root
 
@@ -110,7 +107,6 @@ Summary:  Development files for manipulating RPM packages
 Group: Development/Libraries
 Requires: rpm = %{rpm_version}-%{release}
 Requires: beecrypt >= 4.1.2
-Requires: neon-devel
 Requires: sqlite-devel
 Requires: libselinux-devel
 Requires: elfutils-libelf-devel
@@ -137,7 +133,6 @@ Provides: rpmbuild(VendorConfig) = 4.1-1
 The rpm-build package contains the scripts and executable programs
 that are used to build packages using the RPM Package Manager.
 
-%if %{with_python_subpackage}
 %package python
 Summary: Python bindings for apps which will manipulate RPM packages
 Group: Development/Libraries
@@ -150,7 +145,6 @@ supplied by RPM Package Manager libraries.
 
 This package should be installed if you want to develop Python
 programs that will manipulate RPM packages and databases.
-%endif
 
 %package -n popt
 Summary: A C library for parsing command line parameters
@@ -206,6 +200,8 @@ shell-like rules.
 %patch34 -p1 -b .dbgopt
 %patch35 -p1 -b .flush
 %patch36 -p1 -b .unicode
+%patch37 -p1 -b .noneon
+%patch38 -p0 -b .debugcan
 
 # rebuild configure for ipv6
 autoconf
@@ -215,11 +211,7 @@ autoconf
 # XXX rpm needs functioning nptl for configure tests
 unset LD_ASSUME_KERNEL || :
 
-%if %{with_python_subpackage}
 WITH_PYTHON="--with-python=%{with_python_version}"
-%else
-WITH_PYTHON="--without-python"
-%endif
 
 CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
 %configure $WITH_PYTHON --enable-posixmutexes --without-javaglue
@@ -282,11 +274,9 @@ done
   rm -f .%{_libdir}/lib*.la
   rm -f .%{__prefix}/lib/rpm/{Specfile.pm,cpanflute,cpanflute2,rpmdiff,rpmdiff.cgi,sql.prov,sql.req,tcl.req}
   rm -rf .%{__mandir}/{fr,ko}
-%if %{with_python_subpackage}
   rm -f .%{__libdir}/python%{with_python_version}/site-packages/*.{a,la}
   rm -f .%{__libdir}/python%{with_python_version}/site-packages/rpm/*.{a,la}
   rm -f .%{__libdir}/python%{with_python_version}/site-packages/rpmdb/*.{a,la}
-%endif
 }
 
 # Install mono find-provides/requires
@@ -327,8 +317,9 @@ exit 0
 
 %postun
 if [ $1 = 0 ]; then
-    /usr/sbin/userdel rpm
-    /usr/sbin/groupdel rpm
+    /usr/sbin/userdel rpm > /dev/null 2>&1
+    /usr/sbin/groupdel rpm > /dev/null 2>&1
+
 fi
 exit 0
 
@@ -505,11 +496,9 @@ exit 0
 %{__mandir}/man8/rpmbuild.8*
 %{__mandir}/man8/rpmdeps.8*
 
-%if %{with_python_subpackage}
 %files python
 %defattr(-,root,root)
 %{__libdir}/python%{with_python_version}/site-packages/rpm
-%endif
 
 %files devel
 %defattr(-,root,root)
@@ -571,6 +560,11 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Mar 13 2007 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-41
+- Fix potential segfault when no rpmloc_path (#231146)
+- Fix debugedit for relative paths (#232222)
+- Spec cleanup
+
 * Mon Feb 19 2007 Jeremy Katz <katzj@redhat.com> - 4.4.2-40
 - rpm-build should require findutils
 

@@ -1,4 +1,4 @@
-%define with_python_version     2.4%{nil}
+%define with_python_version     2.5%{nil}
 %define with_apidocs            1%{nil}
 
 # XXX legacy requires './' payload prefix to be omitted from rpm packages.
@@ -17,7 +17,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2
 %{expand: %%define rpm_version %{version}}
-Release: 41%{?dist}
+Release: 42%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -62,6 +62,7 @@ Patch35: rpm-4.4.2-query-flushbuffer.patch
 Patch36: rpm-4.4.2-unicodekey.patch
 Patch37: rpm-4.4.2-noneon.patch
 Patch38: rpm-4.4.2-debugedit-canonicalize-path.patch
+Patch39: rpm-4.4.2-no-ppc-asm.patch
 License: GPL
 Requires: patch > 2.5
 Prereq: shadow-utils
@@ -202,6 +203,7 @@ shell-like rules.
 %patch36 -p1 -b .unicode
 %patch37 -p1 -b .noneon
 %patch38 -p0 -b .debugcan
+%patch39 -p1 -b .noppcasm
 
 # rebuild configure for ipv6
 autoconf
@@ -560,6 +562,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Apr 04 2007 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-42
+- Remove ppc64 inline asm (#233145)
+
 * Tue Mar 13 2007 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-41
 - Fix potential segfault when no rpmloc_path (#231146)
 - Fix debugedit for relative paths (#232222)

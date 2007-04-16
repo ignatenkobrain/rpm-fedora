@@ -17,7 +17,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2
 %{expand: %%define rpm_version %{version}}
-Release: 43%{?dist}
+Release: 44%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -65,6 +65,7 @@ Patch38: rpm-4.4.2-debugedit-canonicalize-path.patch
 Patch39: rpm-4.4.2-no-ppc-asm.patch
 Patch40: rpm-4.4.2-forkfailed.patch
 Patch41: rpm-4.4.2-cdiff.patch
+Patch42: rpm-4.4.2-docflags.patch
 License: GPL
 Requires: patch > 2.5
 Prereq: shadow-utils
@@ -208,6 +209,7 @@ shell-like rules.
 %patch39 -p1 -b .noppcasm
 %patch40 -p0 -b .forkfail
 %patch41 -p1 -b .cdiff
+%patch42 -p1 -b .docflags
 
 # rebuild configure for ipv6
 autoconf
@@ -566,6 +568,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Apr 16 2007 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-44
+- Set default verify flags for %%doc (#235353)
+
 * Mon Apr 16 2007 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-43
 - Log failures for fork failing (OLPC)
 - Gendiff enhancement from Enrico Scholz (#146981)

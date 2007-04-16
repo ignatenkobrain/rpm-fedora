@@ -17,7 +17,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2
 %{expand: %%define rpm_version %{version}}
-Release: 42%{?dist}
+Release: 43%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -63,6 +63,8 @@ Patch36: rpm-4.4.2-unicodekey.patch
 Patch37: rpm-4.4.2-noneon.patch
 Patch38: rpm-4.4.2-debugedit-canonicalize-path.patch
 Patch39: rpm-4.4.2-no-ppc-asm.patch
+Patch40: rpm-4.4.2-forkfailed.patch
+Patch41: rpm-4.4.2-cdiff.patch
 License: GPL
 Requires: patch > 2.5
 Prereq: shadow-utils
@@ -204,6 +206,8 @@ shell-like rules.
 %patch37 -p1 -b .noneon
 %patch38 -p0 -b .debugcan
 %patch39 -p1 -b .noppcasm
+%patch40 -p0 -b .forkfail
+%patch41 -p1 -b .cdiff
 
 # rebuild configure for ipv6
 autoconf
@@ -562,6 +566,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Apr 16 2007 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-43
+- Log failures for fork failing (OLPC)
+- Gendiff enhancement from Enrico Scholz (#146981)
+
 * Wed Apr 04 2007 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-42
 - Remove ppc64 inline asm (#233145)
 

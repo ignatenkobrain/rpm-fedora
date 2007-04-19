@@ -222,7 +222,10 @@ unset LD_ASSUME_KERNEL || :
 WITH_PYTHON="--with-python=%{with_python_version}"
 
 CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
-%configure $WITH_PYTHON --enable-posixmutexes --without-javaglue
+./configure --prefix=%{__prefix} --sysconfdir=/etc \
+        --localstatedir=/var --infodir='${prefix}%{__share}/info' \
+        --mandir='${prefix}%{__share}/man' \
+        $WITH_PYTHON --enable-posixmutexes --without-javaglue
 
 make -C zlib || :
 
@@ -570,6 +573,7 @@ exit 0
 %changelog
 * Mon Apr 16 2007 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-44
 - Set default verify flags for %%doc (#235353)
+- Revert to old configure line 
 
 * Mon Apr 16 2007 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-43
 - Log failures for fork failing (OLPC)

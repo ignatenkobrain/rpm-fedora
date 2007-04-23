@@ -17,7 +17,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2
 %{expand: %%define rpm_version %{version}}
-Release: 44%{?dist}
+Release: 45%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -66,6 +66,7 @@ Patch39: rpm-4.4.2-no-ppc-asm.patch
 Patch40: rpm-4.4.2-forkfailed.patch
 Patch41: rpm-4.4.2-cdiff.patch
 Patch42: rpm-4.4.2-docflags.patch
+Patch43: rpm-debugedit-incremental-fix.patch
 License: GPL
 Requires: patch > 2.5
 Prereq: shadow-utils
@@ -210,6 +211,7 @@ shell-like rules.
 %patch40 -p0 -b .forkfail
 %patch41 -p1 -b .cdiff
 %patch42 -p1 -b .docflags
+%patch43 -p1 -b .debugcan2
 
 # rebuild configure for ipv6
 autoconf
@@ -571,6 +573,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Apr 23 2007 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-45
+- Fix debugedit for relative paths (#232222)
+
 * Mon Apr 16 2007 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-44
 - Set default verify flags for %%doc (#235353)
 - Revert to old configure line 

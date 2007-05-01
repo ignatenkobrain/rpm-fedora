@@ -17,7 +17,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2
 %{expand: %%define rpm_version %{version}}
-Release: 45%{?dist}
+Release: 46%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -67,6 +67,7 @@ Patch40: rpm-4.4.2-forkfailed.patch
 Patch41: rpm-4.4.2-cdiff.patch
 Patch42: rpm-4.4.2-docflags.patch
 Patch43: rpm-debugedit-incremental-fix.patch
+Patch44: rpm-4.4.2-prefer-elf32.patch
 License: GPL
 Requires: patch > 2.5
 Prereq: shadow-utils
@@ -212,6 +213,7 @@ shell-like rules.
 %patch41 -p1 -b .cdiff
 %patch42 -p1 -b .docflags
 %patch43 -p1 -b .debugcan2
+%patch44 -p1 -b .elfprefer
 
 # rebuild configure for ipv6
 autoconf
@@ -573,6 +575,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue May 01 2007 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-46
+- Configurable policy for prefered ELF (#235757)
+
 * Mon Apr 23 2007 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-45
 - Fix debugedit for relative paths (#232222)
 

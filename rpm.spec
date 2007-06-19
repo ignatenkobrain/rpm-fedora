@@ -1,9 +1,6 @@
 %define with_python_version     2.5%{nil}
 %define with_apidocs            1%{nil}
 
-# XXX legacy requires './' payload prefix to be omitted from rpm packages.
-%define _noPayloadPrefix        1
-
 %define __prefix        %{?_prefix}%{!?_prefix:/usr}
 %{?!_lib: %define _lib lib}
 %{expand: %%define __share %(if [ -d %{__prefix}/share/man ]; then echo /share ; else echo %%{nil} ; fi)}
@@ -17,7 +14,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2
 %{expand: %%define rpm_version %{version}}
-Release: 46%{?dist}
+Release: 47%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -69,8 +66,10 @@ Patch42: rpm-4.4.2-docflags.patch
 Patch43: rpm-debugedit-incremental-fix.patch
 Patch44: rpm-4.4.2-prefer-elf32.patch
 License: GPL
-Requires: patch > 2.5
-Prereq: shadow-utils
+Requires(pre): shadow-utils
+Requires(pre): shadow-utils
+Requires(postun): shadow-utils
+Requires(post): coreutils
 Requires: popt = 1.10.2
 Requires: crontabs
 
@@ -90,8 +89,9 @@ BuildRequires: libselinux-devel
 BuildRequires: ncurses-devel
 BuildRequires: bzip2-devel >= 0.9.0c-2
 BuildRequires: python-devel >= %{with_python_version}
+BuildRequires: doxygen
 
-BuildRoot: %{_tmppath}/%{name}-root
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
 The RPM Package Manager (RPM) is a powerful command line driven
@@ -284,10 +284,17 @@ do
     touch $RPM_BUILD_ROOT/var/lib/rpm/$dbi
 done
 
+%find_lang %{name}
+%find_lang popt
+
+# copy db and file/libmagic license info to distinct names
+cp -p db/LICENSE LICENSE-bdb
+cp -p file/LEGAL.NOTICE LEGAL.NOTICE-file
+
 # Get rid of unpackaged files
 { cd $RPM_BUILD_ROOT
   rm -f .%{_libdir}/lib*.la
-  rm -f .%{__prefix}/lib/rpm/{Specfile.pm,cpanflute,cpanflute2,rpmdiff,rpmdiff.cgi,sql.prov,sql.req,tcl.req}
+  rm -f .%{__prefix}/lib/rpm/{Specfile.pm,cpanflute,cpanflute2,rpmdiff,rpmdiff.cgi,sql.prov,sql.req,tcl.req,rpm.*}
   rm -rf .%{__mandir}/{fr,ko}
   rm -f .%{__libdir}/python%{with_python_version}/site-packages/*.{a,la}
   rm -f .%{__libdir}/python%{with_python_version}/site-packages/rpm/*.{a,la}
@@ -302,17 +309,7 @@ install -m 755 %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/rpm
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -f /var/lib/rpm/packages.rpm ]; then
-    echo "
-You have (unsupported)
-        /var/lib/rpm/packages.rpm       db1 format installed package headers
-Please install rpm-4.0.4 first, and do
-        rpm --rebuilddb
-to convert your database from db1 to db3 format.
-"
-    exit 1
-fi
-/usr/sbin/groupadd -g 37 rpm                            > /dev/null 2>&1
+usr/sbin/groupadd -g 37 rpm                            > /dev/null 2>&1
 /usr/sbin/useradd  -r -d /var/lib/rpm -u 37 -g 37 rpm -s /sbin/nologin  > /dev/null 2>&1
 exit 0
 
@@ -349,13 +346,10 @@ exit 0
 
 %define rpmattr         %attr(0755, rpm, rpm)
 
-%files
+%files -f %{name}.lang
 %defattr(-,root,root,-)
-%doc RPM-PGP-KEY RPM-GPG-KEY BETA-GPG-KEY CHANGES GROUPS doc/manual/[a-z]*
-# XXX comment these lines out if building with rpm that knows not %pubkey attr
-%pubkey RPM-PGP-KEY
-%pubkey RPM-GPG-KEY
-%pubkey BETA-GPG-KEY
+%doc CHANGES GROUPS COPYING LICENSE-bdb LEGAL.NOTICE-file CREDITS 
+%doc doc/manual/[a-z]*
 %attr(0755, rpm, rpm)   /bin/rpm
 
 /etc/cron.daily/rpm
@@ -383,7 +377,6 @@ exit 0
 %rpmattr        %{__prefix}/lib/rpm/freshen.sh
 %attr(0644, rpm, rpm)   %{__prefix}/lib/rpm/macros
 %rpmattr        %{__prefix}/lib/rpm/mkinstalldirs
-%rpmattr        %{__prefix}/lib/rpm/rpm.*
 %rpmattr        %{__prefix}/lib/rpm/rpm2cpio.sh
 %rpmattr        %{__prefix}/lib/rpm/rpm[deiukqv]
 %rpmattr        %{__prefix}/lib/rpm/tgpg
@@ -424,27 +417,6 @@ exit 0
 %rpmattr        %{__prefix}/lib/rpm/rpmdb_*
 %rpmattr        %{__prefix}/lib/rpm/rpmfile
 
-%lang(cs)       %{__prefix}/*/locale/cs/LC_MESSAGES/rpm.mo
-%lang(da)       %{__prefix}/*/locale/da/LC_MESSAGES/rpm.mo
-%lang(de)       %{__prefix}/*/locale/de/LC_MESSAGES/rpm.mo
-%lang(fi)       %{__prefix}/*/locale/fi/LC_MESSAGES/rpm.mo
-%lang(fr)       %{__prefix}/*/locale/fr/LC_MESSAGES/rpm.mo
-%lang(gl)       %{__prefix}/*/locale/gl/LC_MESSAGES/rpm.mo
-%lang(is)       %{__prefix}/*/locale/is/LC_MESSAGES/rpm.mo
-%lang(ja)       %{__prefix}/*/locale/ja/LC_MESSAGES/rpm.mo
-%lang(ko)       %{__prefix}/*/locale/ko/LC_MESSAGES/rpm.mo
-%lang(no)       %{__prefix}/*/locale/no/LC_MESSAGES/rpm.mo
-%lang(pl)       %{__prefix}/*/locale/pl/LC_MESSAGES/rpm.mo
-%lang(pt)       %{__prefix}/*/locale/pt/LC_MESSAGES/rpm.mo
-%lang(pt_BR)    %{__prefix}/*/locale/pt_BR/LC_MESSAGES/rpm.mo
-%lang(ro)       %{__prefix}/*/locale/ro/LC_MESSAGES/rpm.mo
-%lang(ru)       %{__prefix}/*/locale/ru/LC_MESSAGES/rpm.mo
-%lang(sk)       %{__prefix}/*/locale/sk/LC_MESSAGES/rpm.mo
-%lang(sl)       %{__prefix}/*/locale/sl/LC_MESSAGES/rpm.mo
-%lang(sr)       %{__prefix}/*/locale/sr/LC_MESSAGES/rpm.mo
-%lang(sv)       %{__prefix}/*/locale/sv/LC_MESSAGES/rpm.mo
-%lang(tr)       %{__prefix}/*/locale/tr/LC_MESSAGES/rpm.mo
-
 %{__mandir}/man1/gendiff.1*
 %{__mandir}/man8/rpm.8*
 %{__mandir}/man8/rpm2cpio.8*
@@ -473,7 +445,7 @@ exit 0
 %rpmattr        %{__prefix}/lib/rpm/brp-*
 %rpmattr        %{__prefix}/lib/rpm/check-files
 %rpmattr        %{__prefix}/lib/rpm/check-prereqs
-%rpmattr        %{__prefix}/lib/rpm/config.site
+%attr(0644, rpm, rpm) %{__prefix}/lib/rpm/config.site
 %rpmattr        %{__prefix}/lib/rpm/cross-build
 %rpmattr        %{__prefix}/lib/rpm/debugedit
 %rpmattr        %{__prefix}/lib/rpm/find-debuginfo.sh
@@ -488,10 +460,10 @@ exit 0
 %rpmattr        %{__prefix}/lib/rpm/getpo.sh
 %rpmattr        %{__prefix}/lib/rpm/http.req
 %rpmattr        %{__prefix}/lib/rpm/javadeps
-%rpmattr        %{__prefix}/lib/rpm/magic
-%rpmattr        %{__prefix}/lib/rpm/magic.mgc
-%rpmattr        %{__prefix}/lib/rpm/magic.mime
-%rpmattr        %{__prefix}/lib/rpm/magic.mime.mgc
+%attr(0644, rpm, rpm) %{__prefix}/lib/rpm/magic
+%attr(0644, rpm, rpm) %{__prefix}/lib/rpm/magic.mgc
+%attr(0644, rpm, rpm) %{__prefix}/lib/rpm/magic.mime
+%attr(0644, rpm, rpm) %{__prefix}/lib/rpm/magic.mime.mgc
 %rpmattr        %{__prefix}/lib/rpm/magic.prov
 %rpmattr        %{__prefix}/lib/rpm/magic.req
 %rpmattr        %{__prefix}/lib/rpm/mono-find-provides
@@ -534,40 +506,10 @@ exit 0
 %rpmattr        %{__prefix}/lib/rpm/rpmcache
 %rpmattr        %{__bindir}/rpmgraph
 
-%files -n popt
+%files -n popt -f popt.lang
 %defattr(-,root,root)
 %{__libdir}/libpopt.so.*
 %{__mandir}/man3/popt.3*
-%lang(cs)       %{__prefix}/*/locale/cs/LC_MESSAGES/popt.mo
-%lang(da)       %{__prefix}/*/locale/da/LC_MESSAGES/popt.mo
-%lang(de)       %{__prefix}/*/locale/de/LC_MESSAGES/popt.mo
-%lang(es)       %{__prefix}/*/locale/es/LC_MESSAGES/popt.mo
-%lang(eu_ES)    %{__prefix}/*/locale/eu_ES/LC_MESSAGES/popt.mo
-%lang(fi)       %{__prefix}/*/locale/fi/LC_MESSAGES/popt.mo
-%lang(fr)       %{__prefix}/*/locale/fr/LC_MESSAGES/popt.mo
-%lang(gl)       %{__prefix}/*/locale/gl/LC_MESSAGES/popt.mo
-%lang(hu)       %{__prefix}/*/locale/hu/LC_MESSAGES/popt.mo
-%lang(id)       %{__prefix}/*/locale/id/LC_MESSAGES/popt.mo
-%lang(is)       %{__prefix}/*/locale/is/LC_MESSAGES/popt.mo
-%lang(it)       %{__prefix}/*/locale/it/LC_MESSAGES/popt.mo
-%lang(ja)       %{__prefix}/*/locale/ja/LC_MESSAGES/popt.mo
-%lang(ko)       %{__prefix}/*/locale/ko/LC_MESSAGES/popt.mo
-%lang(no)       %{__prefix}/*/locale/no/LC_MESSAGES/popt.mo
-%lang(pl)       %{__prefix}/*/locale/pl/LC_MESSAGES/popt.mo
-%lang(pt)       %{__prefix}/*/locale/pt/LC_MESSAGES/popt.mo
-%lang(pt_BR)    %{__prefix}/*/locale/pt_BR/LC_MESSAGES/popt.mo
-%lang(ro)       %{__prefix}/*/locale/ro/LC_MESSAGES/popt.mo
-%lang(ru)       %{__prefix}/*/locale/ru/LC_MESSAGES/popt.mo
-%lang(sk)       %{__prefix}/*/locale/sk/LC_MESSAGES/popt.mo
-%lang(sl)       %{__prefix}/*/locale/sl/LC_MESSAGES/popt.mo
-%lang(sr)       %{__prefix}/*/locale/sr/LC_MESSAGES/popt.mo
-%lang(sv)       %{__prefix}/*/locale/sv/LC_MESSAGES/popt.mo
-%lang(tr)       %{__prefix}/*/locale/tr/LC_MESSAGES/popt.mo
-%lang(uk)       %{__prefix}/*/locale/uk/LC_MESSAGES/popt.mo
-%lang(wa)       %{__prefix}/*/locale/wa/LC_MESSAGES/popt.mo
-%lang(zh)       %{__prefix}/*/locale/zh/LC_MESSAGES/popt.mo
-%lang(zh_CN)    %{__prefix}/*/locale/zh_CN/LC_MESSAGES/popt.mo
-%lang(zh_TW)    %{__prefix}/*/locale/zh_TW/LC_MESSAGES/popt.mo
 
 # XXX These may end up in popt-devel but it hardly seems worth the effort.
 %{__libdir}/libpopt.a
@@ -575,6 +517,20 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Jun 19 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2-47
+- spec / package (review) cleanups:
+- use find_lang instead of manually listing translations
+- remove useless rpm 3.x upgrade check from preinstall script
+- use Fedora recommended buildroot
+- don't include useless, ancient GPG keys
+- add rpm, db and file licenses to docs
+- use scriptlet dependency markers instead of PreReq
+- post scriptlet requires coreutils
+- main package doesn't require patch, rpm-build does
+- buildrequire doxygen once more to resurrect apidocs
+- remove useless/doubly packaged files from /usr/lib/rpm
+- fix bunch of file permissions
+
 * Tue May 01 2007 Paul Nasrat <pnasrat@redhat.com> - 4.4.2-46
 - Configurable policy for prefered ELF (#235757)
 

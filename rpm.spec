@@ -309,7 +309,7 @@ install -m 755 %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/rpm
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-usr/sbin/groupadd -g 37 rpm                            > /dev/null 2>&1
+/usr/sbin/groupadd -g 37 rpm                            > /dev/null 2>&1
 /usr/sbin/useradd  -r -d /var/lib/rpm -u 37 -g 37 rpm -s /sbin/nologin  > /dev/null 2>&1
 exit 0
 

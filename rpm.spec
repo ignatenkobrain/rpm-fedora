@@ -114,7 +114,7 @@ programs that will manipulate RPM packages and databases.
 Summary: A C library for parsing command line parameters
 Group: Development/Libraries
 Version: 1.10.2
-Release: 47%{?dist}
+Release: 48%{?dist}
 
 %description -n popt
 Popt is a C library for parsing command line parameters. Popt was

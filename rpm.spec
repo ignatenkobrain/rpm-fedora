@@ -12,61 +12,19 @@
 
 Summary: The RPM package management system
 Name: rpm
-Version: 4.4.2
-%{expand: %%define rpm_version %{version}}
-Release: 47%{?dist}
+Version: 4.4.2.1
+%{expand: %%define rpm_version %{version}-rc1}
+Release: 0.1.rc1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
-Source1: mono-find-provides
-Source2: mono-find-requires
-Patch0: rpm-4.4.1-hkp-disable.patch
-Patch1: rpm-4.4.1-fileconflicts.patch 
-Patch2: rpm-4.4.1-prereq.patch
-Patch3: rpm-4.4.1-nonmerged.patch
-Patch4: rpm-4.4.1-prepostun.patch
-Patch5: rpm-4.4.1-ordererase.patch
+Patch1: rpm-4.4.1-prereq.patch
+Patch2: rpm-4.4.2-ghost-conflicts.patch
+Patch3: rpm-4.4.2-trust.patch
+Patch4: rpm-4.4.2-devel-autodep.patch
+Patch5: rpm-4.4.2-rpmfc-skip.patch
 Patch6: rpm-4.4.2-matchpathcon.patch
-Patch7: rpm-4.4.2-perlreq.patch
-Patch8: rpm-4.4.2-db3-param.patch
-Patch9: rpm-4.4.2-contextverify.patch
-Patch10: rpm-4.4.2-popt-charset.patch
-Patch11: rpm-4.4.2-ghost-conflicts.patch
-Patch12: rpm-4.4.2-exclude.patch
-Patch13: rpm-4.4.2-excluded-size.patch
-Patch14: rpm-4.4.2-cronpath.patch
-Patch15: rpm-4.4.2-mono.patch
-Patch16: rpm-4.4.2-file-softmagic.patch
-Patch17: rpm-4.4.2-no-large-mmap.patch
-Patch18: rpm-4.4.2-perlmainprov.patch
-Patch19: rpm-4.4.2-rpmsq-deadlock.patch
-Patch20: rpm-4.4.2-netsharedpath.patch
-Patch21: rpm-4.4.2-userlock.patch
-Patch22: rpm-4.4.2-vercmp.patch
-Patch23: rpm-4.4.2-doxy.patch
-Patch24: rpm-4.4.2-trust.patch
-Patch25: rpm-4.4.2-devel-autodep.patch
-Patch26: rpm-4.4.2-rpmfc-skip.patch
-Patch27: rpm-4.4.2-noselinux-verify.patch
-Patch28: rpm-4.4.2-python-aslist.patch
-Patch29: rpm-4.4.2-rpmio-ipv6.patch
-Patch30: rpm-4.4.2-gnuhash.patch
-Patch31: rpm-4.4.2-debugedit-ppc-reloc.patch
-Patch32: rpm-4.4.2-debugpaths.patch
-Patch33: rpm-4.4.2-transaction-order.patch
-Patch34: rpm-4.4.2-debugopt.patch
-Patch35: rpm-4.4.2-query-flushbuffer.patch
-Patch36: rpm-4.4.2-unicodekey.patch
-Patch37: rpm-4.4.2-noneon.patch
-Patch38: rpm-4.4.2-debugedit-canonicalize-path.patch
-Patch39: rpm-4.4.2-no-ppc-asm.patch
-Patch40: rpm-4.4.2-forkfailed.patch
-Patch41: rpm-4.4.2-cdiff.patch
-Patch42: rpm-4.4.2-docflags.patch
-Patch43: rpm-debugedit-incremental-fix.patch
-Patch44: rpm-4.4.2-prefer-elf32.patch
 License: GPL
-Requires(pre): shadow-utils
 Requires(pre): shadow-utils
 Requires(postun): shadow-utils
 Requires(post): coreutils
@@ -103,7 +61,7 @@ the package like its version, a description, etc.
 %package libs
 Summary:  Libraries for manipulating RPM packages
 Group: Development/Libraries
-Requires: rpm = %{rpm_version}-%{release}
+Requires: rpm = %{version}-%{release}
 
 %description libs
 This package contains the RPM shared libraries.
@@ -111,7 +69,7 @@ This package contains the RPM shared libraries.
 %package devel
 Summary:  Development files for manipulating RPM packages
 Group: Development/Libraries
-Requires: rpm = %{rpm_version}-%{release}
+Requires: rpm = %{version}-%{release}
 Requires: beecrypt >= 4.1.2
 Requires: sqlite-devel
 Requires: libselinux-devel
@@ -131,7 +89,7 @@ will manipulate RPM packages and databases.
 %package build
 Summary: Scripts and executable programs used to build packages
 Group: Development/Tools
-Requires: rpm = %{rpm_version}-%{release}, patch >= 2.5, file, elfutils
+Requires: rpm = %{version}-%{release}, patch >= 2.5, file, elfutils
 Requires: findutils
 Provides: rpmbuild(VendorConfig) = 4.1-1
 
@@ -142,7 +100,7 @@ that are used to build packages using the RPM Package Manager.
 %package python
 Summary: Python bindings for apps which will manipulate RPM packages
 Group: Development/Libraries
-Requires: rpm = %{rpm_version}-%{release}
+Requires: rpm = %{version}-%{release}
 
 %description python
 The rpm-python package contains a module that permits applications
@@ -156,6 +114,7 @@ programs that will manipulate RPM packages and databases.
 Summary: A C library for parsing command line parameters
 Group: Development/Libraries
 Version: 1.10.2
+Release: 47%{?dist}
 
 %description -n popt
 Popt is a C library for parsing command line parameters. Popt was
@@ -168,55 +127,13 @@ functions for parsing arbitrary strings into argv[] arrays using
 shell-like rules.
 
 %prep
-%setup -q
-%patch0 -p1  -b .nohkp
-%patch1 -p1  -b .fileconflicts
-%patch2 -p1  -b .prereq
-%patch3 -p1  -b .rpmal
-%patch4 -p1  -b .prepostun
-%patch5 -p1  -b .ordererase
-# patch 6 moved
-%patch7 -p1  -b .perlreq
-%patch8 -p1  -b .param
-%patch10 -p1  -b .charset
-%patch11 -p1  -b .ghostconflicts
-#patch12 -p1  -b .exclude
-%patch13 -p1  -b .excludedsize
-%patch14 -p1  -b .cronpath
-%patch15 -p1  -b .mono
-%patch16 -p1 -b .magic
-%patch17 -p1 -b .no_large_mmap
-%patch18 -p1 -b .perlmainprov
-%patch19 -p1 -b .deadlock
-%patch20 -p1 -b .netsharedpath
-%patch21 -p1 -b .userlock
-%patch22 -p1 -b .vercmp
-%patch23 -p1 -b .doxy
-%patch24 -p1 -b .trust
-%patch25 -p1 -b .develdeps
-%patch26 -p1 -b .fcskip
-%patch27 -p0 -b .nosever
-%patch6 -p1  -b .matchpathcon
-%patch28 -p1 -b .aslist
-%patch29 -p1 -b .ipv6
-%patch30 -p1 -b .gnuhash
-%patch31 -p0 -b .dbgppc
-%patch32 -p1 -b .dbgpaths
-%patch33 -p1 -b .order
-%patch34 -p1 -b .dbgopt
-%patch35 -p1 -b .flush
-%patch36 -p1 -b .unicode
-%patch37 -p1 -b .noneon
-%patch38 -p0 -b .debugcan
-%patch39 -p1 -b .noppcasm
-%patch40 -p0 -b .forkfail
-%patch41 -p1 -b .cdiff
-%patch42 -p1 -b .docflags
-%patch43 -p1 -b .debugcan2
-%patch44 -p1 -b .elfprefer
-
-# rebuild configure for ipv6
-autoconf
+%setup -q -n %{name}-%{rpm_version}
+%patch1 -p1 -b .prereq
+%patch2 -p1 -b .ghostconflicts
+%patch3 -p1 -b .trust
+%patch4 -p1 -b .develdeps
+%patch5 -p1 -b .fcskip
+%patch6 -p1 -b .matchpathcon
 
 %build
 
@@ -230,8 +147,6 @@ CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
         --localstatedir=/var --infodir='${prefix}%{__share}/info' \
         --mandir='${prefix}%{__share}/man' \
         $WITH_PYTHON --enable-posixmutexes --without-javaglue
-
-make -C zlib || :
 
 make %{?_smp_mflags}
 
@@ -300,10 +215,6 @@ cp -p file/LEGAL.NOTICE LEGAL.NOTICE-file
   rm -f .%{__libdir}/python%{with_python_version}/site-packages/rpm/*.{a,la}
   rm -f .%{__libdir}/python%{with_python_version}/site-packages/rpmdb/*.{a,la}
 }
-
-# Install mono find-provides/requires
-install -m 755 %{SOURCE1} $RPM_BUILD_ROOT/usr/lib/rpm
-install -m 755 %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/rpm
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -517,6 +428,12 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Jun 25 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-0.1.rc1
+- update to 4.4.2.1-rc1
+- patch shuffle, most have been merged upstream
+- drop mono-scripts, it comes from upstream now
+- popt isn't upgrading here so it needs its own release
+
 * Tue Jun 19 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2-47
 - spec / package (review) cleanups:
 - use find_lang instead of manually listing translations

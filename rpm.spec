@@ -14,7 +14,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
 %{expand: %%define rpm_version %{version}-rc1}
-Release: 0.1.rc1
+Release: 0.2.rc1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -24,11 +24,12 @@ Patch3: rpm-4.4.2-trust.patch
 Patch4: rpm-4.4.2-devel-autodep.patch
 Patch5: rpm-4.4.2-rpmfc-skip.patch
 Patch6: rpm-4.4.2-matchpathcon.patch
+Patch7: rpm-4.4.2.1-rc1-poptver.patch
 License: GPL
 Requires(pre): shadow-utils
 Requires(postun): shadow-utils
 Requires(post): coreutils
-Requires: popt = 1.10.2
+Requires: popt = 1.10.2.1
 Requires: crontabs
 
 BuildRequires: autoconf
@@ -113,8 +114,7 @@ programs that will manipulate RPM packages and databases.
 %package -n popt
 Summary: A C library for parsing command line parameters
 Group: Development/Libraries
-Version: 1.10.2
-Release: 48%{?dist}
+Version: 1.10.2.1
 
 %description -n popt
 Popt is a C library for parsing command line parameters. Popt was
@@ -134,6 +134,7 @@ shell-like rules.
 %patch4 -p1 -b .develdeps
 %patch5 -p1 -b .fcskip
 %patch6 -p1 -b .matchpathcon
+%patch7 -p1 -b .poptver
 
 %build
 
@@ -428,6 +429,10 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Tue Jun 26 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-0.2.rc1
+- patch popt version to 1.10.2.1 for clean upgrade path
+- popt release follows main package release again
+
 * Mon Jun 25 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-0.1.rc1
 - update to 4.4.2.1-rc1
 - patch shuffle, most have been merged upstream

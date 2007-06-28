@@ -14,7 +14,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
 %{expand: %%define rpm_version %{version}-rc1}
-Release: 0.2.rc1
+Release: 0.3.rc1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -25,6 +25,7 @@ Patch4: rpm-4.4.2-devel-autodep.patch
 Patch5: rpm-4.4.2-rpmfc-skip.patch
 Patch6: rpm-4.4.2-matchpathcon.patch
 Patch7: rpm-4.4.2.1-rc1-poptver.patch
+Patch8: rpm-4.4.2.1-rc1-query-iterators.patch
 License: GPL
 Requires(pre): shadow-utils
 Requires(postun): shadow-utils
@@ -135,6 +136,7 @@ shell-like rules.
 %patch5 -p1 -b .fcskip
 %patch6 -p1 -b .matchpathcon
 %patch7 -p1 -b .poptver
+%patch8 -p1 -b .queryiter
 
 %build
 
@@ -429,6 +431,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Thu Jun 28 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-0.3.rc1
+- don't hang because of leftover query iterators (#246044)
+
 * Tue Jun 26 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-0.2.rc1
 - patch popt version to 1.10.2.1 for clean upgrade path
 - popt release follows main package release again

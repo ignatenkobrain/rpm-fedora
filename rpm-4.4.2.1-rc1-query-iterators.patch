@@ -1,0 +1,25 @@
+changeset:   6070:7ca081cd83d8
+tag:         tip
+user:        Panu Matilainen <pmatilai@redhat.com>
+date:        Thu Jun 28 14:44:48 2007 +0300
+summary:     Remember to free up match iterators (rhbz#246044)
+
+diff -r a468a8443652 -r 7ca081cd83d8 lib/query.c
+--- a/lib/query.c	Wed Jun 27 16:29:16 2007 +0300
++++ b/lib/query.c	Thu Jun 28 14:44:48 2007 +0300
+@@ -680,10 +680,12 @@ int rpmQueryVerify(QVA_t qva, rpmts ts, 
+     case RPMQV_PACKAGE:
+     {
+ 	int matches = 0;
+-	qva->qva_mi = rpmtsInitIterator(ts, RPMDBI_LABEL, arg, 0);
+-	while (rpmdbNextIterator(qva->qva_mi) != NULL) {
++	rpmdbMatchIterator mi;
++	mi = rpmtsInitIterator(ts, RPMDBI_LABEL, arg, 0);
++	while (rpmdbNextIterator(mi) != NULL) {
+ 	    matches++;
+ 	}
++	rpmdbFreeIterator(mi);
+ 	if (! matches) {
+ 	    rpmError(RPMERR_QUERYINFO, _("package %s is not installed\n"), arg);
+ 	    res = 1;
+

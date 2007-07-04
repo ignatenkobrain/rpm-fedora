@@ -13,8 +13,8 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
-%{expand: %%define rpm_version %{version}-rc1}
-Release: 0.3.rc1
+%{expand: %%define rpm_version %{version}-rc2}
+Release: 0.4.rc2
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -24,8 +24,6 @@ Patch3: rpm-4.4.2-trust.patch
 Patch4: rpm-4.4.2-devel-autodep.patch
 Patch5: rpm-4.4.2-rpmfc-skip.patch
 Patch6: rpm-4.4.2-matchpathcon.patch
-Patch7: rpm-4.4.2.1-rc1-poptver.patch
-Patch8: rpm-4.4.2.1-rc1-query-iterators.patch
 License: GPL
 Requires(pre): shadow-utils
 Requires(postun): shadow-utils
@@ -135,8 +133,6 @@ shell-like rules.
 %patch4 -p1 -b .develdeps
 %patch5 -p1 -b .fcskip
 %patch6 -p1 -b .matchpathcon
-%patch7 -p1 -b .poptver
-%patch8 -p1 -b .queryiter
 
 %build
 
@@ -357,8 +353,10 @@ exit 0
 %{__prefix}/src/redhat/RPMS/*
 %rpmattr        %{__bindir}/rpmbuild
 %rpmattr        %{__prefix}/lib/rpm/brp-*
+%rpmattr        %{__prefix}/lib/rpm/check-buildroot
 %rpmattr        %{__prefix}/lib/rpm/check-files
 %rpmattr        %{__prefix}/lib/rpm/check-prereqs
+%rpmattr        %{__prefix}/lib/rpm/check-rpaths*
 %attr(0644, rpm, rpm) %{__prefix}/lib/rpm/config.site
 %rpmattr        %{__prefix}/lib/rpm/cross-build
 %rpmattr        %{__prefix}/lib/rpm/debugedit
@@ -431,6 +429,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Jul 04 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-0.4.rc2
+- 4.4.2.1-rc2
+
 * Thu Jun 28 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-0.3.rc1
 - don't hang because of leftover query iterators (#246044)
 

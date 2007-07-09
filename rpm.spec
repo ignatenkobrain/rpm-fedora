@@ -13,8 +13,8 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
-%{expand: %%define rpm_version %{version}-rc2}
-Release: 0.4.rc2
+%{expand: %%define rpm_version %{version}-rc3}
+Release: 0.4.rc3
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -429,6 +429,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Jul 09 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-0.4.rc3
+- 4.4.2.1-rc3
+
 * Wed Jul 04 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-0.4.rc2
 - 4.4.2.1-rc2
 

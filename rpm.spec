@@ -14,7 +14,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
 %{expand: %%define rpm_version %{version}-rc3}
-Release: 0.4.rc3
+Release: 0.5.rc3
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -24,12 +24,16 @@ Patch3: rpm-4.4.2-trust.patch
 Patch4: rpm-4.4.2-devel-autodep.patch
 Patch5: rpm-4.4.2-rpmfc-skip.patch
 Patch6: rpm-4.4.2-matchpathcon.patch
+Patch7: rpm-4.4.2.1-checksignals.patch
+Patch8: rpm-4.4.2.1-checkterminate.patch
+Patch9: rpm-4.4.2.1-python-exithook.patch
 License: GPL
 Requires(pre): shadow-utils
 Requires(postun): shadow-utils
 Requires(post): coreutils
 Requires: popt = 1.10.2.1
 Requires: crontabs
+Requires: logrotate
 
 BuildRequires: autoconf
 BuildRequires: elfutils-devel >= 0.112
@@ -133,6 +137,9 @@ shell-like rules.
 %patch4 -p1 -b .develdeps
 %patch5 -p1 -b .fcskip
 %patch6 -p1 -b .matchpathcon
+%patch7 -p1 -b .checksignals
+%patch8 -p1 -b .checkterminate
+%patch9 -p1 -b .py-exithook
 
 %build
 
@@ -429,6 +436,11 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Fri Jul 20 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-0.5.rc3
+- require logrotate (#248629)
+- allow checking for pending signals from python (#181434)
+- add hook to python for cleaning up on unclean exit (#245389)
+
 * Mon Jul 09 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-0.4.rc3
 - 4.4.2.1-rc3
 

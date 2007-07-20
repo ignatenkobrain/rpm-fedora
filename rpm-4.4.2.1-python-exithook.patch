@@ -1,0 +1,47 @@
+changeset:   6178:e9ced408b17f
+tag:         tip
+user:        Panu Matilainen <pmatilai@redhat.com>
+date:        Fri Jul 20 11:23:11 2007 +0300
+files:       python/rpmmodule.c
+description:
+Force rpmdb clean termination on exit from python.
+Python process tracebacking with active iterators can and will otherwise leave
+stale locks around (as is presumably the reason for rhbz#235389 and various
+other locking issues)
+
+
+diff -r 6acd7701e4df -r e9ced408b17f python/rpmmodule.c
+--- a/python/rpmmodule.c	Fri Jul 20 11:19:56 2007 +0300
++++ b/python/rpmmodule.c	Fri Jul 20 11:23:11 2007 +0300
+@@ -227,6 +227,16 @@ static PyMethodDef rpmModuleMethods[] = 
+     { NULL }
+ } ;
+ 
++/*
++* Force clean up of open iterators and dbs on exit.
++* This ends up calling exit() while we're already exiting but exit
++* handlers will only get called once so it wont loop.
++*/
++static void rpm_exithook(void)
++{
++   rpmdbCheckTerminate(1);
++}
++
+ /**
+  */
+ static char rpm__doc__[] =
+@@ -263,6 +273,13 @@ void init_rpm(void)
+ 
+     m = Py_InitModule3("_rpm", rpmModuleMethods, rpm__doc__);
+     if (m == NULL)
++	return;
++
++    /* 
++     * treat error to register rpm cleanup hook as fatal, tracebacks
++     * can and will leave stale locks around if we can't clean up
++     */
++    if (Py_AtExit(rpm_exithook) == -1)
+ 	return;
+ 
+     rpmReadConfigFiles(NULL, NULL);
+

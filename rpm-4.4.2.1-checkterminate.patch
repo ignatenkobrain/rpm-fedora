@@ -1,0 +1,87 @@
+changeset:   6177:6acd7701e4df
+user:        Panu Matilainen <pmatilai@redhat.com>
+date:        Fri Jul 20 11:19:56 2007 +0300
+files:       rpmdb/rpmdb.c rpmdb/rpmdb.h
+description:
+Support explicitly asking from rpmdb cleanup + termination.
+New rpmdbCheckTerminate() function which checks for termination signals
+and allows requesting termination via parameter as well. Make
+rpmdbCheckSignals() just a wrapper that calls it with terminate=0.
+
+
+diff -r c0237c16e2e3 -r 6acd7701e4df rpmdb/rpmdb.c
+--- a/rpmdb/rpmdb.c	Fri Jul 20 10:41:15 2007 +0300
++++ b/rpmdb/rpmdb.c	Fri Jul 20 11:19:56 2007 +0300
+@@ -700,14 +700,14 @@ static rpmdb rpmdbRock;
+ /*@unchecked@*/ /*@exposed@*/ /*@null@*/
+ static rpmdbMatchIterator rpmmiRock;
+ 
+-int rpmdbCheckSignals(void)
++int rpmdbCheckTerminate(int terminate)
+ 	/*@globals rpmdbRock, rpmmiRock @*/
+ 	/*@modifies rpmdbRock, rpmmiRock @*/
+ {
+     sigset_t newMask, oldMask;
+-    static int terminate = 0;
+-
+-    if (terminate) return 0;
++    static int terminating = 0;
++
++    if (terminating) return 0;
+ 
+     (void) sigfillset(&newMask);		/* block all signals */
+     (void) sigprocmask(SIG_BLOCK, &newMask, &oldMask);
+@@ -716,10 +716,11 @@ int rpmdbCheckSignals(void)
+      || sigismember(&rpmsqCaught, SIGQUIT)
+      || sigismember(&rpmsqCaught, SIGHUP)
+      || sigismember(&rpmsqCaught, SIGTERM)
+-     || sigismember(&rpmsqCaught, SIGPIPE))
+-	terminate = 1;
+-
+-    if (terminate) {
++     || sigismember(&rpmsqCaught, SIGPIPE)
++     || terminate)
++	terminating = 1;
++
++    if (terminating) {
+ 	rpmdb db;
+ 	rpmdbMatchIterator mi;
+ 
+@@ -745,6 +746,11 @@ int rpmdbCheckSignals(void)
+ 	exit(EXIT_FAILURE);
+     }
+     return sigprocmask(SIG_SETMASK, &oldMask, NULL);
++}
++
++int rpmdbCheckSignals(void)
++{
++    return rpmdbCheckTerminate(0);
+ }
+ 
+ /**
+diff -r c0237c16e2e3 -r 6acd7701e4df rpmdb/rpmdb.h
+--- a/rpmdb/rpmdb.h	Fri Jul 20 10:41:15 2007 +0300
++++ b/rpmdb/rpmdb.h	Fri Jul 20 11:19:56 2007 +0300
+@@ -1039,12 +1039,20 @@ Header rpmdbNextIterator(/*@null@*/ rpmd
+ 	/*@modifies mi, rpmGlobalMacroContext, fileSystem, internalState @*/;
+ 
+ /** \ingroup rpmdb
+- * Check rpmdb signal handler for trapped signal exit.
++ * Check rpmdb signal handler for trapped signal exit. Just a compatibility
++ * wrapper for rpmdbCheckTerminate()
+  */
+ /*@mayexit@*/
+ int rpmdbCheckSignals(void)
+ 	/*@globals fileSystem, internalState @*/
+ 	/*@modifies fileSystem, internalState @*/;
++
++/** \ingroup rpmdb
++ * Check rpmdb signal handler for trapped signal or requested exit.
++ * @param terminate	0 to only check for signals, 1 to terminate anyway
++ */
++/*@mayexit@*/
++int rpmdbCheckTerminate(int terminate);
+ 
+ /** \ingroup rpmdb
+  * Destroy rpm database iterator.
+

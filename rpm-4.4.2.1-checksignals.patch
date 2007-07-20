@@ -1,0 +1,87 @@
+changeset:   6176:c0237c16e2e3
+user:        Panu Matilainen <pmatilai@redhat.com>
+date:        Fri Jul 20 10:41:15 2007 +0300
+files:       python/rpmmodule.c
+description:
+Add python methods for checking pending signals from rpmsqCaught.
+- a thin wrapper for rpmdbCheckSignals() from rpm5.org / Jeff Johnson
+- a function taking a list of signals to check and returning list caught
+  signals (python doesn't know about signal sets so rpmsqCaught needs
+  wrapping)
+
+
+diff -r d8e2ec20c948 -r c0237c16e2e3 python/rpmmodule.c
+--- a/python/rpmmodule.c	Wed Jul 18 16:05:56 2007 +0300
++++ b/python/rpmmodule.c	Fri Jul 20 10:41:15 2007 +0300
+@@ -7,6 +7,7 @@
+ #include <rpmio_internal.h>
+ #include <rpmcli.h>	/* XXX for rpmCheckSig */
+ #include <rpmdb.h>
++#include <rpmsq.h>
+ 
+ #include "legacy.h"
+ #include "misc.h"
+@@ -58,6 +59,50 @@ static PyObject * archScore(PyObject * s
+ }
+ 
+ /**
++ *  */
++static PyObject * signalsCaught(PyObject * self, PyObject * check)
++{
++    PyObject *caught, *o;
++    Py_ssize_t llen;
++    int signum, i;
++    sigset_t newMask, oldMask;
++
++    if (!PyList_Check(check)) {
++	PyErr_SetString(PyExc_TypeError, "list expected");
++	return NULL;
++    }
++
++    llen = PyList_Size(check);
++    caught = PyList_New(0);
++
++    /* block signals while checking for them */
++    (void) sigfillset(&newMask);
++    (void) sigprocmask(SIG_BLOCK, &newMask, &oldMask);
++
++    for (i = 0; i < llen; i++) {
++	o = PyList_GetItem(check, i);
++	signum = PyInt_AsLong(o);
++	if (sigismember(&rpmsqCaught, signum)) {
++	    PyList_Append(caught, o);
++	}
++    }
++    (void) sigprocmask(SIG_SETMASK, &oldMask, NULL);
++
++    return caught;
++}
++
++/**
++ *  */
++static PyObject * checkSignals(PyObject * self, PyObject * args)
++{
++    if (!PyArg_ParseTuple(args, ":checkSignals")) return NULL;
++    rpmdbCheckSignals();
++    Py_INCREF(Py_None);
++    return Py_None;
++}
++
++
++/**
+  */
+ static PyObject * setLogFile (PyObject * self, PyObject * args, PyObject *kwds)
+ {
+@@ -145,6 +190,11 @@ static PyMethodDef rpmModuleMethods[] = 
+ 
+     { "archscore", (PyCFunction) archScore, METH_VARARGS|METH_KEYWORDS,
+ 	NULL },
++
++    { "signalsCaught", (PyCFunction) signalsCaught, METH_O, 
++	NULL },
++    { "checkSignals", (PyCFunction) checkSignals, METH_VARARGS,
++        NULL },
+ 
+     { "headerLoad", (PyCFunction) hdrLoad, METH_VARARGS|METH_KEYWORDS,
+ 	NULL },
+

@@ -14,7 +14,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
 %{expand: %%define rpm_version %{version}-rc3}
-Release: 0.5.rc3
+Release: 0.6.rc3
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -27,6 +27,7 @@ Patch6: rpm-4.4.2-matchpathcon.patch
 Patch7: rpm-4.4.2.1-checksignals.patch
 Patch8: rpm-4.4.2.1-checkterminate.patch
 Patch9: rpm-4.4.2.1-python-exithook.patch
+Patch10: rpm-4.4.2.1-checkterminate-noexit.patch
 License: GPL
 Requires(pre): shadow-utils
 Requires(postun): shadow-utils
@@ -140,6 +141,7 @@ shell-like rules.
 %patch7 -p1 -b .checksignals
 %patch8 -p1 -b .checkterminate
 %patch9 -p1 -b .py-exithook
+%patch10 -p1 -b .checkterminate-noexit
 
 %build
 
@@ -436,6 +438,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Sat Jul 21 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-0.6.rc3
+- dont mess up python exit codes
+
 * Fri Jul 20 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-0.5.rc3
 - require logrotate (#248629)
 - allow checking for pending signals from python (#181434)

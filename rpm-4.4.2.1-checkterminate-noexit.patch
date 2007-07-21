@@ -1,0 +1,105 @@
+changeset:   6179:fb37e4dccbf3
+tag:         tip
+user:        Panu Matilainen <pmatilai@redhat.com>
+date:        Sat Jul 21 15:05:19 2007 +0300
+files:       python/rpmmodule.c rpmdb/rpmdb.c rpmdb/rpmdb.h
+description:
+Make rpmdbCheckTerminate() non-terminating.
+This allows use in exit handler without affecting exit code, and permits
+caller to do its own cleanup if necessary.
+
+
+diff -r e9ced408b17f -r fb37e4dccbf3 python/rpmmodule.c
+--- a/python/rpmmodule.c	Fri Jul 20 11:23:11 2007 +0300
++++ b/python/rpmmodule.c	Sat Jul 21 15:05:19 2007 +0300
+@@ -229,8 +229,6 @@ static PyMethodDef rpmModuleMethods[] = 
+ 
+ /*
+ * Force clean up of open iterators and dbs on exit.
+-* This ends up calling exit() while we're already exiting but exit
+-* handlers will only get called once so it wont loop.
+ */
+ static void rpm_exithook(void)
+ {
+diff -r e9ced408b17f -r fb37e4dccbf3 rpmdb/rpmdb.c
+--- a/rpmdb/rpmdb.c	Fri Jul 20 11:23:11 2007 +0300
++++ b/rpmdb/rpmdb.c	Sat Jul 21 15:05:19 2007 +0300
+@@ -707,7 +707,7 @@ int rpmdbCheckTerminate(int terminate)
+     sigset_t newMask, oldMask;
+     static int terminating = 0;
+ 
+-    if (terminating) return 0;
++    if (terminating) return 1;
+ 
+     (void) sigfillset(&newMask);		/* block all signals */
+     (void) sigprocmask(SIG_BLOCK, &newMask, &oldMask);
+@@ -724,10 +724,6 @@ int rpmdbCheckTerminate(int terminate)
+ 	rpmdb db;
+ 	rpmdbMatchIterator mi;
+ 
+-/*@-abstract@*/ /* sigset_t is abstract type */
+-	rpmMessage(RPMMESS_DEBUG, "Exiting on signal(0x%lx) ...\n", *((unsigned long *)&rpmsqCaught));
+-/*@=abstract@*/
+-
+ /*@-branchstate@*/
+ 	while ((mi = rpmmiRock) != NULL) {
+ /*@i@*/	    rpmmiRock = mi->mi_next;
+@@ -743,14 +739,20 @@ int rpmdbCheckTerminate(int terminate)
+ 	    (void) rpmdbClose(db);
+ 	}
+ /*@=newreftrans@*/
++    }
++    sigprocmask(SIG_SETMASK, &oldMask, NULL);
++    return terminating;
++}
++
++int rpmdbCheckSignals(void)
++{
++    if (rpmdbCheckTerminate(0)) {
++/*@-abstract@*/ /* sigset_t is abstract type */
++	rpmMessage(RPMMESS_DEBUG, "Exiting on signal(0x%lx) ...\n", *((unsigned long *)&rpmsqCaught));
+ 	exit(EXIT_FAILURE);
+-    }
+-    return sigprocmask(SIG_SETMASK, &oldMask, NULL);
+-}
+-
+-int rpmdbCheckSignals(void)
+-{
+-    return rpmdbCheckTerminate(0);
++/*@=abstract@*/
++    }
++    return 0;
+ }
+ 
+ /**
+diff -r e9ced408b17f -r fb37e4dccbf3 rpmdb/rpmdb.h
+--- a/rpmdb/rpmdb.h	Fri Jul 20 11:23:11 2007 +0300
++++ b/rpmdb/rpmdb.h	Sat Jul 21 15:05:19 2007 +0300
+@@ -1039,8 +1039,7 @@ Header rpmdbNextIterator(/*@null@*/ rpmd
+ 	/*@modifies mi, rpmGlobalMacroContext, fileSystem, internalState @*/;
+ 
+ /** \ingroup rpmdb
+- * Check rpmdb signal handler for trapped signal exit. Just a compatibility
+- * wrapper for rpmdbCheckTerminate()
++ * Check for and exit on termination signals.
+  */
+ /*@mayexit@*/
+ int rpmdbCheckSignals(void)
+@@ -1048,10 +1047,13 @@ int rpmdbCheckSignals(void)
+ 	/*@modifies fileSystem, internalState @*/;
+ 
+ /** \ingroup rpmdb
+- * Check rpmdb signal handler for trapped signal or requested exit.
++ * Check rpmdb signal handler for trapped signal and/or requested exit,
++ * clean up any open iterators and databases on termination condition.
++ * On non-zero exit any open references to rpmdb are invalid and cannot
++ * be accessed anymore, calling process should terminate immediately.
+  * @param terminate	0 to only check for signals, 1 to terminate anyway
+- */
+-/*@mayexit@*/
++ * @return 		0 to continue, 1 if termination cleanup was done.
++ */
+ int rpmdbCheckTerminate(int terminate);
+ 
+ /** \ingroup rpmdb
+

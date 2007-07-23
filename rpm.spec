@@ -13,8 +13,8 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
-%{expand: %%define rpm_version %{version}-rc3}
-Release: 0.6.rc3
+%{expand: %%define rpm_version %{version}}
+Release: 1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -28,6 +28,7 @@ Patch7: rpm-4.4.2.1-checksignals.patch
 Patch8: rpm-4.4.2.1-checkterminate.patch
 Patch9: rpm-4.4.2.1-python-exithook.patch
 Patch10: rpm-4.4.2.1-checkterminate-noexit.patch
+Patch11: rpm-4.4.2.1-gnueabi.patch
 License: GPL
 Requires(pre): shadow-utils
 Requires(postun): shadow-utils
@@ -142,6 +143,7 @@ shell-like rules.
 %patch8 -p1 -b .checkterminate
 %patch9 -p1 -b .py-exithook
 %patch10 -p1 -b .checkterminate-noexit
+%patch11 -p1 -b .gnueabi
 
 %build
 
@@ -149,6 +151,12 @@ shell-like rules.
 unset LD_ASSUME_KERNEL || :
 
 WITH_PYTHON="--with-python=%{with_python_version}"
+
+# XXX pull in updated config.guess and config.sub as done by %configure
+# which cannot be used to build rpm itself due to makefile brokenness
+for i in $(find . -name config.guess -o -name config.sub) ; do 
+    [ -f /usr/lib/rpm/redhat/$(basename $i) ] && %{__rm} -f $i && %{__cp} -fv /usr/lib/rpm/redhat/$(basename $i) $i 
+done 
 
 CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
 ./configure --prefix=%{__prefix} --sysconfdir=/etc \
@@ -267,7 +275,7 @@ exit 0
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
-%doc CHANGES GROUPS COPYING LICENSE-bdb LEGAL.NOTICE-file CREDITS 
+%doc CHANGES GROUPS COPYING LICENSE-bdb LEGAL.NOTICE-file CREDITS ChangeLog
 %doc doc/manual/[a-z]*
 %attr(0755, rpm, rpm)   /bin/rpm
 
@@ -438,6 +446,13 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Jul 23 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-1
+- 4.4.2.1 final
+- reintroduce disttag
+- include full ChangeLog as doc
+- use up-to-date config.guess for ARM support (#246803)
+- ARM EANBI gnu/gnuenabi fix from Lennert Buytenhek (#246803)
+
 * Sat Jul 21 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-0.6.rc3
 - dont mess up python exit codes
 

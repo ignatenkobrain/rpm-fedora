@@ -1,9 +1,0 @@
---- rpm-4.4.2/scripts/rpm.daily.cronpath	2005-12-01 11:58:28.000000000 -0500
-+++ rpm-4.4.2/scripts/rpm.daily	2005-12-01 11:58:46.000000000 -0500
-@@ -1,4 +1,4 @@
- #!/bin/sh
- 
--rpm -qa --qf '%{name}-%{version}-%{release}.%{arch}.rpm\n' 2>&1 \
--	| sort > /var/log/rpmpkgs
-+/bin/rpm -qa --qf '%{name}-%{version}-%{release}.%{arch}.rpm\n' 2>&1 \
-+	| /bin/sort > /var/log/rpmpkgs

@@ -14,7 +14,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
 %{expand: %%define rpm_version %{version}}
-Release: 2%{?dist}
+Release: 3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -30,6 +30,8 @@ Patch9: rpm-4.4.2.1-python-exithook.patch
 Patch10: rpm-4.4.2.1-checkterminate-noexit.patch
 Patch11: rpm-4.4.2.1-gnueabi.patch
 Patch12: rpm-4.4.2.1-arm-typos.patch
+Patch13: rpm-4.4.2.1-bdb-glibc.patch
+Patch14: rpm-4.4.2.1-rpm-glibc.patch
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
 License: (GPLv2 and LGPLv2 with exceptions) and BSD and MIT and Sleepycat
@@ -153,6 +155,8 @@ shell-like rules.
 %patch10 -p1 -b .checkterminate-noexit
 %patch11 -p1 -b .gnueabi
 %patch12 -p1 -b .armtypo
+%patch13 -p1 -b .bdb-glibc
+%patch14 -p1 -b .rpm-glibc
 cp -f %{SOURCE2} scripts/find-debuginfo.sh
 
 %build
@@ -456,6 +460,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Aug  8 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-3
+- make peace with new glibc checks on open() wrt internal bdb and rpm itself
+
 * Wed Aug  8 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-2
 - ARM-related typo fixes from Lennert Buytenhek
 - License clarifications

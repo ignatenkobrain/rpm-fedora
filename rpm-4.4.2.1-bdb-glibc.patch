@@ -1,0 +1,440 @@
+diff -up rpm-4.4.2.1/db/xa/xa.c.orig rpm-4.4.2.1/db/xa/xa.c
+--- rpm-4.4.2.1/db/xa/xa.c.orig	2007-07-05 15:24:36.000000000 +0300
++++ rpm-4.4.2.1/db/xa/xa.c	2007-08-08 13:22:44.000000000 +0300
+@@ -219,7 +219,7 @@ __db_xa_open(xa_info, rmid, arg_flags)
+ 	/* Open a new environment. */
+ 	if (db_env_create(&dbenv, 0) != 0)
+ 		return (XAER_RMERR);
+-	if (dbenv->open(dbenv, xa_info, XA_FLAGS, 0) != 0)
++	if ((dbenv->open)(dbenv, xa_info, XA_FLAGS, 0) != 0)
+ 		goto err;
+ 
+ 	/* Create the mapping. */
+diff -up rpm-4.4.2.1/db/xa/xa_db.c.orig rpm-4.4.2.1/db/xa/xa_db.c
+--- rpm-4.4.2.1/db/xa/xa_db.c.orig	2007-07-05 15:24:36.000000000 +0300
++++ rpm-4.4.2.1/db/xa/xa_db.c	2007-08-08 13:26:54.000000000 +0300
+@@ -96,7 +96,7 @@ __xa_open(dbp, txn, name, subdb, type, f
+ 	xam = (XA_METHODS *)dbp->xa_internal;
+ 
+ 	SET_TXN(txn, t);
+-	if ((ret = xam->open(dbp, t, name, subdb, type, flags, mode)) != 0)
++	if ((ret = (xam->open)(dbp, t, name, subdb, type, flags, mode)) != 0)
+ 		return (ret);
+ 
+ 	xam->cursor = dbp->cursor;
+diff -up rpm-4.4.2.1/db/rpc_server/c/db_server_proc.c.orig rpm-4.4.2.1/db/rpc_server/c/db_server_proc.c
+--- rpm-4.4.2.1/db/rpc_server/c/db_server_proc.c.orig	2007-07-05 15:24:35.000000000 +0300
++++ rpm-4.4.2.1/db/rpc_server/c/db_server_proc.c	2007-08-08 13:22:41.000000000 +0300
+@@ -363,7 +363,7 @@ __env_open_proc(dbenvcl_id, home, flags,
+ 		replyp->envcl_id = new_ctp->ct_id;
+ 		ret = __dbenv_close_int(dbenvcl_id, 0, 0);
+ 	} else {
+-		ret = dbenv->open(dbenv, fullhome->home, newflags, mode);
++		ret = (dbenv->open)(dbenv, fullhome->home, newflags, mode);
+ 		dbenv_ctp->ct_envdp.home = fullhome;
+ 		dbenv_ctp->ct_envdp.envflags = shareflags;
+ 	}
+@@ -1388,7 +1388,7 @@ __db_open_proc(dbpcl_id, txnpcl_id, name
+ 		ret = __db_close_int(dbpcl_id, 0);
+ 		goto out;
+ 	}
+-	ret = dbp->open(dbp, txnp, name, subdb, (DBTYPE)type, flags, mode);
++	ret = (dbp->open)(dbp, txnp, name, subdb, (DBTYPE)type, flags, mode);
+ 	if (ret == 0) {
+ 		(void)dbp->get_type(dbp, &dbtype);
+ 		replyp->type = dbtype;
+diff -up rpm-4.4.2.1/db/rpc_server/c/db_server_util.c.orig rpm-4.4.2.1/db/rpc_server/c/db_server_util.c
+--- rpm-4.4.2.1/db/rpc_server/c/db_server_util.c.orig	2007-07-05 15:24:35.000000000 +0300
++++ rpm-4.4.2.1/db/rpc_server/c/db_server_util.c	2007-08-08 13:22:41.000000000 +0300
+@@ -824,7 +824,7 @@ env_recover(progname)
+ 			printf("Running recovery on %s\n", hp->home);
+ 		flags = DB_CREATE | DB_INIT_LOCK | DB_INIT_LOG | DB_INIT_MPOOL |
+ 		    DB_INIT_TXN | DB_USE_ENVIRON | DB_RECOVER;
+-		if ((ret = dbenv->open(dbenv, hp->home, flags, 0)) != 0) {
++		if ((ret = (dbenv->open)(dbenv, hp->home, flags, 0)) != 0) {
+ 			dbenv->err(dbenv, ret, "DB_ENV->open");
+ 			goto error;
+ 		}
+diff -up rpm-4.4.2.1/db/rpc_server/cxx/db_server_cxxproc.cpp.orig rpm-4.4.2.1/db/rpc_server/cxx/db_server_cxxproc.cpp
+--- rpm-4.4.2.1/db/rpc_server/cxx/db_server_cxxproc.cpp.orig	2007-07-05 15:24:35.000000000 +0300
++++ rpm-4.4.2.1/db/rpc_server/cxx/db_server_cxxproc.cpp	2007-08-08 13:22:41.000000000 +0300
+@@ -314,7 +314,7 @@ __env_open_proc(
+ 		replyp->envcl_id = new_ctp->ct_id;
+ 		ret = __dbenv_close_int(dbenvcl_id, 0, 0);
+ 	} else {
+-		ret = dbenv->open(fullhome->home, newflags, mode);
++		ret = (dbenv->open)(fullhome->home, newflags, mode);
+ 		dbenv_ctp->ct_envdp.home = fullhome;
+ 		dbenv_ctp->ct_envdp.envflags = shareflags;
+ 	}
+@@ -1195,7 +1195,7 @@ __db_open_proc(
+ 		ret = __db_close_int(dbpcl_id, 0);
+ 		goto out;
+ 	}
+-	ret = dbp->open(txnp, name, subdb, (DBTYPE)type, flags, mode);
++	ret = (dbp->open)(txnp, name, subdb, (DBTYPE)type, flags, mode);
+ 	if (ret == 0) {
+ 		(void)dbp->get_type(&dbtype);
+ 		replyp->type = dbtype;
+diff -up rpm-4.4.2.1/db/rpc_server/cxx/db_server_cxxutil.cpp.orig rpm-4.4.2.1/db/rpc_server/cxx/db_server_cxxutil.cpp
+--- rpm-4.4.2.1/db/rpc_server/cxx/db_server_cxxutil.cpp.orig	2007-07-05 15:24:35.000000000 +0300
++++ rpm-4.4.2.1/db/rpc_server/cxx/db_server_cxxutil.cpp	2007-08-08 13:22:41.000000000 +0300
+@@ -756,7 +756,7 @@ env_recover(char *progname)
+ 			printf("Running recovery on %s\n", hp->home);
+ 		flags = DB_CREATE | DB_INIT_LOCK | DB_INIT_LOG | DB_INIT_MPOOL |
+ 		    DB_INIT_TXN | DB_USE_ENVIRON | DB_RECOVER;
+-		if ((ret = dbenv->open(hp->home, flags, 0)) != 0) {
++		if ((ret = (dbenv->open)(hp->home, flags, 0)) != 0) {
+ 			dbenv->err(ret, "DbEnv->open");
+ 			goto error;
+ 		}
+diff -up rpm-4.4.2.1/db/db_upgrade/db_upgrade.c.orig rpm-4.4.2.1/db/db_upgrade/db_upgrade.c
+--- rpm-4.4.2.1/db/db_upgrade/db_upgrade.c.orig	2007-07-05 15:24:34.000000000 +0300
++++ rpm-4.4.2.1/db/db_upgrade/db_upgrade.c	2007-08-08 13:27:41.000000000 +0300
+@@ -120,10 +120,10 @@ main(argc, argv)
+ 	 * If attaching to a pre-existing environment fails, create a
+ 	 * private one and try again.
+ 	 */
+-	if ((ret = dbenv->open(dbenv,
++	if ((ret = (dbenv->open)(dbenv,
+ 	    home, DB_JOINENV | DB_USE_ENVIRON, 0)) != 0 &&
+ 	    (ret == DB_VERSION_MISMATCH ||
+-	    (ret = dbenv->open(dbenv, home,
++	    (ret = (dbenv->open)(dbenv, home,
+ 	    DB_CREATE | DB_INIT_MPOOL | DB_PRIVATE | DB_USE_ENVIRON,
+ 	    0)) != 0)) {
+ 		dbenv->err(dbenv, ret, "DB_ENV->open");
+diff -up rpm-4.4.2.1/db/db_stat/db_stat.c.orig rpm-4.4.2.1/db/db_stat/db_stat.c
+--- rpm-4.4.2.1/db/db_stat/db_stat.c.orig	2007-07-05 15:24:34.000000000 +0300
++++ rpm-4.4.2.1/db/db_stat/db_stat.c	2007-08-08 13:28:27.000000000 +0300
+@@ -278,7 +278,7 @@ retry:	if ((ret = db_env_create(&dbenv, 
+ 			goto err;
+ 		}
+ 
+-		if ((ret = dbp->open(dbp,
++		if ((ret = (dbp->open)(dbp,
+ 		    NULL, db, subdb, DB_UNKNOWN, DB_RDONLY, 0)) != 0) {
+ 			dbenv->err(dbenv, ret, "DB->open: %s", db);
+ 			goto err;
+@@ -316,7 +316,7 @@ retry:	if ((ret = db_env_create(&dbenv, 
+ 				dbenv->err(dbenv, ret, "db_create");
+ 				goto err;
+ 			}
+-			if ((ret = dbp->open(alt_dbp, NULL,
++			if ((ret = (dbp->open)(alt_dbp, NULL,
+ 			    db, subdb, DB_UNKNOWN, DB_RDONLY, 0)) != 0) {
+ 				if (subdb == NULL)
+ 					dbenv->err(dbenv,
+@@ -413,7 +413,7 @@ db_init(dbenv, home, ttype, cache, is_pr
+ 	 */
+ 	*is_private = 0;
+ 	if ((ret =
+-	    dbenv->open(dbenv, home, DB_JOINENV | DB_USE_ENVIRON, 0)) == 0)
++	    (dbenv->open)(dbenv, home, DB_JOINENV | DB_USE_ENVIRON, 0)) == 0)
+ 		return (0);
+ 	if (ret == DB_VERSION_MISMATCH)
+ 		goto err;
+@@ -445,7 +445,7 @@ db_init(dbenv, home, ttype, cache, is_pr
+ 		oflags |= DB_INIT_LOG;
+ 	if (ttype == T_REP)
+ 		oflags |= DB_INIT_REP;
+-	if ((ret = dbenv->open(dbenv, home, oflags, 0)) == 0)
++	if ((ret = (dbenv->open)(dbenv, home, oflags, 0)) == 0)
+ 		return (0);
+ 
+ 	/* An environment is required. */
+diff -up rpm-4.4.2.1/db/db_load/db_load.c.orig rpm-4.4.2.1/db/db_load/db_load.c
+--- rpm-4.4.2.1/db/db_load/db_load.c.orig	2007-07-05 15:24:34.000000000 +0300
++++ rpm-4.4.2.1/db/db_load/db_load.c	2007-08-08 13:22:44.000000000 +0300
+@@ -399,7 +399,7 @@ retry_db:
+ #endif
+ 
+ 	/* Open the DB file. */
+-	if ((ret = dbp->open(dbp, NULL, name, subdb, dbtype,
++	if ((ret = (dbp->open)(dbp, NULL, name, subdb, dbtype,
+ 	    DB_CREATE | (TXN_ON(dbenv) ? DB_AUTO_COMMIT : 0),
+ 	    __db_omode("rwrwrw"))) != 0) {
+ 		dbp->err(dbp, ret, "DB->open: %s", name);
+@@ -613,7 +613,7 @@ db_init(dbenv, home, cache, is_private)
+ 	/* We may be loading into a live environment.  Try and join. */
+ 	flags = DB_USE_ENVIRON |
+ 	    DB_INIT_LOCK | DB_INIT_LOG | DB_INIT_MPOOL | DB_INIT_TXN;
+-	if ((ret = dbenv->open(dbenv, home, flags, 0)) == 0)
++	if ((ret = (dbenv->open)(dbenv, home, flags, 0)) == 0)
+ 		return (0);
+ 	if (ret == DB_VERSION_MISMATCH)
+ 		goto err;
+@@ -637,7 +637,7 @@ db_init(dbenv, home, cache, is_private)
+ 		dbenv->err(dbenv, ret, "set_cachesize");
+ 		return (1);
+ 	}
+-	if ((ret = dbenv->open(dbenv, home, flags, 0)) == 0)
++	if ((ret = (dbenv->open)(dbenv, home, flags, 0)) == 0)
+ 		return (0);
+ 
+ 	/* An environment is required. */
+diff -up rpm-4.4.2.1/db/db_verify/db_verify.c.orig rpm-4.4.2.1/db/db_verify/db_verify.c
+--- rpm-4.4.2.1/db/db_verify/db_verify.c.orig	2007-07-05 15:24:34.000000000 +0300
++++ rpm-4.4.2.1/db/db_verify/db_verify.c	2007-08-08 13:22:44.000000000 +0300
+@@ -133,7 +133,7 @@ retry:	if ((ret = db_env_create(&dbenv, 
+ 	 */
+ 	private = 0;
+ 	if ((ret =
+-	    dbenv->open(dbenv, home, DB_INIT_MPOOL | DB_USE_ENVIRON, 0)) != 0) {
++	    (dbenv->open)(dbenv, home, DB_INIT_MPOOL | DB_USE_ENVIRON, 0)) != 0) {
+ 		if (ret != DB_VERSION_MISMATCH) {
+ 			if ((ret =
+ 			    dbenv->set_cachesize(dbenv, 0, cache, 1)) != 0) {
+@@ -141,7 +141,7 @@ retry:	if ((ret = db_env_create(&dbenv, 
+ 				goto shutdown;
+ 			}
+ 			private = 1;
+-			ret = dbenv->open(dbenv, home, DB_CREATE |
++			ret = (dbenv->open)(dbenv, home, DB_CREATE |
+ 			    DB_INIT_MPOOL | DB_PRIVATE | DB_USE_ENVIRON, 0);
+ 		}
+ 		if (ret != 0) {
+@@ -171,7 +171,7 @@ retry:	if ((ret = db_env_create(&dbenv, 
+ 				goto shutdown;
+ 			}
+ 
+-			ret = dbp1->open(dbp1,
++			ret = (dbp1->open)(dbp1,
+ 			    NULL, argv[0], NULL, DB_UNKNOWN, DB_RDONLY, 0);
+ 
+ 			/*
+diff -up rpm-4.4.2.1/db/db_deadlock/db_deadlock.c.orig rpm-4.4.2.1/db/db_deadlock/db_deadlock.c
+--- rpm-4.4.2.1/db/db_deadlock/db_deadlock.c.orig	2007-07-05 15:24:34.000000000 +0300
++++ rpm-4.4.2.1/db/db_deadlock/db_deadlock.c	2007-08-08 13:28:55.000000000 +0300
+@@ -165,7 +165,7 @@ main(argc, argv)
+ 
+ 	/* An environment is required. */
+ 	if ((ret =
+-	    dbenv->open(dbenv, home, DB_INIT_LOCK | DB_USE_ENVIRON, 0)) != 0) {
++	    (dbenv->open)(dbenv, home, DB_INIT_LOCK | DB_USE_ENVIRON, 0)) != 0) {
+ 		dbenv->err(dbenv, ret, "open");
+ 		goto shutdown;
+ 	}
+diff -up rpm-4.4.2.1/db/hsearch/hsearch.c.orig rpm-4.4.2.1/db/hsearch/hsearch.c
+--- rpm-4.4.2.1/db/hsearch/hsearch.c.orig	2007-07-05 15:24:35.000000000 +0300
++++ rpm-4.4.2.1/db/hsearch/hsearch.c	2007-08-08 13:29:23.000000000 +0300
+@@ -82,7 +82,7 @@ __db_hcreate(nel)
+ 	if ((ret = dbp->set_pagesize(dbp, 512)) != 0 ||
+ 	    (ret = dbp->set_h_ffactor(dbp, 16)) != 0 ||
+ 	    (ret = dbp->set_h_nelem(dbp, (u_int32_t)nel)) != 0 ||
+-	    (ret = dbp->open(dbp,
++	    (ret = (dbp->open)(dbp,
+ 	    NULL, NULL, NULL, DB_HASH, DB_CREATE, __db_omode("rw----"))) != 0)
+ 		__os_set_errno(ret);
+ 
+diff -up rpm-4.4.2.1/db/libdb_java/db_java_wrap.c.orig rpm-4.4.2.1/db/libdb_java/db_java_wrap.c
+--- rpm-4.4.2.1/db/libdb_java/db_java_wrap.c.orig	2007-07-05 15:24:35.000000000 +0300
++++ rpm-4.4.2.1/db/libdb_java/db_java_wrap.c	2007-08-08 13:29:58.000000000 +0300
+@@ -1894,7 +1894,7 @@ db_ret_t Db_key_range(struct Db *self,DB
+ 		return self->key_range(self, txnid, key, key_range, flags);
+ 	}
+ db_ret_t Db_open(struct Db *self,DB_TXN *txnid,char const *file,char const *database,DBTYPE type,u_int32_t flags,int mode){
+-		return self->open(self, txnid, file, database,
++		return (self->open)(self, txnid, file, database,
+ 		    type, flags, mode);
+ 	}
+ int Db_pget(struct Db *self,DB_TXN *txnid,DBT *key,DBT *pkey,DBT *data,u_int32_t flags){
+@@ -2103,7 +2103,7 @@ int_bool DbEnv_get_verbose(struct DbEnv 
+ 		return ret;
+ 	}
+ db_ret_t DbEnv_open(struct DbEnv *self,char const *db_home,u_int32_t flags,int mode){
+-		return self->open(self, db_home, flags, mode);
++		return (self->open)(self, db_home, flags, mode);
+ 	}
+ db_ret_t DbEnv_remove(struct DbEnv *self,char const *db_home,u_int32_t flags){
+ 		return self->remove(self, db_home, flags);
+@@ -2499,7 +2499,7 @@ db_ret_t DbSequence_initial_value(struct
+ 		return self->initial_value(self, val);
+ 	}
+ db_ret_t DbSequence_open(struct DbSequence *self,DB_TXN *txnid,DBT *key,u_int32_t flags){
+-		return self->open(self, txnid, key, flags);
++		return (self->open)(self, txnid, key, flags);
+ 	}
+ db_ret_t DbSequence_remove(struct DbSequence *self,DB_TXN *txnid,u_int32_t flags){
+ 		return self->remove(self, txnid, flags);
+diff -up rpm-4.4.2.1/db/dbm/dbm.c.orig rpm-4.4.2.1/db/dbm/dbm.c
+--- rpm-4.4.2.1/db/dbm/dbm.c.orig	2007-07-05 15:24:34.000000000 +0300
++++ rpm-4.4.2.1/db/dbm/dbm.c	2007-08-08 13:22:38.000000000 +0300
+@@ -235,7 +235,7 @@ __db_ndbm_open(file, oflags, mode)
+ 	if ((ret = dbp->set_pagesize(dbp, 4096)) != 0 ||
+ 	    (ret = dbp->set_h_ffactor(dbp, 40)) != 0 ||
+ 	    (ret = dbp->set_h_nelem(dbp, 1)) != 0 ||
+-	    (ret = dbp->open(dbp, NULL,
++	    (ret = (dbp->open)(dbp, NULL,
+ 	    path, NULL, DB_HASH, __db_oflags(oflags), mode)) != 0) {
+ 		__os_set_errno(ret);
+ 		return (NULL);
+diff -up rpm-4.4.2.1/db/db_dump/db_dump.c.orig rpm-4.4.2.1/db/db_dump/db_dump.c
+--- rpm-4.4.2.1/db/db_dump/db_dump.c.orig	2007-07-05 15:24:34.000000000 +0300
++++ rpm-4.4.2.1/db/db_dump/db_dump.c	2007-08-08 13:30:27.000000000 +0300
+@@ -204,7 +204,7 @@ retry:	if ((ret = db_env_create(&dbenv, 
+ 		goto done;
+ 	}
+ 
+-	if ((ret = dbp->open(dbp, NULL,
++	if ((ret = (dbp->open)(dbp, NULL,
+ 	    argv[0], subname, DB_UNKNOWN, DB_RDONLY, 0)) != 0) {
+ 		dbp->err(dbp, ret, "open: %s", argv[0]);
+ 		goto err;
+@@ -305,7 +305,7 @@ db_init(dbenv, home, is_salvage, cache, 
+ 	 * before we create our own.
+ 	 */
+ 	*is_privatep = 0;
+-	if ((ret = dbenv->open(dbenv, home, DB_USE_ENVIRON |
++	if ((ret = (dbenv->open)(dbenv, home, DB_USE_ENVIRON |
+ 	    (is_salvage ? DB_INIT_MPOOL : DB_JOINENV), 0)) == 0)
+ 		return (0);
+ 	if (ret == DB_VERSION_MISMATCH)
+@@ -323,7 +323,7 @@ db_init(dbenv, home, is_salvage, cache, 
+ 	 */
+ 	*is_privatep = 1;
+ 	if ((ret = dbenv->set_cachesize(dbenv, 0, cache, 1)) == 0 &&
+-	    (ret = dbenv->open(dbenv, home,
++	    (ret = (dbenv->open)(dbenv, home,
+ 	    DB_CREATE | DB_INIT_MPOOL | DB_PRIVATE | DB_USE_ENVIRON, 0)) == 0)
+ 		return (0);
+ 
+@@ -416,7 +416,7 @@ dump_sub(dbenv, parent_dbp, parent_name,
+ 			free(subdb);
+ 			return (1);
+ 		}
+-		if ((ret = dbp->open(dbp, NULL,
++		if ((ret = (dbp->open)(dbp, NULL,
+ 		    parent_name, subdb, DB_UNKNOWN, DB_RDONLY, 0)) != 0)
+ 			dbp->err(dbp, ret,
+ 			    "DB->open: %s:%s", parent_name, subdb);
+diff -up rpm-4.4.2.1/db/db_recover/db_recover.c.orig rpm-4.4.2.1/db/db_recover/db_recover.c
+--- rpm-4.4.2.1/db/db_recover/db_recover.c.orig	2007-07-05 15:24:34.000000000 +0300
++++ rpm-4.4.2.1/db/db_recover/db_recover.c	2007-08-08 13:30:54.000000000 +0300
+@@ -146,7 +146,7 @@ main(argc, argv)
+ 	    DB_INIT_MPOOL | DB_INIT_TXN | DB_USE_ENVIRON);
+ 	LF_SET(fatal_recover ? DB_RECOVER_FATAL : DB_RECOVER);
+ 	LF_SET(retain_env ? 0 : DB_PRIVATE);
+-	if ((ret = dbenv->open(dbenv, home, flags, 0)) != 0) {
++	if ((ret = (dbenv->open)(dbenv, home, flags, 0)) != 0) {
+ 		dbenv->err(dbenv, ret, "DB_ENV->open");
+ 		goto shutdown;
+ 	}
+diff -up rpm-4.4.2.1/db/db_printlog/db_printlog.c.orig rpm-4.4.2.1/db/db_printlog/db_printlog.c
+--- rpm-4.4.2.1/db/db_printlog/db_printlog.c.orig	2007-07-05 15:24:34.000000000 +0300
++++ rpm-4.4.2.1/db/db_printlog/db_printlog.c	2007-08-08 13:32:00.000000000 +0300
+@@ -168,19 +168,19 @@ main(argc, argv)
+ 	 * with logging, because we don't want to log the opens.
+ 	 */
+ 	if (repflag) {
+-		if ((ret = dbenv->open(dbenv, home,
++		if ((ret = (dbenv->open)(dbenv, home,
+ 		    DB_INIT_MPOOL | DB_USE_ENVIRON, 0)) != 0 &&
+ 		    (ret == DB_VERSION_MISMATCH ||
+-		    (ret = dbenv->open(dbenv, home,
++		    (ret = (dbenv->open)(dbenv, home,
+ 		    DB_CREATE | DB_INIT_MPOOL | DB_PRIVATE | DB_USE_ENVIRON, 0))
+ 		    != 0)) {
+ 			dbenv->err(dbenv, ret, "DB_ENV->open");
+ 			goto shutdown;
+ 		}
+-	} else if ((ret = dbenv->open(dbenv, home,
++	} else if ((ret = (dbenv->open)(dbenv, home,
+ 	    DB_JOINENV | DB_USE_ENVIRON, 0)) != 0 &&
+ 	    (ret == DB_VERSION_MISMATCH ||
+-	    (ret = dbenv->open(dbenv, home,
++	    (ret = (dbenv->open)(dbenv, home,
+ 	    DB_CREATE | DB_INIT_LOG | DB_PRIVATE | DB_USE_ENVIRON, 0)) != 0)) {
+ 		dbenv->err(dbenv, ret, "DB_ENV->open");
+ 		goto shutdown;
+@@ -378,7 +378,7 @@ open_rep_db(dbenv, dbpp, dbcp)
+ 
+ 	dbp = *dbpp;
+ 	if ((ret =
+-	    dbp->open(dbp, NULL, "__db.rep.db", NULL, DB_BTREE, 0, 0)) != 0) {
++	    (dbp->open)(dbp, NULL, "__db.rep.db", NULL, DB_BTREE, 0, 0)) != 0) {
+ 		dbenv->err(dbenv, ret, "DB->open");
+ 		goto err;
+ 	}
+diff -up rpm-4.4.2.1/db/db185/db185.c.orig rpm-4.4.2.1/db/db185/db185.c
+--- rpm-4.4.2.1/db/db185/db185.c.orig	2007-07-05 15:24:34.000000000 +0300
++++ rpm-4.4.2.1/db/db185/db185.c	2007-08-08 13:22:44.000000000 +0300
+@@ -230,7 +230,7 @@ __db185_open(file, oflags, mode, type, o
+ 	dbp->api_internal = db185p;
+ 
+ 	/* Open the database. */
+-	if ((ret = dbp->open(dbp, NULL,
++	if ((ret = (dbp->open)(dbp, NULL,
+ 	    file, NULL, type, __db_oflags(oflags), mode)) != 0)
+ 		goto err;
+ 
+diff -up rpm-4.4.2.1/db/db_archive/db_archive.c.orig rpm-4.4.2.1/db/db_archive/db_archive.c
+--- rpm-4.4.2.1/db/db_archive/db_archive.c.orig	2007-07-05 15:24:34.000000000 +0300
++++ rpm-4.4.2.1/db/db_archive/db_archive.c	2007-08-08 13:32:24.000000000 +0300
+@@ -117,10 +117,10 @@ main(argc, argv)
+ 	 * If attaching to a pre-existing environment fails, create a
+ 	 * private one and try again.
+ 	 */
+-	if ((ret = dbenv->open(dbenv,
++	if ((ret = (dbenv->open)(dbenv,
+ 	    home, DB_JOINENV | DB_USE_ENVIRON, 0)) != 0 &&
+ 	    (ret == DB_VERSION_MISMATCH ||
+-	    (ret = dbenv->open(dbenv, home, DB_CREATE |
++	    (ret = (dbenv->open)(dbenv, home, DB_CREATE |
+ 	    DB_INIT_LOG | DB_PRIVATE | DB_USE_ENVIRON, 0)) != 0)) {
+ 		dbenv->err(dbenv, ret, "DB_ENV->open");
+ 		goto shutdown;
+diff -up rpm-4.4.2.1/db/db_checkpoint/db_checkpoint.c.orig rpm-4.4.2.1/db/db_checkpoint/db_checkpoint.c
+--- rpm-4.4.2.1/db/db_checkpoint/db_checkpoint.c.orig	2007-07-05 15:24:34.000000000 +0300
++++ rpm-4.4.2.1/db/db_checkpoint/db_checkpoint.c	2007-08-08 13:33:03.000000000 +0300
+@@ -155,7 +155,7 @@ main(argc, argv)
+ 		goto shutdown;
+ 	}
+ 	/* Initialize the environment. */
+-	if ((ret = dbenv->open(dbenv,
++	if ((ret = (dbenv->open)(dbenv,
+ 	    home, DB_JOINENV | DB_USE_ENVIRON, 0)) != 0) {
+ 		dbenv->err(dbenv, ret, "open");
+ 		goto shutdown;
+diff -up rpm-4.4.2.1/db/tcl/tcl_mp.c.orig rpm-4.4.2.1/db/tcl/tcl_mp.c
+--- rpm-4.4.2.1/db/tcl/tcl_mp.c.orig	2007-07-05 15:24:35.000000000 +0300
++++ rpm-4.4.2.1/db/tcl/tcl_mp.c	2007-08-08 13:22:38.000000000 +0300
+@@ -276,7 +276,7 @@ tcl_Mp(interp, objc, objv, envp, envip)
+ 	 * XXX
+ 	 * Interface doesn't currently support DB_MPOOLFILE configuration.
+ 	 */
+-	if ((ret = mpf->open(mpf, file, flag, mode, (size_t)pgsize)) != 0) {
++	if ((ret = (mpf->open)(mpf, file, flag, mode, (size_t)pgsize)) != 0) {
+ 		result = _ReturnSetup(interp, ret, DB_RETOK_STD(ret), "mpool");
+ 		_DeleteInfo(ip);
+ 
+diff -up rpm-4.4.2.1/db/tcl/tcl_db_pkg.c.orig rpm-4.4.2.1/db/tcl/tcl_db_pkg.c
+--- rpm-4.4.2.1/db/tcl/tcl_db_pkg.c.orig	2007-07-05 15:24:35.000000000 +0300
++++ rpm-4.4.2.1/db/tcl/tcl_db_pkg.c	2007-08-08 13:22:38.000000000 +0300
+@@ -1327,7 +1327,7 @@ bdb_EnvOpen(interp, objc, objv, ip, env)
+ 	 * Now open the environment.
+ 	 */
+ 	_debug_check();
+-	ret = (*env)->open(*env, home, open_flags, mode);
++	ret = ((*env)->open)(*env, home, open_flags, mode);
+ 	result = _ReturnSetup(interp, ret, DB_RETOK_STD(ret), "env open");
+ 
+ 	if (rep_flags != 0 && result == TCL_OK) {
+@@ -2136,7 +2136,7 @@ bdb_DbOpen(interp, objc, objv, ip, dbp)
+ 	_debug_check();
+ 
+ 	/* Open the database. */
+-	ret = (*dbp)->open(*dbp, txn, db, subdb, type, open_flags, mode);
++	ret = ((*dbp)->open)(*dbp, txn, db, subdb, type, open_flags, mode);
+ 	result = _ReturnSetup(interp, ret, DB_RETOK_STD(ret), "db open");
+ 
+ error:
+@@ -2395,7 +2395,7 @@ bdb_SeqOpen(interp, objc, objv, ip, seqp
+ 		    ret, DB_RETOK_STD(ret), "sequence init")) != TCL_OK)
+ 			goto error;
+ 	}
+-	ret = (*seqp)->open(*seqp, txn, &key, oflags);
++	ret = ((*seqp)->open)(*seqp, txn, &key, oflags);
+ 	if ((result = _ReturnSetup(interp,
+ 	    ret, DB_RETOK_STD(ret), "sequence open")) != TCL_OK)
+ 		goto error;

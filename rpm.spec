@@ -14,7 +14,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
 %{expand: %%define rpm_version %{version}}
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -29,13 +29,19 @@ Patch8: rpm-4.4.2.1-checkterminate.patch
 Patch9: rpm-4.4.2.1-python-exithook.patch
 Patch10: rpm-4.4.2.1-checkterminate-noexit.patch
 Patch11: rpm-4.4.2.1-gnueabi.patch
-License: GPL
+Patch12: rpm-4.4.2.1-arm-typos.patch
+# XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
+# and several different components with their own licenses included...
+License: (GPLv2 and LGPLv2 with exceptions) and BSD and MIT and Sleepycat
 Requires(pre): shadow-utils
 Requires(postun): shadow-utils
 Requires(post): coreutils
 Requires: popt = 1.10.2.1
 Requires: crontabs
 Requires: logrotate
+
+# XXX temporary
+Source2: find-debuginfo.sh
 
 BuildRequires: autoconf
 BuildRequires: elfutils-devel >= 0.112
@@ -95,7 +101,8 @@ will manipulate RPM packages and databases.
 %package build
 Summary: Scripts and executable programs used to build packages
 Group: Development/Tools
-Requires: rpm = %{version}-%{release}, patch >= 2.5, file, elfutils
+Requires: rpm = %{version}-%{release}, patch >= 2.5, file
+Requires: elfutils >= 0.128
 Requires: findutils
 Provides: rpmbuild(VendorConfig) = 4.1-1
 
@@ -120,6 +127,7 @@ programs that will manipulate RPM packages and databases.
 Summary: A C library for parsing command line parameters
 Group: Development/Libraries
 Version: 1.10.2.1
+License: MIT
 
 %description -n popt
 Popt is a C library for parsing command line parameters. Popt was
@@ -144,6 +152,8 @@ shell-like rules.
 %patch9 -p1 -b .py-exithook
 %patch10 -p1 -b .checkterminate-noexit
 %patch11 -p1 -b .gnueabi
+%patch12 -p1 -b .armtypo
+cp -f %{SOURCE2} scripts/find-debuginfo.sh
 
 %build
 
@@ -446,6 +456,13 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Aug  8 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-2
+- ARM-related typo fixes from Lennert Buytenhek
+- License clarifications
+
+* Mon Aug  6 2007 Roland McGrath <roland@redhat.com>
+- new find-debuginfo.sh script, requires elfutils >= 0.128
+
 * Mon Jul 23 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-1
 - 4.4.2.1 final
 - reintroduce disttag

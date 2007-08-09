@@ -14,7 +14,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
 %{expand: %%define rpm_version %{version}}
-Release: 4%{?dist}
+Release: 5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -32,6 +32,8 @@ Patch11: rpm-4.4.2.1-gnueabi.patch
 Patch12: rpm-4.4.2.1-arm-typos.patch
 Patch13: rpm-4.4.2.1-bdb-glibc.patch
 Patch14: rpm-4.4.2.1-rpm-glibc.patch
+Patch15: rpm-4.4.2.1-config-mtime.patch
+Patch16: rpm-4.4.2.1-strict-docdir.patch
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
 License: (GPLv2 and LGPLv2 with exceptions) and BSD and MIT and Sleepycat
@@ -157,6 +159,8 @@ shell-like rules.
 %patch12 -p1 -b .armtypo
 %patch13 -p1 -b .bdb-glibc
 %patch14 -p1 -b .rpm-glibc
+%patch15 -p1 -b .config-mtime
+%patch16 -p1 -b .strict-docdir
 cp -f %{SOURCE2} scripts/find-debuginfo.sh
 
 %build
@@ -235,6 +239,7 @@ done
 # copy db and file/libmagic license info to distinct names
 cp -p db/LICENSE LICENSE-bdb
 cp -p file/LEGAL.NOTICE LEGAL.NOTICE-file
+cp -p lua/COPYRIGHT COPYRIGHT-lua
 
 # Get rid of unpackaged files
 { cd $RPM_BUILD_ROOT
@@ -290,7 +295,7 @@ exit 0
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 %doc CHANGES GROUPS COPYING LICENSE-bdb LEGAL.NOTICE-file CREDITS ChangeLog
-%doc doc/manual/[a-z]*
+%doc COPYRIGHT-lua doc/manual/[a-z]*
 %attr(0755, rpm, rpm)   /bin/rpm
 
 /etc/cron.daily/rpm
@@ -460,6 +465,11 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Thu Aug  9 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-5
+- avoid unnecessary .rpmsave / .rpmnew files by Tomas Mraz (#29470, #128622)
+- stricter docdir checking by Ralf S. Engelschall (#246819)
+- add lua license to docs
+
 * Thu Aug  9 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-4
 - fix new find-debuginfo.sh on noarch packages by Roland McGrath
 

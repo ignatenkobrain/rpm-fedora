@@ -14,7 +14,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
 %{expand: %%define rpm_version %{version}}
-Release: 3%{?dist}
+Release: 4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -460,6 +460,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Thu Aug  9 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-4
+- fix new find-debuginfo.sh on noarch packages by Roland McGrath
+
 * Wed Aug  8 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-3
 - make peace with new glibc checks on open() wrt internal bdb and rpm itself
 

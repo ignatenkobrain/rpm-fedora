@@ -178,7 +178,7 @@ find $RPM_BUILD_ROOT ! -path "${debugdir}/*.debug" -type f \
      		     \( -perm -0100 -or -perm -0010 -or -perm -0001 \) \
 		     -print |
 file -N -f - | sed -n -e 's/^\(.*\):[ 	]*.*ELF.*, not stripped/\1/p' |
-xargs stat -c '%h %D_%i %n' |
+xargs --no-run-if-empty stat -c '%h %D_%i %n' |
 while read nlinks inum f; do
   get_debugfn "$f"
   [ -f "${debugfn}" ] && continue
@@ -244,23 +244,29 @@ do
   fi
 done
 
-mkdir -p ${RPM_BUILD_ROOT}/usr/src/debug
-LC_ALL=C sort -z -u $SOURCEFILE | egrep -v -z '(<internal>|<built-in>)$' |
-(cd $RPM_BUILD_DIR; cpio -pd0mL ${RPM_BUILD_ROOT}/usr/src/debug)
-# stupid cpio creates new directories in mode 0700, fixup
-find ${RPM_BUILD_ROOT}/usr/src/debug -type d -print0 | xargs -0 chmod a+rx
+if [ -s "$SOURCEFILE" ]; then
+  mkdir -p ${RPM_BUILD_ROOT}/usr/src/debug
+  LC_ALL=C sort -z -u $SOURCEFILE | egrep -v -z '(<internal>|<built-in>)$' |
+  (cd $RPM_BUILD_DIR; cpio -pd0mL ${RPM_BUILD_ROOT}/usr/src/debug)
+  # stupid cpio creates new directories in mode 0700, fixup
+  find ${RPM_BUILD_ROOT}/usr/src/debug -type d -print0 |
+  xargs --no-run-if-empty -0 chmod a+rx
+fi
 
-gendirs=src
-((nout > 0)) || gendirs='lib src'
-for d in $gendirs; do
-  (cd ${RPM_BUILD_ROOT}/usr/$d; find debug -type d) |
-  sed "s,^,%dir /usr/$d/," >> $LISTFILE
-done
+if [ -d ${RPM_BUILD_ROOT}/usr/lib -o -d ${RPM_BUILD_ROOT}/usr/src ]; then
+  gendirs=src
+  ((nout > 0)) || gendirs='lib src'
+  for d in $gendirs; do
+    test ! -d ${RPM_BUILD_ROOT}/usr/$d ||
+    (cd ${RPM_BUILD_ROOT}/usr/$d; find debug -type d) |
+    sed "s,^,%dir /usr/$d/," >> $LISTFILE
+  done
 
-(cd ${RPM_BUILD_ROOT}/usr
- find lib/debug ! -type d
- find src/debug -mindepth 1 -maxdepth 1
-) | sed 's,^,/usr/,' >> $LISTFILE
+  (cd ${RPM_BUILD_ROOT}/usr
+   test ! -d lib/debug || find lib/debug ! -type d
+   test ! -d src/debug || find src/debug -mindepth 1 -maxdepth 1
+  ) | sed 's,^,/usr/,' >> $LISTFILE
+fi
 
 # Append to $1 only the lines from stdin not already in the file.
 append_uniq()

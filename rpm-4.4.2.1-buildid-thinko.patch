@@ -1,0 +1,24 @@
+changeset:   6113:1e7e1ab92d32
+tag:         tip
+user:        Panu Matilainen <pmatilai@redhat.com>
+date:        Sun Aug 12 15:27:46 2007 +0300
+files:       tools/debugedit.c
+description:
+Fix debugedit buildid thinko.
+Patch from Roland McGrath
+(transplanted from fb1ee4c438c929f0b2af376fd23e05e52947b977)
+
+
+diff -r 7fde0de974ee -r 1e7e1ab92d32 tools/debugedit.c
+--- a/tools/debugedit.c	Thu Aug 09 15:15:24 2007 +0300
++++ b/tools/debugedit.c	Sun Aug 12 15:27:46 2007 +0300
+@@ -1329,7 +1329,7 @@ handle_build_id (DSO *dso, Elf_Data *bui
+     }
+ 
+   /* Clear the old bits so they do not affect the new hash.  */
+-  memset ((char *) build_id->d_buf + build_id_offset, 0, build_id_offset);
++  memset ((char *) build_id->d_buf + build_id_offset, 0, build_id_size);
+ 
+   hashFunctionContextInit (&ctx, hf);
+ 
+

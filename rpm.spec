@@ -14,7 +14,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
 %{expand: %%define rpm_version %{version}}
-Release: 5%{?dist}
+Release: 6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -34,6 +34,7 @@ Patch13: rpm-4.4.2.1-bdb-glibc.patch
 Patch14: rpm-4.4.2.1-rpm-glibc.patch
 Patch15: rpm-4.4.2.1-config-mtime.patch
 Patch16: rpm-4.4.2.1-strict-docdir.patch
+Patch17: rpm-4.4.2.1-buildid-thinko.patch
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
 License: (GPLv2 and LGPLv2 with exceptions) and BSD and MIT and Sleepycat
@@ -161,6 +162,7 @@ shell-like rules.
 %patch14 -p1 -b .rpm-glibc
 %patch15 -p1 -b .config-mtime
 %patch16 -p1 -b .strict-docdir
+%patch17 -p1 -b .buildid-thinko
 cp -f %{SOURCE2} scripts/find-debuginfo.sh
 
 %build
@@ -465,6 +467,9 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Sun Aug 12 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-6
+- debugedit buildid thinko fix from Roland McGrath
+
 * Thu Aug  9 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-5
 - avoid unnecessary .rpmsave / .rpmnew files by Tomas Mraz (#29470, #128622)
 - stricter docdir checking by Ralf S. Engelschall (#246819)

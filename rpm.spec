@@ -41,7 +41,7 @@ License: (GPLv2 and LGPLv2 with exceptions) and BSD and MIT and Sleepycat
 Requires(pre): shadow-utils
 Requires(postun): shadow-utils
 Requires(post): coreutils
-Requires: popt = 1.10.2.1
+Requires: popt >= 1.10.2.1
 Requires: crontabs
 Requires: logrotate
 
@@ -469,6 +469,7 @@ exit 0
 %changelog
 * Sun Aug 12 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-6
 - debugedit buildid thinko fix from Roland McGrath
+- loosen up popt-dependency to prepare for splitting it off
 
 * Thu Aug  9 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-5
 - avoid unnecessary .rpmsave / .rpmnew files by Tomas Mraz (#29470, #128622)

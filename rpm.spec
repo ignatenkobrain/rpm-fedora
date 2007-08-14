@@ -14,7 +14,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
 %{expand: %%define rpm_version %{version}}
-Release: 6%{?dist}
+Release: 7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -35,6 +35,8 @@ Patch14: rpm-4.4.2.1-rpm-glibc.patch
 Patch15: rpm-4.4.2.1-config-mtime.patch
 Patch16: rpm-4.4.2.1-strict-docdir.patch
 Patch17: rpm-4.4.2.1-buildid-thinko.patch
+Patch18: rpm-4.4.2.1-estale.patch
+Patch19: rpm-4.4.2.1-debuginfo-names.patch
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
 License: (GPLv2 and LGPLv2 with exceptions) and BSD and MIT and Sleepycat
@@ -133,6 +135,7 @@ Summary: A C library for parsing command line parameters
 Group: Development/Libraries
 Version: 1.10.2.1
 License: MIT
+Provides: popt-devel = %{name}-%{version}
 
 %description -n popt
 Popt is a C library for parsing command line parameters. Popt was
@@ -163,6 +166,9 @@ shell-like rules.
 %patch15 -p1 -b .config-mtime
 %patch16 -p1 -b .strict-docdir
 %patch17 -p1 -b .buildid-thinko
+%patch18 -p1 -b .estale
+%patch19 -p1 -b .debugedit-names
+
 cp -f %{SOURCE2} scripts/find-debuginfo.sh
 
 %build
@@ -467,6 +473,11 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Mon Aug 13 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-7
+- another debugedit fix from Roland McGrath
+- make popt provide popt-devel to further ease split-off transition
+- skip ESTALE and EACCESS on mountpoints from Jeff Johnson (#190496, #220991)
+
 * Sun Aug 12 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-6
 - debugedit buildid thinko fix from Roland McGrath
 - loosen up popt-dependency to prepare for splitting it off

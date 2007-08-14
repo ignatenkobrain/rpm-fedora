@@ -1,0 +1,34 @@
+changeset:   6253:a5f774e61a47
+user:        Panu Matilainen <pmatilai@redhat.com>
+date:        Thu Aug 09 21:50:56 2007 +0300
+files:       lib/fs.c
+description:
+Skip stale and unaccessible (FUSE) mountpoints (rhbz#190496, 220991)
+Ported from rpm5.org work of Jeff Johnson.
+
+
+diff -r 0cda3105a3c4 -r a5f774e61a47 lib/fs.c
+--- a/lib/fs.c	Thu Aug 09 19:26:05 2007 +0300
++++ b/lib/fs.c	Thu Aug 09 21:50:56 2007 +0300
+@@ -109,11 +109,17 @@ static int getFilesystemList(void)
+ 	filesystems[i].mntPoint = fsnames[i] = fsn;
+ 	
+ 	if (stat(filesystems[i].mntPoint, &sb)) {
+-	    rpmError(RPMERR_STAT, _("failed to stat %s: %s\n"), fsnames[i],
++	    switch (errno) {
++	    case EACCES: /* fuse mount */
++	    case ESTALE: 
++		continue;
++	    default:
++	    	rpmError(RPMERR_STAT, _("failed to stat %s: %s\n"), fsnames[i],
+ 			strerror(errno));
+ 
+-	    freeFilesystems();
+-	    return 1;
++	    	freeFilesystems();
++	    	return 1;
++	    }
+ 	}
+ 	
+ 	filesystems[i].dev = sb.st_dev;
+

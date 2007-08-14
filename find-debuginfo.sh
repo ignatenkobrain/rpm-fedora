@@ -93,7 +93,7 @@ strip_to_debug()
   $strip_g && case "$(file -bi "$2")" in
   application/x-sharedlib,*) g=-g ;;
   esac
-  eu-strip --remove-comment -f "$1" "$2" || exit
+  eu-strip --remove-comment $g -f "$1" "$2" || exit
 }
 
 # Make a relative symlink to $1 called $3$2
@@ -254,13 +254,10 @@ if [ -s "$SOURCEFILE" ]; then
 fi
 
 if [ -d ${RPM_BUILD_ROOT}/usr/lib -o -d ${RPM_BUILD_ROOT}/usr/src ]; then
-  gendirs=src
-  ((nout > 0)) || gendirs='lib src'
-  for d in $gendirs; do
-    test ! -d ${RPM_BUILD_ROOT}/usr/$d ||
-    (cd ${RPM_BUILD_ROOT}/usr/$d; find debug -type d) |
-    sed "s,^,%dir /usr/$d/," >> $LISTFILE
-  done
+  ((nout > 0)) ||
+  test ! -d ${RPM_BUILD_ROOT}/usr/lib ||
+  (cd ${RPM_BUILD_ROOT}/usr/lib; find debug -type d) |
+  sed 's,^,%dir /usr/lib/,' >> $LISTFILE
 
   (cd ${RPM_BUILD_ROOT}/usr
    test ! -d lib/debug || find lib/debug ! -type d
@@ -324,7 +321,7 @@ while ((i < nout)); do
 done
 if ((nout > 0)); then
   # Now add the right %dir lines to each output list.
-  (cd ${RPM_BUILD_ROOT}; find usr/{lib,src}/debug -type d) |
+  (cd ${RPM_BUILD_ROOT}; find usr/lib/debug -type d) |
   sed 's#^.*$#\\@^/&/@{h;s@^.*$@%dir /&@p;g;}#' |
   LC_ALL=C sort -ur > ${LISTFILE}.dirs.sed
   i=0

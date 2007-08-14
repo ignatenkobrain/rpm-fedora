@@ -474,7 +474,7 @@ exit 0
 
 %changelog
 * Mon Aug 13 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-7
-- another debugedit fix from Roland McGrath
+- another debugedit fix and updated find-debuginfo script from Roland McGrath
 - make popt provide popt-devel to further ease split-off transition
 - skip ESTALE and EACCESS on mountpoints from Jeff Johnson (#190496, #220991)
 

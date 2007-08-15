@@ -14,7 +14,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
 %{expand: %%define rpm_version %{version}}
-Release: 7%{?dist}
+Release: 8%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -37,6 +37,8 @@ Patch16: rpm-4.4.2.1-strict-docdir.patch
 Patch17: rpm-4.4.2.1-buildid-thinko.patch
 Patch18: rpm-4.4.2.1-estale.patch
 Patch19: rpm-4.4.2.1-debuginfo-names.patch
+Patch20: rpm-4.4.2.1-perl-reqprov.patch
+Patch21: rpm-4.4.2.1-findlang-omf.patch
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
 License: (GPLv2 and LGPLv2 with exceptions) and BSD and MIT and Sleepycat
@@ -59,6 +61,8 @@ BuildRequires: readline-devel zlib-devel
 BuildRequires: beecrypt-devel >= 4.1.2
 Requires: beecrypt >= 4.1.2
 
+# XXX not yet...
+# BuildRequires: popt-devel
 BuildConflicts: neon-devel
 BuildRequires: sqlite-devel
 BuildRequires: gettext-devel
@@ -168,6 +172,8 @@ shell-like rules.
 %patch17 -p1 -b .buildid-thinko
 %patch18 -p1 -b .estale
 %patch19 -p1 -b .debugedit-names
+%patch20 -p1 -b .perl-reqprov
+%patch21 -p1 -b .findlang-omf
 
 cp -f %{SOURCE2} scripts/find-debuginfo.sh
 
@@ -473,6 +479,11 @@ exit 0
 %{__includedir}/popt.h
 
 %changelog
+* Wed Aug 15 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-8
+- improved perl dependency extraction (#198033, #249135) by Ville Skyttä
+  and John Owens
+- make find-lang --with-gnome pick up .omf files (#251400) by Matthias Clasen
+
 * Mon Aug 13 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-7
 - another debugedit fix and updated find-debuginfo script from Roland McGrath
 - make popt provide popt-devel to further ease split-off transition

@@ -14,7 +14,7 @@ Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
 %{expand: %%define rpm_version %{version}}
-Release: 8%{?dist}
+Release: 9%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: rpm-%{rpm_version}.tar.gz
@@ -39,9 +39,13 @@ Patch18: rpm-4.4.2.1-estale.patch
 Patch19: rpm-4.4.2.1-debuginfo-names.patch
 Patch20: rpm-4.4.2.1-perl-reqprov.patch
 Patch21: rpm-4.4.2.1-findlang-omf.patch
+Patch22: rpm-4.4.2.1-no-popt.patch
+
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
-License: (GPLv2 and LGPLv2 with exceptions) and BSD and MIT and Sleepycat
+# SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD and MIT and Sleepycat
+License: GPLv2+
+
 Requires(pre): shadow-utils
 Requires(postun): shadow-utils
 Requires(post): coreutils
@@ -52,18 +56,15 @@ Requires: logrotate
 # XXX temporary
 Source2: find-debuginfo.sh
 
-BuildRequires: autoconf
+# XXX for autoreconf due to popt removal
+BuildRequires: autoconf automake libtool
 BuildRequires: elfutils-devel >= 0.112
 BuildRequires: elfutils-libelf-devel-static
-
 BuildRequires: readline-devel zlib-devel
-
 BuildRequires: beecrypt-devel >= 4.1.2
-Requires: beecrypt >= 4.1.2
-
-# XXX not yet...
-# BuildRequires: popt-devel
-BuildConflicts: neon-devel
+# The popt versions here just document an older known-good version, not
+# necessarily accurate
+BuildRequires: popt-devel >= 1.10.2, popt-static >= 1.10.2
 BuildRequires: sqlite-devel
 BuildRequires: gettext-devel
 BuildRequires: libselinux-devel
@@ -71,6 +72,8 @@ BuildRequires: ncurses-devel
 BuildRequires: bzip2-devel >= 0.9.0c-2
 BuildRequires: python-devel >= %{with_python_version}
 BuildRequires: doxygen
+
+BuildConflicts: neon-devel
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -84,7 +87,9 @@ the package like its version, a description, etc.
 %package libs
 Summary:  Libraries for manipulating RPM packages
 Group: Development/Libraries
+License: GPLv2+ and LGPLv2+ with exceptions
 Requires: rpm = %{version}-%{release}
+Requires: beecrypt >= 4.1.2
 
 %description libs
 This package contains the RPM shared libraries.
@@ -92,6 +97,7 @@ This package contains the RPM shared libraries.
 %package devel
 Summary:  Development files for manipulating RPM packages
 Group: Development/Libraries
+License: GPLv2+ and LGPLv2+ with exceptions
 Requires: rpm = %{version}-%{release}
 Requires: beecrypt >= 4.1.2
 Requires: sqlite-devel
@@ -134,23 +140,6 @@ supplied by RPM Package Manager libraries.
 This package should be installed if you want to develop Python
 programs that will manipulate RPM packages and databases.
 
-%package -n popt
-Summary: A C library for parsing command line parameters
-Group: Development/Libraries
-Version: 1.10.2.1
-License: MIT
-Provides: popt-devel = %{name}-%{version}
-
-%description -n popt
-Popt is a C library for parsing command line parameters. Popt was
-heavily influenced by the getopt() and getopt_long() functions, but it
-improves on them by allowing more powerful argument expansion. Popt
-can parse arbitrary argv[] style arrays and automatically set
-variables based on command line arguments. Popt allows command line
-arguments to be aliased via configuration files and includes utility
-functions for parsing arbitrary strings into argv[] arrays using
-shell-like rules.
-
 %prep
 %setup -q -n %{name}-%{rpm_version}
 %patch1 -p1 -b .prereq
@@ -174,8 +163,22 @@ shell-like rules.
 %patch19 -p1 -b .debugedit-names
 %patch20 -p1 -b .perl-reqprov
 %patch21 -p1 -b .findlang-omf
+%patch22 -p1 -b .no-popt
 
+# force external popt
+rm -rf popt/
+
+# XXX for popt removal and gnueabi patches
+autoreconf
+
+# new buildid-aware debuginfo 
 cp -f %{SOURCE2} scripts/find-debuginfo.sh
+
+# convert non-utf8 manuals to utf-8
+for i in doc/{sk,pl}/*.[1-8]; do
+    iconv -f iso-8859-2 -t utf-8 < ${i} > ${i}.tmp
+    mv -f ${i}.tmp ${i}
+done
 
 %build
 
@@ -248,7 +251,6 @@ do
 done
 
 %find_lang %{name}
-%find_lang popt
 
 # copy db and file/libmagic license info to distinct names
 cp -p db/LICENSE LICENSE-bdb
@@ -300,9 +302,6 @@ exit 0
 
 %post libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig
-
-%post -n popt -p /sbin/ldconfig
-%postun -n popt -p /sbin/ldconfig
 
 %define rpmattr         %attr(0755, rpm, rpm)
 
@@ -468,17 +467,14 @@ exit 0
 %rpmattr        %{__prefix}/lib/rpm/rpmcache
 %rpmattr        %{__bindir}/rpmgraph
 
-%files -n popt -f popt.lang
-%defattr(-,root,root)
-%{__libdir}/libpopt.so.*
-%{__mandir}/man3/popt.3*
-
-# XXX These may end up in popt-devel but it hardly seems worth the effort.
-%{__libdir}/libpopt.a
-%{__libdir}/libpopt.so
-%{__includedir}/popt.h
-
 %changelog
+* Fri Aug 24 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-9
+- remove internal popt, buildrequire popt-devel and popt-static (#249352)
+- move the versioned beecrypt dependency to libs where it belongs
+- license clarification according to latest guidelines: libs and devel
+  are dual gpl/lgpl licensed with exceptions, other binaries are gpl
+- convert pl and sk manuals to utf-8
+
 * Wed Aug 15 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-8
 - improved perl dependency extraction (#198033, #249135) by Ville Skyttä
   and John Owens

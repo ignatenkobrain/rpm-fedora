@@ -58,6 +58,7 @@ Source2: find-debuginfo.sh
 
 # XXX for autoreconf due to popt removal
 BuildRequires: autoconf automake libtool
+BuildRequires: gawk
 BuildRequires: elfutils-devel >= 0.112
 BuildRequires: elfutils-libelf-devel-static
 BuildRequires: readline-devel zlib-devel
@@ -474,6 +475,7 @@ exit 0
 - license clarification according to latest guidelines: libs and devel
   are dual gpl/lgpl licensed with exceptions, other binaries are gpl
 - convert pl and sk manuals to utf-8
+- buildrequire gawk
 
 * Wed Aug 15 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-8
 - improved perl dependency extraction (#198033, #249135) by Ville Skyttä

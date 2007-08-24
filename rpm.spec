@@ -363,8 +363,8 @@ exit 0
 %ifarch s390 s390x
 %attr(-, rpm, rpm)              %{__prefix}/lib/rpm/s390*
 %endif
-%ifarch armv3l armv4l
-%attr(-, rpm, rpm)              %{__prefix}/lib/rpm/armv[34][lb]*
+%ifarch %{arm}
+%attr(-, rpm, rpm)              %{__prefix}/lib/rpm/arm*
 %endif
 %ifarch mips mipsel
 %attr(-, rpm, rpm)              %{__prefix}/lib/rpm/mips*
@@ -469,6 +469,9 @@ exit 0
 %rpmattr        %{__bindir}/rpmgraph
 
 %changelog
+* Fri Aug 24 2007 Panu Matilainen <pmatilai@redhat.com> 
+- include sys-specific macros for all ARM variants (Lennert Buytenhek)
+
 * Fri Aug 24 2007 Panu Matilainen <pmatilai@redhat.com> - 4.4.2.1-9
 - remove internal popt, buildrequire popt-devel and popt-static (#249352)
 - move the versioned beecrypt dependency to libs where it belongs

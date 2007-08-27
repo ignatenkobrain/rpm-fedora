@@ -1,23 +1,15 @@
 %define with_python_version     2.5%{nil}
 %define with_apidocs            1%{nil}
 
-%define __prefix        %{?_prefix}%{!?_prefix:/usr}
-%{?!_lib: %define _lib lib}
-%{expand: %%define __share %(if [ -d %{__prefix}/share/man ]; then echo /share ; else echo %%{nil} ; fi)}
-
-%define __bindir        %{__prefix}/bin
-%define __includedir    %{__prefix}/include
-%define __libdir        %{__prefix}/%{_lib}
-%define __mandir        %{__prefix}%{__share}/man
+%define rpmhome /usr/lib/rpm
 
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.1
-%{expand: %%define rpm_version %{version}}
-Release: 9%{?dist}
+Release: 10%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source: rpm-%{rpm_version}.tar.gz
+Source: %{name}-%{version}.tar.gz
 Patch1: rpm-4.4.1-prereq.patch
 Patch2: rpm-4.4.2-ghost-conflicts.patch
 Patch3: rpm-4.4.2-trust.patch
@@ -47,7 +39,6 @@ Patch22: rpm-4.4.2.1-no-popt.patch
 License: GPLv2+
 
 Requires(pre): shadow-utils
-Requires(postun): shadow-utils
 Requires(post): coreutils
 Requires: popt >= 1.10.2.1
 Requires: crontabs
@@ -58,6 +49,9 @@ Source2: find-debuginfo.sh
 
 # XXX for autoreconf due to popt removal
 BuildRequires: autoconf automake libtool
+# XXX generally assumed to be installed but make it explicit as rpm
+# is a bit special...
+BuildRequires: redhat-rpm-config
 BuildRequires: gawk
 BuildRequires: elfutils-devel >= 0.112
 BuildRequires: elfutils-libelf-devel-static
@@ -72,7 +66,6 @@ BuildRequires: libselinux-devel
 BuildRequires: ncurses-devel
 BuildRequires: bzip2-devel >= 0.9.0c-2
 BuildRequires: python-devel >= %{with_python_version}
-BuildRequires: doxygen
 
 BuildConflicts: neon-devel
 
@@ -100,7 +93,7 @@ Summary:  Development files for manipulating RPM packages
 Group: Development/Libraries
 License: GPLv2+ and LGPLv2+ with exceptions
 Requires: rpm = %{version}-%{release}
-Requires: beecrypt >= 4.1.2
+Requires: beecrypt-devel >= 4.1.2
 Requires: sqlite-devel
 Requires: libselinux-devel
 Requires: elfutils-libelf-devel
@@ -122,7 +115,6 @@ Group: Development/Tools
 Requires: rpm = %{version}-%{release}, patch >= 2.5, file
 Requires: elfutils >= 0.128
 Requires: findutils
-Provides: rpmbuild(VendorConfig) = 4.1-1
 
 %description build
 The rpm-build package contains the scripts and executable programs
@@ -141,8 +133,19 @@ supplied by RPM Package Manager libraries.
 This package should be installed if you want to develop Python
 programs that will manipulate RPM packages and databases.
 
+%if %{with_apidocs}
+%package apidocs
+Summary: API documentation for RPM libraries
+Group: Documentation
+BuildRequires: doxygen
+
+%description apidocs
+This package contains API documentation for developing applications
+that will manipulate RPM packages and databases.
+%endif
+
 %prep
-%setup -q -n %{name}-%{rpm_version}
+%setup -q 
 %patch1 -p1 -b .prereq
 %patch2 -p1 -b .ghostconflicts
 %patch3 -p1 -b .trust
@@ -181,12 +184,10 @@ for i in doc/{sk,pl}/*.[1-8]; do
     mv -f ${i}.tmp ${i}
 done
 
+# ensure sane source permissions
+find -name "*.[ch]"|xargs chmod 644
+
 %build
-
-# XXX rpm needs functioning nptl for configure tests
-unset LD_ASSUME_KERNEL || :
-
-WITH_PYTHON="--with-python=%{with_python_version}"
 
 # XXX pull in updated config.guess and config.sub as done by %configure
 # which cannot be used to build rpm itself due to makefile brokenness
@@ -194,50 +195,39 @@ for i in $(find . -name config.guess -o -name config.sub) ; do
     [ -f /usr/lib/rpm/redhat/$(basename $i) ] && %{__rm} -f $i && %{__cp} -fv /usr/lib/rpm/redhat/$(basename $i) $i 
 done 
 
+# XXX rpm 4.4.2.1 can't be built with %configure due to makefile brokenness
 CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
-./configure --prefix=%{__prefix} --sysconfdir=/etc \
-        --localstatedir=/var --infodir='${prefix}%{__share}/info' \
-        --mandir='${prefix}%{__share}/man' \
-        $WITH_PYTHON --enable-posixmutexes --without-javaglue
+./configure --prefix=%{_usr} \
+            --sysconfdir=%{_sysconfdir} \
+            --localstatedir=%{_var} \
+            --infodir=%{_infodir} \
+            --mandir=%{_mandir} \
+            --with-python=%{with_python_version} \
+            --enable-posixmutexes
 
 make %{?_smp_mflags}
 
 %install
-# XXX rpm needs functioning nptl for configure tests
-unset LD_ASSUME_KERNEL || :
-
 rm -rf $RPM_BUILD_ROOT
 
 make DESTDIR="$RPM_BUILD_ROOT" install
 
-# Working around breakage from the -L$(RPM_BUILD_ROOT)... -L$(DESTDIR)...
-# workaround to #132435,
-# and from linking to included zlib
-for i in librpm.la librpmbuild.la librpmdb.la librpmio.la ; do
-        sed -i -e 's~-L'"$RPM_BUILD_ROOT"'[^ ]* ~~g' \
-                -e 's~-L'"$RPM_BUILD_DIR"'[^ ]* ~~g' \
-                "$RPM_BUILD_ROOT%{__libdir}/$i"
-done
-
 # Clean up dangling symlinks
-# XXX Fix in rpm tree
-for i in /usr/bin/rpme /usr/bin/rpmi /usr/bin/rpmu; do
-    rm -f "$RPM_BUILD_ROOT"/"$i" 
+for i in rpme rpmi rpmu; do
+    rm -f $RPM_BUILD_ROOT%{_bindir}/$i
 done
-
-# Clean up dangling symlinks
-for i in /usr/lib/rpmpopt /usr/lib/rpmrc; do
-    rm -f "$RPM_BUILD_ROOT"/"$i" 
+for i in rpmpopt rpmrc; do
+    rm -f $RPM_BUILD_ROOT/usr/lib/$i
 done
 
 # Save list of packages through cron
-mkdir -p ${RPM_BUILD_ROOT}/etc/cron.daily
-install -m 755 scripts/rpm.daily ${RPM_BUILD_ROOT}/etc/cron.daily/rpm
+mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.daily
+install -m 755 scripts/rpm.daily ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.daily/rpm
 
-mkdir -p ${RPM_BUILD_ROOT}/etc/logrotate.d
-install -m 644 scripts/rpm.log ${RPM_BUILD_ROOT}/etc/logrotate.d/rpm
+mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/logrotate.d
+install -m 644 scripts/rpm.log ${RPM_BUILD_ROOT}%{_sysconfdir}/logrotate.d/rpm
 
-mkdir -p $RPM_BUILD_ROOT/etc/rpm
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm
 
 mkdir -p $RPM_BUILD_ROOT/var/spool/repackage
 mkdir -p $RPM_BUILD_ROOT/var/lib/rpm
@@ -261,214 +251,208 @@ cp -p lua/COPYRIGHT COPYRIGHT-lua
 # Get rid of unpackaged files
 { cd $RPM_BUILD_ROOT
   rm -f .%{_libdir}/lib*.la
-  rm -f .%{__prefix}/lib/rpm/{Specfile.pm,cpanflute,cpanflute2,rpmdiff,rpmdiff.cgi,sql.prov,sql.req,tcl.req,rpm.*}
-  rm -rf .%{__mandir}/{fr,ko}
-  rm -f .%{__libdir}/python%{with_python_version}/site-packages/*.{a,la}
-  rm -f .%{__libdir}/python%{with_python_version}/site-packages/rpm/*.{a,la}
-  rm -f .%{__libdir}/python%{with_python_version}/site-packages/rpmdb/*.{a,la}
+  rm -f .%{rpmhome}/{Specfile.pm,cpanflute,cpanflute2,rpmdiff,rpmdiff.cgi,sql.prov,sql.req,tcl.req,rpm.*}
+  rm -rf .%{_mandir}/{fr,ko}
+  rm -f .%{_libdir}/python%{with_python_version}/site-packages/*.{a,la}
+  rm -f .%{_libdir}/python%{with_python_version}/site-packages/rpm/*.{a,la}
+  rm -f .%{_libdir}/python%{with_python_version}/site-packages/rpmdb/*.{a,la}
 }
+
+find $RPM_BUILD_ROOT/%{_libdir}/python%{with_python_version} -name "*.py"|xargs chmod 644
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-/usr/sbin/groupadd -g 37 rpm                            > /dev/null 2>&1
-/usr/sbin/useradd  -r -d /var/lib/rpm -u 37 -g 37 rpm -s /sbin/nologin  > /dev/null 2>&1
+getent group rpm > /dev/null || groupadd -g 37 rpm
+getent passwd rpm > /dev/null || \
+/usr/sbin/useradd  -r -d /var/lib/rpm -u 37 -g 37 -s /sbin/nologin \
+-c "RPM user" rpm > /dev/null 2>&1
 exit 0
 
 %post
-# Establish correct rpmdb ownership.
-/bin/chown rpm.rpm /var/lib/rpm/[A-Z]*
-
-# XXX Detect (and remove) incompatible dbenv files during db-4.3.14 upgrade.
+# XXX Detect (and remove) incompatible dbenv files during upgrade.
 # XXX Removing dbenv files in %%post opens a lock race window, a tolerable
 # XXX risk compared to the support issues involved with upgrading Berkeley DB.
 [ -w /var/lib/rpm/__db.001 ] &&
 /usr/lib/rpm/rpmdb_stat -CA -h /var/lib/rpm 2>&1 |
-grep "db_stat: Program version 4.3 doesn't match environment version" 2>&1 > /dev/null &&
+grep "db_stat: Program version ... doesn't match environment version" 2>&1 > /dev/null &&
         rm -f /var/lib/rpm/__db*
                                                                                 
 exit 0
 
-%postun
-if [ $1 = 0 ]; then
-    /usr/sbin/userdel rpm > /dev/null 2>&1
-    /usr/sbin/groupdel rpm > /dev/null 2>&1
-
-fi
-exit 0
-
-%post devel -p /sbin/ldconfig
-%postun devel -p /sbin/ldconfig
-
 %post libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig
 
-%define rpmattr         %attr(0755, rpm, rpm)
+%define rpmattr   %attr(0755, rpm, rpm)
+%define rpmdbattr %attr(0644, rpm, rpm) %verify(not md5 size mtime) %ghost %config(missingok,noreplace)
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 %doc CHANGES GROUPS COPYING LICENSE-bdb LEGAL.NOTICE-file CREDITS ChangeLog
 %doc COPYRIGHT-lua doc/manual/[a-z]*
-%attr(0755, rpm, rpm)   /bin/rpm
 
-/etc/cron.daily/rpm
-%config(noreplace,missingok)    /etc/logrotate.d/rpm
-%dir                            /etc/rpm
-#%config(noreplace,missingok)   /etc/rpm/macros.*
+%{_sysconfdir}/cron.daily/rpm
+%config(noreplace,missingok)    %{_sysconfdir}/logrotate.d/rpm
+%dir                            %{_sysconfdir}/rpm
+# XXX teach rpm to skip .rpmnew etc first...
+#%ghost %config(noreplace,missingok)   %{_sysconfdir}/rpm/platform
+#%ghost %config(noreplace,missingok)   %{_sysconfdir}/rpm/macros.tscolor
+
 %attr(0755, rpm, rpm)   %dir /var/lib/rpm
-%attr(0755, rpm, rpm)   %dir /var/spool/repackage
+%rpmdbattr /var/lib/rpm/*
+%attr(0755, rpm, rpm) %dir /var/spool/repackage
+%attr(0755, rpm, rpm) %dir %{rpmhome}
 
-%define rpmdbattr %attr(0644, rpm, rpm) %verify(not md5 size mtime) %ghost %config(missingok,noreplace)
-%rpmdbattr      /var/lib/rpm/*
+%{rpmattr} /bin/rpm
+%{rpmattr} %{_bindir}/rpm2cpio
+%{rpmattr} %{_bindir}/gendiff
+%{rpmattr} %{_bindir}/rpmdb
+%{rpmattr} %{_bindir}/rpmsign
+%{rpmattr} %{_bindir}/rpmquery
+%{rpmattr} %{_bindir}/rpmverify
 
-%rpmattr        %{__bindir}/rpm2cpio
-%rpmattr        %{__bindir}/gendiff
-%rpmattr        %{__bindir}/rpmdb
-#%rpmattr       %{__bindir}/rpm[eiu]
-%rpmattr        %{__bindir}/rpmsign
-%rpmattr        %{__bindir}/rpmquery
-%rpmattr        %{__bindir}/rpmverify
+%{rpmattr} %{rpmhome}/config.guess
+%{rpmattr} %{rpmhome}/config.sub
+%{rpmattr} %{rpmhome}/convertrpmrc.sh
+%{rpmattr} %{rpmhome}/freshen.sh
+%{rpmattr} %{rpmhome}/mkinstalldirs
+%{rpmattr} %{rpmhome}/rpm2cpio.sh
+%{rpmattr} %{rpmhome}/rpm[deiukqv]
+%{rpmattr} %{rpmhome}/tgpg
+%{rpmattr} %{rpmhome}/rpmdb_*
+%{rpmattr} %{rpmhome}/rpmfile
 
-%attr(0755, rpm, rpm)   %dir %{__prefix}/lib/rpm
-%rpmattr        %{__prefix}/lib/rpm/config.guess
-%rpmattr        %{__prefix}/lib/rpm/config.sub
-%rpmattr        %{__prefix}/lib/rpm/convertrpmrc.sh
-%rpmattr        %{__prefix}/lib/rpm/freshen.sh
-%attr(0644, rpm, rpm)   %{__prefix}/lib/rpm/macros
-%rpmattr        %{__prefix}/lib/rpm/mkinstalldirs
-%rpmattr        %{__prefix}/lib/rpm/rpm2cpio.sh
-%rpmattr        %{__prefix}/lib/rpm/rpm[deiukqv]
-%rpmattr        %{__prefix}/lib/rpm/tgpg
-%attr(0644, rpm, rpm)   %{__prefix}/lib/rpm/rpmpopt*
-%attr(0644, rpm, rpm)   %{__prefix}/lib/rpm/rpmrc
+%attr(0644, rpm, rpm) %{rpmhome}/macros
+%attr(0644, rpm, rpm) %{rpmhome}/rpmpopt*
+%attr(0644, rpm, rpm) %{rpmhome}/rpmrc
 
 %ifarch i386 i486 i586 i686 athlon pentium3 pentium4
-%attr(-, rpm, rpm)              %{__prefix}/lib/rpm/i[3456]86*
-%attr(-, rpm, rpm)              %{__prefix}/lib/rpm/athlon*
-%attr(-, rpm, rpm)              %{__prefix}/lib/rpm/pentium*
+%attr(-, rpm, rpm) %{rpmhome}/i[3456]86*
+%attr(-, rpm, rpm) %{rpmhome}/athlon*
+%attr(-, rpm, rpm) %{rpmhome}/pentium*
 %endif
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
-%attr(-, rpm, rpm)              %{__prefix}/lib/rpm/alpha*
+%attr(-, rpm, rpm) %{rpmhome}/alpha*
 %endif
 %ifarch sparc sparcv8 sparcv9 sparc64
-%attr(-, rpm, rpm)              %{__prefix}/lib/rpm/sparc*
+%attr(-, rpm, rpm) %{rpmhome}/sparc*
 %endif
 %ifarch ia64
-%attr(-, rpm, rpm)              %{__prefix}/lib/rpm/ia64*
+%attr(-, rpm, rpm) %{rpmhome}/ia64*
 %endif
 %ifarch powerpc ppc ppciseries ppcpseries ppcmac ppc64
-%attr(-, rpm, rpm)              %{__prefix}/lib/rpm/ppc*
+%attr(-, rpm, rpm) %{rpmhome}/ppc*
 %endif
 %ifarch s390 s390x
-%attr(-, rpm, rpm)              %{__prefix}/lib/rpm/s390*
+%attr(-, rpm, rpm) %{rpmhome}/s390*
 %endif
 %ifarch %{arm}
-%attr(-, rpm, rpm)              %{__prefix}/lib/rpm/arm*
+%attr(-, rpm, rpm) %{rpmhome}/arm*
 %endif
 %ifarch mips mipsel
-%attr(-, rpm, rpm)              %{__prefix}/lib/rpm/mips*
+%attr(-, rpm, rpm) %{rpmhome}/mips*
 %endif
 %ifarch x86_64
-%attr(-, rpm, rpm)              %{__prefix}/lib/rpm/x86_64*
+%attr(-, rpm, rpm) %{rpmhome}/x86_64*
 %endif
-%attr(-, rpm, rpm)              %{__prefix}/lib/rpm/noarch*
+%attr(-, rpm, rpm) %{rpmhome}/noarch*
 
-%rpmattr        %{__prefix}/lib/rpm/rpmdb_*
-%rpmattr        %{__prefix}/lib/rpm/rpmfile
+%{_mandir}/man1/gendiff.1*
+%{_mandir}/man8/rpm.8*
+%{_mandir}/man8/rpm2cpio.8*
 
-%{__mandir}/man1/gendiff.1*
-%{__mandir}/man8/rpm.8*
-%{__mandir}/man8/rpm2cpio.8*
-%lang(ja)       %{__mandir}/ja/man[18]/*.[18]*
-%lang(pl)       %{__mandir}/pl/man[18]/*.[18]*
-%lang(ru)       %{__mandir}/ru/man[18]/*.[18]*
-%lang(sk)       %{__mandir}/sk/man[18]/*.[18]*
+# XXX this places translated manuals to wrong package wrt eg rpmbuild
+%lang(ja) %{_mandir}/ja/man[18]/*.[18]*
+%lang(pl) %{_mandir}/pl/man[18]/*.[18]*
+%lang(ru) %{_mandir}/ru/man[18]/*.[18]*
+%lang(sk) %{_mandir}/sk/man[18]/*.[18]*
 
 %files libs
 %defattr(-,root,root)
-%{__libdir}/librpm-4.4.so
-%{__libdir}/librpmdb-4.4.so
-%{__libdir}/librpmio-4.4.so
-%{__libdir}/librpmbuild-4.4.so
+%{_libdir}/librpm-4.4.so
+%{_libdir}/librpmdb-4.4.so
+%{_libdir}/librpmio-4.4.so
+%{_libdir}/librpmbuild-4.4.so
 
 %files build
 %defattr(-,root,root)
-%dir %{__prefix}/src/redhat
-%dir %{__prefix}/src/redhat/BUILD
-%dir %{__prefix}/src/redhat/SPECS
-%dir %{__prefix}/src/redhat/SOURCES
-%dir %{__prefix}/src/redhat/SRPMS
-%dir %{__prefix}/src/redhat/RPMS
-%{__prefix}/src/redhat/RPMS/*
-%rpmattr        %{__bindir}/rpmbuild
-%rpmattr        %{__prefix}/lib/rpm/brp-*
-%rpmattr        %{__prefix}/lib/rpm/check-buildroot
-%rpmattr        %{__prefix}/lib/rpm/check-files
-%rpmattr        %{__prefix}/lib/rpm/check-prereqs
-%rpmattr        %{__prefix}/lib/rpm/check-rpaths*
-%attr(0644, rpm, rpm) %{__prefix}/lib/rpm/config.site
-%rpmattr        %{__prefix}/lib/rpm/cross-build
-%rpmattr        %{__prefix}/lib/rpm/debugedit
-%rpmattr        %{__prefix}/lib/rpm/find-debuginfo.sh
-%rpmattr        %{__prefix}/lib/rpm/find-lang.sh
-%rpmattr        %{__prefix}/lib/rpm/find-prov.pl
-%rpmattr        %{__prefix}/lib/rpm/find-provides
-%rpmattr        %{__prefix}/lib/rpm/find-provides.perl
-%rpmattr        %{__prefix}/lib/rpm/find-req.pl
-%rpmattr        %{__prefix}/lib/rpm/find-requires
-%rpmattr        %{__prefix}/lib/rpm/find-requires.perl
-%rpmattr        %{__prefix}/lib/rpm/get_magic.pl
-%rpmattr        %{__prefix}/lib/rpm/getpo.sh
-%rpmattr        %{__prefix}/lib/rpm/http.req
-%rpmattr        %{__prefix}/lib/rpm/javadeps
-%attr(0644, rpm, rpm) %{__prefix}/lib/rpm/magic
-%attr(0644, rpm, rpm) %{__prefix}/lib/rpm/magic.mgc
-%attr(0644, rpm, rpm) %{__prefix}/lib/rpm/magic.mime
-%attr(0644, rpm, rpm) %{__prefix}/lib/rpm/magic.mime.mgc
-%rpmattr        %{__prefix}/lib/rpm/magic.prov
-%rpmattr        %{__prefix}/lib/rpm/magic.req
-%rpmattr        %{__prefix}/lib/rpm/mono-find-provides
-%rpmattr        %{__prefix}/lib/rpm/mono-find-requires
-%rpmattr        %{__prefix}/lib/rpm/perldeps.pl
-%rpmattr        %{__prefix}/lib/rpm/perl.prov
-%rpmattr        %{__prefix}/lib/rpm/perl.req
-%rpmattr        %{__prefix}/lib/rpm/pythondeps.sh
+%{_usrsrc}/redhat
+%{rpmattr} %{_bindir}/rpmbuild
+%{rpmattr} %{rpmhome}/brp-*
+%{rpmattr} %{rpmhome}/check-buildroot
+%{rpmattr} %{rpmhome}/check-files
+%{rpmattr} %{rpmhome}/check-prereqs
+%{rpmattr} %{rpmhome}/check-rpaths*
+%{rpmattr} %{rpmhome}/cross-build
+%{rpmattr} %{rpmhome}/debugedit
+%{rpmattr} %{rpmhome}/find-debuginfo.sh
+%{rpmattr} %{rpmhome}/find-lang.sh
+%{rpmattr} %{rpmhome}/find-prov.pl
+%{rpmattr} %{rpmhome}/find-provides
+%{rpmattr} %{rpmhome}/find-provides.perl
+%{rpmattr} %{rpmhome}/find-req.pl
+%{rpmattr} %{rpmhome}/find-requires
+%{rpmattr} %{rpmhome}/find-requires.perl
+%{rpmattr} %{rpmhome}/get_magic.pl
+%{rpmattr} %{rpmhome}/getpo.sh
+%{rpmattr} %{rpmhome}/http.req
+%{rpmattr} %{rpmhome}/javadeps
+%{rpmattr} %{rpmhome}/magic.prov
+%{rpmattr} %{rpmhome}/magic.req
+%{rpmattr} %{rpmhome}/mono-find-provides
+%{rpmattr} %{rpmhome}/mono-find-requires
+%{rpmattr} %{rpmhome}/perldeps.pl
+%{rpmattr} %{rpmhome}/perl.prov
+%{rpmattr} %{rpmhome}/perl.req
+%{rpmattr} %{rpmhome}/pythondeps.sh
+%{rpmattr} %{rpmhome}/rpm[bt]
+%{rpmattr} %{rpmhome}/rpmdeps
+%{rpmattr} %{rpmhome}/trpm
+%{rpmattr} %{rpmhome}/u_pkg.sh
+%{rpmattr} %{rpmhome}/vpkg-provides.sh
+%{rpmattr} %{rpmhome}/vpkg-provides2.sh
 
-%rpmattr        %{__prefix}/lib/rpm/rpm[bt]
-%rpmattr        %{__prefix}/lib/rpm/rpmdeps
-%rpmattr        %{__prefix}/lib/rpm/trpm
-%rpmattr        %{__prefix}/lib/rpm/u_pkg.sh
-%rpmattr        %{__prefix}/lib/rpm/vpkg-provides.sh
-%rpmattr        %{__prefix}/lib/rpm/vpkg-provides2.sh
+%attr(0644, rpm, rpm) %{rpmhome}/config.site
+%attr(0644, rpm, rpm) %{rpmhome}/magic
+%attr(0644, rpm, rpm) %{rpmhome}/magic.mgc
+%attr(0644, rpm, rpm) %{rpmhome}/magic.mime
+%attr(0644, rpm, rpm) %{rpmhome}/magic.mime.mgc
 
-%{__mandir}/man8/rpmbuild.8*
-%{__mandir}/man8/rpmdeps.8*
+%{_mandir}/man8/rpmbuild.8*
+%{_mandir}/man8/rpmdeps.8*
 
 %files python
 %defattr(-,root,root)
-%{__libdir}/python%{with_python_version}/site-packages/rpm
+%{_libdir}/python%{with_python_version}/site-packages/rpm
 
 %files devel
 %defattr(-,root,root)
+%{_includedir}/rpm
+%{_libdir}/librpm*.so
+%{_libdir}/librpm*.a
+%{_mandir}/man8/rpmcache.8*
+%{_mandir}/man8/rpmgraph.8*
+%{rpmattr} %{rpmhome}/rpmcache
+%{rpmattr} %{_bindir}/rpmgraph
+
 %if %{with_apidocs}
+%files apidocs
+%defattr(-,root,root)
 %doc apidocs
 %endif
-%{__includedir}/rpm
-%{__libdir}/librpm.a
-%{__libdir}/librpm.so
-%{__libdir}/librpmdb.a
-%{__libdir}/librpmdb.so
-%{__libdir}/librpmio.a
-%{__libdir}/librpmio.so
-%{__libdir}/librpmbuild.a
-%{__libdir}/librpmbuild.so
-%{__mandir}/man8/rpmcache.8*
-%{__mandir}/man8/rpmgraph.8*
-%rpmattr        %{__prefix}/lib/rpm/rpmcache
-%rpmattr        %{__bindir}/rpmgraph
 
 %changelog
+* Fri Aug 24 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-10
+- split apidocs to separate package (they're huge)
+- use system macros for bindir etc instead of defining our own
+- remove NPTL-related LD_ASSUME_KERNEL stuff, no longer functional anyway
+- remove various hacks that are no longer needed
+- ensure correct permissions of debug sources
+- follow fedora guidelines for user/group manipulation 
+- clean up any non-matching bdb environment on post, not just 4.3
+- visual cleanup of spec
+
 * Fri Aug 24 2007 Panu Matilainen <pmatilai@redhat.com> 
 - include sys-specific macros for all ARM variants (Lennert Buytenhek)
 

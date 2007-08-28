@@ -5,33 +5,18 @@
 
 Summary: The RPM package management system
 Name: rpm
-Version: 4.4.2.1
-Release: 10%{?dist}
+Version: 4.4.2.2
+Release: 0.1.rc1
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source: %{name}-%{version}.tar.gz
+Source: %{name}-%{version}-rc1.tar.gz
 Patch1: rpm-4.4.1-prereq.patch
 Patch2: rpm-4.4.2-ghost-conflicts.patch
 Patch3: rpm-4.4.2-trust.patch
 Patch4: rpm-4.4.2-devel-autodep.patch
 Patch5: rpm-4.4.2-rpmfc-skip.patch
 Patch6: rpm-4.4.2-matchpathcon.patch
-Patch7: rpm-4.4.2.1-checksignals.patch
-Patch8: rpm-4.4.2.1-checkterminate.patch
-Patch9: rpm-4.4.2.1-python-exithook.patch
-Patch10: rpm-4.4.2.1-checkterminate-noexit.patch
-Patch11: rpm-4.4.2.1-gnueabi.patch
-Patch12: rpm-4.4.2.1-arm-typos.patch
-Patch13: rpm-4.4.2.1-bdb-glibc.patch
-Patch14: rpm-4.4.2.1-rpm-glibc.patch
-Patch15: rpm-4.4.2.1-config-mtime.patch
-Patch16: rpm-4.4.2.1-strict-docdir.patch
-Patch17: rpm-4.4.2.1-buildid-thinko.patch
-Patch18: rpm-4.4.2.1-estale.patch
-Patch19: rpm-4.4.2.1-debuginfo-names.patch
-Patch20: rpm-4.4.2.1-perl-reqprov.patch
-Patch21: rpm-4.4.2.1-findlang-omf.patch
-Patch22: rpm-4.4.2.1-no-popt.patch
+Patch7: rpm-4.4.2.1-no-popt.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -145,29 +130,14 @@ that will manipulate RPM packages and databases.
 %endif
 
 %prep
-%setup -q 
+%setup -q -n %{name}-%{version}-rc1
 %patch1 -p1 -b .prereq
 %patch2 -p1 -b .ghostconflicts
 %patch3 -p1 -b .trust
 %patch4 -p1 -b .develdeps
 %patch5 -p1 -b .fcskip
 %patch6 -p1 -b .matchpathcon
-%patch7 -p1 -b .checksignals
-%patch8 -p1 -b .checkterminate
-%patch9 -p1 -b .py-exithook
-%patch10 -p1 -b .checkterminate-noexit
-%patch11 -p1 -b .gnueabi
-%patch12 -p1 -b .armtypo
-%patch13 -p1 -b .bdb-glibc
-%patch14 -p1 -b .rpm-glibc
-%patch15 -p1 -b .config-mtime
-%patch16 -p1 -b .strict-docdir
-%patch17 -p1 -b .buildid-thinko
-%patch18 -p1 -b .estale
-%patch19 -p1 -b .debugedit-names
-%patch20 -p1 -b .perl-reqprov
-%patch21 -p1 -b .findlang-omf
-%patch22 -p1 -b .no-popt
+%patch7 -p1 -b .no-popt
 
 # force external popt
 rm -rf popt/
@@ -177,15 +147,6 @@ autoreconf
 
 # new buildid-aware debuginfo 
 cp -f %{SOURCE2} scripts/find-debuginfo.sh
-
-# convert non-utf8 manuals to utf-8
-for i in doc/{sk,pl}/*.[1-8]; do
-    iconv -f iso-8859-2 -t utf-8 < ${i} > ${i}.tmp
-    mv -f ${i}.tmp ${i}
-done
-
-# ensure sane source permissions
-find -name "*.[ch]"|xargs chmod 644
 
 %build
 
@@ -212,12 +173,9 @@ rm -rf $RPM_BUILD_ROOT
 
 make DESTDIR="$RPM_BUILD_ROOT" install
 
-# Clean up dangling symlinks
+# Clean up useless symlinks
 for i in rpme rpmi rpmu; do
     rm -f $RPM_BUILD_ROOT%{_bindir}/$i
-done
-for i in rpmpopt rpmrc; do
-    rm -f $RPM_BUILD_ROOT/usr/lib/$i
 done
 
 # Save list of packages through cron
@@ -355,6 +313,8 @@ exit 0
 %endif
 %ifarch x86_64
 %attr(-, rpm, rpm) %{rpmhome}/x86_64*
+%attr(-, rpm, rpm) %{rpmhome}/amd64*
+%attr(-, rpm, rpm) %{rpmhome}/ia32e*
 %endif
 %attr(-, rpm, rpm) %{rpmhome}/noarch*
 
@@ -443,6 +403,11 @@ exit 0
 %endif
 
 %changelog
+* Tue Aug 28 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-0.1.rc1
+- update to 4.4.2.2-rc1
+- remove no longer needed hacks
+- drop patches merged upstream
+
 * Fri Aug 24 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.1-10
 - split apidocs to separate package (they're huge)
 - use system macros for bindir etc instead of defining our own

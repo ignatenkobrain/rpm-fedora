@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 0.2.rc1
+Release: 0.3.rc1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: %{name}-%{version}-rc1.tar.gz
@@ -100,7 +100,7 @@ Summary: Scripts and executable programs used to build packages
 Group: Development/Tools
 Requires: rpm = %{version}-%{release}
 Requires: elfutils >= 0.128 binutils
-Requires: findutils sed grep awk diffutils file patch >= 2.5
+Requires: findutils sed grep gawk diffutils file patch >= 2.5
 Requires: zip gzip bzip2 cpio
 
 %description build
@@ -406,6 +406,9 @@ exit 0
 %endif
 
 %changelog
+* Tue Sep 04 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-0.3.rc1
+- require gawk, not awk, doh
+
 * Tue Sep 04 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-0.2.rc1
 - add back accidentally dropped debugedit patch until upstreamed
 - add a bunch of previously implicit dependencies for rpm-build

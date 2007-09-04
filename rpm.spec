@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 0.1.rc1
+Release: 0.2.rc1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: %{name}-%{version}-rc1.tar.gz
@@ -17,6 +17,7 @@ Patch4: rpm-4.4.2-devel-autodep.patch
 Patch5: rpm-4.4.2-rpmfc-skip.patch
 Patch6: rpm-4.4.2-matchpathcon.patch
 Patch7: rpm-4.4.2.1-no-popt.patch
+Patch8: rpm-4.4.2.1-debuginfo-names.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -97,9 +98,10 @@ will manipulate RPM packages and databases.
 %package build
 Summary: Scripts and executable programs used to build packages
 Group: Development/Tools
-Requires: rpm = %{version}-%{release}, patch >= 2.5, file
-Requires: elfutils >= 0.128
-Requires: findutils
+Requires: rpm = %{version}-%{release}
+Requires: elfutils >= 0.128 binutils
+Requires: findutils sed grep awk diffutils file patch >= 2.5
+Requires: zip gzip bzip2 cpio
 
 %description build
 The rpm-build package contains the scripts and executable programs
@@ -138,6 +140,7 @@ that will manipulate RPM packages and databases.
 %patch5 -p1 -b .fcskip
 %patch6 -p1 -b .matchpathcon
 %patch7 -p1 -b .no-popt
+%patch8 -p1 -b .debugedit-names
 
 # force external popt
 rm -rf popt/
@@ -403,6 +406,10 @@ exit 0
 %endif
 
 %changelog
+* Tue Sep 04 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-0.2.rc1
+- add back accidentally dropped debugedit patch until upstreamed
+- add a bunch of previously implicit dependencies for rpm-build
+
 * Tue Aug 28 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-0.1.rc1
 - update to 4.4.2.2-rc1
 - remove no longer needed hacks

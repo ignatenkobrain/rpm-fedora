@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 0.3.rc1
+Release: 0.4.rc1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: %{name}-%{version}-rc1.tar.gz
@@ -333,10 +333,7 @@ exit 0
 
 %files libs
 %defattr(-,root,root)
-%{_libdir}/librpm-4.4.so
-%{_libdir}/librpmdb-4.4.so
-%{_libdir}/librpmio-4.4.so
-%{_libdir}/librpmbuild-4.4.so
+%{_libdir}/librpm*-*.so
 
 %files build
 %defattr(-,root,root)
@@ -392,7 +389,7 @@ exit 0
 %files devel
 %defattr(-,root,root)
 %{_includedir}/rpm
-%{_libdir}/librpm*.so
+%{_libdir}/librp*[a-z].so
 %{_libdir}/librpm*.a
 %{_mandir}/man8/rpmcache.8*
 %{_mandir}/man8/rpmgraph.8*
@@ -406,6 +403,9 @@ exit 0
 %endif
 
 %changelog
+* Wed Sep 05 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-0.4.rc1
+- remove duplicated libraries from rpm-devel (#278151)
+
 * Tue Sep 04 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-0.3.rc1
 - require gawk, not awk, doh
 

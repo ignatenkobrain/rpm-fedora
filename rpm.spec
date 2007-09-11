@@ -6,10 +6,10 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 0.4.rc1
+Release: 0.5.rc2
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source: %{name}-%{version}-rc1.tar.gz
+Source: %{name}-%{version}-rc2.tar.gz
 Patch1: rpm-4.4.1-prereq.patch
 Patch2: rpm-4.4.2-ghost-conflicts.patch
 Patch3: rpm-4.4.2-trust.patch
@@ -17,7 +17,6 @@ Patch4: rpm-4.4.2-devel-autodep.patch
 Patch5: rpm-4.4.2-rpmfc-skip.patch
 Patch6: rpm-4.4.2-matchpathcon.patch
 Patch7: rpm-4.4.2.1-no-popt.patch
-Patch8: rpm-4.4.2.1-debuginfo-names.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -132,7 +131,7 @@ that will manipulate RPM packages and databases.
 %endif
 
 %prep
-%setup -q -n %{name}-%{version}-rc1
+%setup -q -n %{name}-%{version}-rc2
 %patch1 -p1 -b .prereq
 %patch2 -p1 -b .ghostconflicts
 %patch3 -p1 -b .trust
@@ -140,7 +139,6 @@ that will manipulate RPM packages and databases.
 %patch5 -p1 -b .fcskip
 %patch6 -p1 -b .matchpathcon
 %patch7 -p1 -b .no-popt
-%patch8 -p1 -b .debugedit-names
 
 # force external popt
 rm -rf popt/
@@ -403,6 +401,11 @@ exit 0
 %endif
 
 %changelog
+* Tue Sep 11 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-0.5.rc2
+- 4.4.2.2-rc2
+- resolves #180996, #281611, #259961, #277161, #155079
+- drop debugedit-names patch now that it's really upstream
+
 * Wed Sep 05 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-0.4.rc1
 - remove duplicated libraries from rpm-devel (#278151)
 

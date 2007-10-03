@@ -151,7 +151,7 @@ cp -f %{SOURCE2} scripts/find-debuginfo.sh
 
 %build
 
-# XXX pull in updated config.guess and config.sub as done by %configure
+# XXX pull in updated config.guess and config.sub as done by %%configure
 # which cannot be used to build rpm itself due to makefile brokenness
 for i in $(find . -name config.guess -o -name config.sub) ; do 
     [ -f /usr/lib/rpm/redhat/$(basename $i) ] && %{__rm} -f $i && %{__cp} -fv /usr/lib/rpm/redhat/$(basename $i) $i 

@@ -6,16 +6,16 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 0.5.rc2
+Release: 1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source: %{name}-%{version}-rc2.tar.gz
+Source: %{name}-%{version}.tar.gz
 Patch1: rpm-4.4.1-prereq.patch
 Patch2: rpm-4.4.2-ghost-conflicts.patch
 Patch3: rpm-4.4.2-trust.patch
 Patch4: rpm-4.4.2-devel-autodep.patch
 Patch5: rpm-4.4.2-rpmfc-skip.patch
-Patch6: rpm-4.4.2-matchpathcon.patch
+Patch6: rpm-4.4.2.2-matchpathcon.patch
 Patch7: rpm-4.4.2.1-no-popt.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
@@ -131,7 +131,7 @@ that will manipulate RPM packages and databases.
 %endif
 
 %prep
-%setup -q -n %{name}-%{version}-rc2
+%setup -q -n %{name}-%{version}
 %patch1 -p1 -b .prereq
 %patch2 -p1 -b .ghostconflicts
 %patch3 -p1 -b .trust
@@ -401,6 +401,11 @@ exit 0
 %endif
 
 %changelog
+* Wed Oct 03 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-1
+- update to 4.4.2.2 final
+- update matchpathcon patch to work better when selinux disabled
+- resolves #251400, #315271, #296731, #308171, #305221, #295941
+
 * Tue Sep 11 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-0.5.rc2
 - 4.4.2.2-rc2
 - resolves #180996, #281611, #259961, #277161, #155079

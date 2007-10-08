@@ -9,7 +9,7 @@ Version: 4.4.2.2
 Release: 1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source: %{name}-%{version}.tar.gz
+Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
 Patch1: rpm-4.4.1-prereq.patch
 Patch2: rpm-4.4.2-ghost-conflicts.patch
 Patch3: rpm-4.4.2-trust.patch

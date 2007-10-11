@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
@@ -17,6 +17,7 @@ Patch4: rpm-4.4.2-devel-autodep.patch
 Patch5: rpm-4.4.2-rpmfc-skip.patch
 Patch6: rpm-4.4.2.2-matchpathcon.patch
 Patch7: rpm-4.4.2.1-no-popt.patch
+Patch8: rpm-4.4.2.2-nonutf-comment.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -139,11 +140,12 @@ that will manipulate RPM packages and databases.
 %patch5 -p1 -b .fcskip
 %patch6 -p1 -b .matchpathcon
 %patch7 -p1 -b .no-popt
+%patch8 -p1 -b .nonutf-comment
 
 # force external popt
 rm -rf popt/
 
-# XXX for popt removal and gnueabi patches
+# XXX for popt removal 
 autoreconf
 
 # new buildid-aware debuginfo 
@@ -157,7 +159,7 @@ for i in $(find . -name config.guess -o -name config.sub) ; do
     [ -f /usr/lib/rpm/redhat/$(basename $i) ] && %{__rm} -f $i && %{__cp} -fv /usr/lib/rpm/redhat/$(basename $i) $i 
 done 
 
-# XXX rpm 4.4.2.1 can't be built with %configure due to makefile brokenness
+# XXX rpm 4.4.2.1 can't be built with %%configure due to makefile brokenness
 CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
 ./configure --prefix=%{_usr} \
             --sysconfdir=%{_sysconfdir} \
@@ -209,7 +211,7 @@ cp -p lua/COPYRIGHT COPYRIGHT-lua
 
 # Get rid of unpackaged files
 { cd $RPM_BUILD_ROOT
-  rm -f .%{_libdir}/lib*.la
+  rm -f .%{_libdir}/lib*.{a,la}
   rm -f .%{rpmhome}/{Specfile.pm,cpanflute,cpanflute2,rpmdiff,rpmdiff.cgi,sql.prov,sql.req,tcl.req,rpm.*}
   rm -rf .%{_mandir}/{fr,ko}
   rm -f .%{_libdir}/python%{with_python_version}/site-packages/*.{a,la}
@@ -388,7 +390,6 @@ exit 0
 %defattr(-,root,root)
 %{_includedir}/rpm
 %{_libdir}/librp*[a-z].so
-%{_libdir}/librpm*.a
 %{_mandir}/man8/rpmcache.8*
 %{_mandir}/man8/rpmgraph.8*
 %{rpmattr} %{rpmhome}/rpmcache
@@ -401,6 +402,11 @@ exit 0
 %endif
 
 %changelog
+* Thu Oct 11 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-2
+- merge review: remove static libraries (#226377)
+- merge review: remove comment causing doxygen to emit non-utf output (#226377)
+- other minor spec cleanups
+
 * Wed Oct 03 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-1
 - update to 4.4.2.2 final
 - update matchpathcon patch to work better when selinux disabled

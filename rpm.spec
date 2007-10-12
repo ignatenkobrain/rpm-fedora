@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
@@ -18,6 +18,7 @@ Patch5: rpm-4.4.2-rpmfc-skip.patch
 Patch6: rpm-4.4.2.2-matchpathcon.patch
 Patch7: rpm-4.4.2.1-no-popt.patch
 Patch8: rpm-4.4.2.2-nonutf-comment.patch
+Patch9: rpm-4.4.2.2-osgideps.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -141,6 +142,7 @@ that will manipulate RPM packages and databases.
 %patch6 -p1 -b .matchpathcon
 %patch7 -p1 -b .no-popt
 %patch8 -p1 -b .nonutf-comment
+%patch9 -p1 -b .osgideps
 
 # force external popt
 rm -rf popt/
@@ -362,6 +364,7 @@ exit 0
 %{rpmattr} %{rpmhome}/magic.req
 %{rpmattr} %{rpmhome}/mono-find-provides
 %{rpmattr} %{rpmhome}/mono-find-requires
+%{rpmattr} %{rpmhome}/osgideps.pl
 %{rpmattr} %{rpmhome}/perldeps.pl
 %{rpmattr} %{rpmhome}/perl.prov
 %{rpmattr} %{rpmhome}/perl.req
@@ -402,6 +405,9 @@ exit 0
 %endif
 
 %changelog
+* Fri Oct 12 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-3
+- add OSGi dependency generator script
+
 * Thu Oct 11 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-2
 - merge review: remove static libraries (#226377)
 - merge review: remove comment causing doxygen to emit non-utf output (#226377)

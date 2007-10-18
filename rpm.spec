@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 3%{?dist}
+Release: 4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
@@ -19,6 +19,7 @@ Patch6: rpm-4.4.2.2-matchpathcon.patch
 Patch7: rpm-4.4.2.1-no-popt.patch
 Patch8: rpm-4.4.2.2-nonutf-comment.patch
 Patch9: rpm-4.4.2.2-osgideps.patch
+Patch10: rpm-4.4.2.2-debugedit-fpc.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -143,6 +144,7 @@ that will manipulate RPM packages and databases.
 %patch7 -p1 -b .no-popt
 %patch8 -p1 -b .nonutf-comment
 %patch9 -p1 -b .osgideps
+%patch10 -p1 -b .debugedit-fpc
 
 # force external popt
 rm -rf popt/
@@ -405,6 +407,9 @@ exit 0
 %endif
 
 %changelog
+* Thu Oct 18 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-4
+- debugedit fixes from Roland McGrath (#336951, #337011)
+
 * Fri Oct 12 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-3
 - add OSGi dependency generator script
 

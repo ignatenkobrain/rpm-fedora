@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 4%{?dist}
+Release: 5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
@@ -85,6 +85,7 @@ Requires: beecrypt-devel >= 4.1.2
 Requires: sqlite-devel
 Requires: libselinux-devel
 Requires: elfutils-libelf-devel
+Requires: popt-devel
 
 %description devel
 This package contains the RPM C library and header files. These
@@ -407,6 +408,9 @@ exit 0
 %endif
 
 %changelog
+* Mon Oct 22 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-5
+- add missing popt-devel dependency to rpm-devel
+
 * Thu Oct 18 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-4
 - debugedit fixes from Roland McGrath (#336951, #337011)
 

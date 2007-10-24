@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 6%{?dist}
+Release: 7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
@@ -21,6 +21,7 @@ Patch8: rpm-4.4.2.2-nonutf-comment.patch
 Patch9: rpm-4.4.2.2-osgideps.patch
 Patch10: rpm-4.4.2.2-debugedit-fpc.patch
 Patch11: rpm-4.4.2.2-pyproblem.patch
+Patch12: rpm-4.4.2.2-problem-nevra.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -148,6 +149,7 @@ that will manipulate RPM packages and databases.
 %patch9 -p1 -b .osgideps
 %patch10 -p1 -b .debugedit-fpc
 %patch11 -p1 -b .pyproblem
+%patch12 -p1 -b .problem-nevra
 
 # force external popt
 rm -rf popt/
@@ -410,6 +412,10 @@ exit 0
 %endif
 
 %changelog
+* Wed Oct 24 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-7
+- Use package NEVRA everywhere for rpmProblems (#349091)
+- The python problem addressed in -6 was related but a different issue...
+
 * Wed Oct 24 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-6
 - Don't mess up problem pkgNEVR in python ts.check() (#349091)
 

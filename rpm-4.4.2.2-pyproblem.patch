@@ -1,0 +1,27 @@
+changeset:   6193:cc2abc150d64
+tag:         tip
+user:        Panu Matilainen <pmatilai@redhat.com>
+date:        Wed Oct 24 09:50:13 2007 +0300
+summary:     Don't mess up problem pkgNEVR in python ts.check() (rhbz#349091)
+
+diff -r 751cf2c7614e -r cc2abc150d64 python/rpmts-py.c
+--- a/python/rpmts-py.c	Thu Oct 18 09:34:54 2007 +0300
++++ b/python/rpmts-py.c	Wed Oct 24 09:50:13 2007 +0300
+@@ -439,7 +439,7 @@ fprintf(stderr, "*** rpmts_Check(%p) ts 
+ 	    if (p->type == RPMPROB_BADRELOCATE)
+ 		continue;
+ 
+-	    byName = p->pkgNEVR;
++	    byName = strdup(p->pkgNEVR);
+ 	    if ((byArch= strrchr(byName, '.')) != NULL)
+ 		*byArch++ = '\0';
+ 	    if ((byRelease = strrchr(byName, '-')) != NULL)
+@@ -475,6 +475,7 @@ fprintf(stderr, "*** rpmts_Check(%p) ts 
+ #endif
+ 	    PyList_Append(list, (PyObject *) cf);
+ 	    Py_DECREF(cf);
++	    free(byName);
+ 	}
+ 
+ 	ps = rpmpsFree(ps);
+

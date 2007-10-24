@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 5%{?dist}
+Release: 6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
@@ -20,6 +20,7 @@ Patch7: rpm-4.4.2.1-no-popt.patch
 Patch8: rpm-4.4.2.2-nonutf-comment.patch
 Patch9: rpm-4.4.2.2-osgideps.patch
 Patch10: rpm-4.4.2.2-debugedit-fpc.patch
+Patch11: rpm-4.4.2.2-pyproblem.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -146,6 +147,7 @@ that will manipulate RPM packages and databases.
 %patch8 -p1 -b .nonutf-comment
 %patch9 -p1 -b .osgideps
 %patch10 -p1 -b .debugedit-fpc
+%patch11 -p1 -b .pyproblem
 
 # force external popt
 rm -rf popt/
@@ -408,6 +410,9 @@ exit 0
 %endif
 
 %changelog
+* Wed Oct 24 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-6
+- Don't mess up problem pkgNEVR in python ts.check() (#349091)
+
 * Mon Oct 22 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-5
 - add missing popt-devel dependency to rpm-devel
 

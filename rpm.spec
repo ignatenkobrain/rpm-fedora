@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 7%{?dist}
+Release: 8%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
@@ -22,6 +22,7 @@ Patch9: rpm-4.4.2.2-osgideps.patch
 Patch10: rpm-4.4.2.2-debugedit-fpc.patch
 Patch11: rpm-4.4.2.2-pyproblem.patch
 Patch12: rpm-4.4.2.2-problem-nevra.patch
+Patch13: rpm-4.4.2.2-nss.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -46,7 +47,7 @@ BuildRequires: gawk
 BuildRequires: elfutils-devel >= 0.112
 BuildRequires: elfutils-libelf-devel-static
 BuildRequires: readline-devel zlib-devel
-BuildRequires: beecrypt-devel >= 4.1.2
+BuildRequires: nss-devel
 # The popt versions here just document an older known-good version, not
 # necessarily accurate
 BuildRequires: popt-devel >= 1.10.2, popt-static >= 1.10.2
@@ -73,7 +74,6 @@ Summary:  Libraries for manipulating RPM packages
 Group: Development/Libraries
 License: GPLv2+ and LGPLv2+ with exceptions
 Requires: rpm = %{version}-%{release}
-Requires: beecrypt >= 4.1.2
 
 %description libs
 This package contains the RPM shared libraries.
@@ -83,7 +83,7 @@ Summary:  Development files for manipulating RPM packages
 Group: Development/Libraries
 License: GPLv2+ and LGPLv2+ with exceptions
 Requires: rpm = %{version}-%{release}
-Requires: beecrypt-devel >= 4.1.2
+Requires: nss-devel 
 Requires: sqlite-devel
 Requires: libselinux-devel
 Requires: elfutils-libelf-devel
@@ -150,6 +150,7 @@ that will manipulate RPM packages and databases.
 %patch10 -p1 -b .debugedit-fpc
 %patch11 -p1 -b .pyproblem
 %patch12 -p1 -b .problem-nevra
+%patch13 -p1 -b .nss
 
 # force external popt
 rm -rf popt/
@@ -412,6 +413,10 @@ exit 0
 %endif
 
 %changelog
+* Mon Nov 12 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-8
+- Use NSS instead of beecrypt for cryptography, from Tomas Mraz (#348131)
+- Update build + other dependencies accordingly
+
 * Wed Oct 24 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-7
 - Use package NEVRA everywhere for rpmProblems (#349091)
 - The python problem addressed in -6 was related but a different issue...

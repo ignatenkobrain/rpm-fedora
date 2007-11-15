@@ -1,6 +1,6 @@
 diff -up rpm-4.4.2.2/rpmio/digest.c.nss-init rpm-4.4.2.2/rpmio/digest.c
---- rpm-4.4.2.2/rpmio/digest.c.nss-init	2007-11-15 10:57:04.000000000 +0200
-+++ rpm-4.4.2.2/rpmio/digest.c	2007-11-15 10:57:04.000000000 +0200
+--- rpm-4.4.2.2/rpmio/digest.c.nss-init	2007-11-15 15:00:41.000000000 +0200
++++ rpm-4.4.2.2/rpmio/digest.c	2007-11-15 15:00:41.000000000 +0200
 @@ -78,9 +78,6 @@ rpmDigestInit(pgpHashAlgo hashalgo, rpmD
      HASH_HashType type;
      DIGEST_CTX ctx = xcalloc(1, sizeof(*ctx));
@@ -12,8 +12,8 @@ diff -up rpm-4.4.2.2/rpmio/digest.c.nss-init rpm-4.4.2.2/rpmio/digest.c
  
      type = getHashType(hashalgo);
 diff -up rpm-4.4.2.2/rpmio/rpmpgp.h.nss-init rpm-4.4.2.2/rpmio/rpmpgp.h
---- rpm-4.4.2.2/rpmio/rpmpgp.h.nss-init	2007-11-15 10:57:04.000000000 +0200
-+++ rpm-4.4.2.2/rpmio/rpmpgp.h	2007-11-15 10:57:04.000000000 +0200
+--- rpm-4.4.2.2/rpmio/rpmpgp.h.nss-init	2007-11-15 15:00:41.000000000 +0200
++++ rpm-4.4.2.2/rpmio/rpmpgp.h	2007-11-15 15:00:41.000000000 +0200
 @@ -1380,6 +1380,15 @@ unsigned int pgpCRC(const byte *octets, 
  }
  
@@ -31,8 +31,8 @@ diff -up rpm-4.4.2.2/rpmio/rpmpgp.h.nss-init rpm-4.4.2.2/rpmio/rpmpgp.h
   * @param octx		existing digest context
   * @return		duplicated digest context
 diff -up rpm-4.4.2.2/rpmio/rpmpgp.c.nss-init rpm-4.4.2.2/rpmio/rpmpgp.c
---- rpm-4.4.2.2/rpmio/rpmpgp.c.nss-init	2007-11-15 10:57:04.000000000 +0200
-+++ rpm-4.4.2.2/rpmio/rpmpgp.c	2007-11-15 10:58:07.000000000 +0200
+--- rpm-4.4.2.2/rpmio/rpmpgp.c.nss-init	2007-11-15 15:00:41.000000000 +0200
++++ rpm-4.4.2.2/rpmio/rpmpgp.c	2007-11-15 15:00:41.000000000 +0200
 @@ -17,6 +17,8 @@ static int _debug = 0;
  /*@unchecked@*/
  static int _print = 0;
@@ -70,9 +70,21 @@ diff -up rpm-4.4.2.2/rpmio/rpmpgp.c.nss-init rpm-4.4.2.2/rpmio/rpmpgp.c
 +}
 +
 +
+diff -up rpm-4.4.2.2/tools/debugedit.c.nss-init rpm-4.4.2.2/tools/debugedit.c
+--- rpm-4.4.2.2/tools/debugedit.c.nss-init	2007-11-15 15:01:42.000000000 +0200
++++ rpm-4.4.2.2/tools/debugedit.c	2007-11-15 15:02:23.000000000 +0200
+@@ -1318,6 +1318,8 @@ handle_build_id (DSO *dso, Elf_Data *bui
+   void *digest = NULL;
+   size_t len;
+ 
++  rpmInitCrypto();
++
+   while (i-- > 0)
+     {
+       algorithm = algorithms[i];
 diff -up rpm-4.4.2.2/lib/rpmrc.c.nss-init rpm-4.4.2.2/lib/rpmrc.c
 --- rpm-4.4.2.2/lib/rpmrc.c.nss-init	2007-09-11 09:28:15.000000000 +0300
-+++ rpm-4.4.2.2/lib/rpmrc.c	2007-11-15 10:57:04.000000000 +0200
++++ rpm-4.4.2.2/lib/rpmrc.c	2007-11-15 15:00:41.000000000 +0200
 @@ -1850,6 +1850,10 @@ static int rpmReadRC(/*@null@*/ const ch
  
  int rpmReadConfigFiles(const char * file, const char * target)

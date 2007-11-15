@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 10%{?dist}
+Release: 11%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
@@ -417,6 +417,9 @@ exit 0
 %endif
 
 %changelog
+* Thu Nov 15 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-11
+- Unbreak debugedit (missing crypto initialization)
+
 * Thu Nov 15 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-10
 - Initialize NSS as early as possible (#382091)
 

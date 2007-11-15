@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 9%{?dist}
+Release: 10%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
@@ -24,6 +24,7 @@ Patch11: rpm-4.4.2.2-pyproblem.patch
 Patch12: rpm-4.4.2.2-problem-nevra.patch
 Patch13: rpm-4.4.2.2-nss.patch
 Patch14: rpm-4.4.2.2-base64-unsigned-char.patch
+Patch15: rpm-4.4.2.2-cryptoinit.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -153,6 +154,7 @@ that will manipulate RPM packages and databases.
 %patch12 -p1 -b .problem-nevra
 %patch13 -p1 -b .nss
 %patch14 -p1 -b .base64
+%patch15 -p1 -b .nss-init
 
 # force external popt
 rm -rf popt/
@@ -415,6 +417,9 @@ exit 0
 %endif
 
 %changelog
+* Thu Nov 15 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-10
+- Initialize NSS as early as possible (#382091)
+
 * Wed Nov 14 2007 Paul Nasrat <pauln@truemesh.com> 4.4.2.2-9
 - Fix base64 assumption of signed char, from Tomas Mraz (#380911)
 

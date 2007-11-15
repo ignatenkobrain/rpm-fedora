@@ -1,0 +1,86 @@
+diff -up rpm-4.4.2.2/rpmio/digest.c.nss-init rpm-4.4.2.2/rpmio/digest.c
+--- rpm-4.4.2.2/rpmio/digest.c.nss-init	2007-11-15 10:57:04.000000000 +0200
++++ rpm-4.4.2.2/rpmio/digest.c	2007-11-15 10:57:04.000000000 +0200
+@@ -78,9 +78,6 @@ rpmDigestInit(pgpHashAlgo hashalgo, rpmD
+     HASH_HashType type;
+     DIGEST_CTX ctx = xcalloc(1, sizeof(*ctx));
+ 
+-    if (NSS_NoDB_Init(NULL) != SECSuccess)
+-	return NULL;
+-
+     ctx->flags = flags;
+ 
+     type = getHashType(hashalgo);
+diff -up rpm-4.4.2.2/rpmio/rpmpgp.h.nss-init rpm-4.4.2.2/rpmio/rpmpgp.h
+--- rpm-4.4.2.2/rpmio/rpmpgp.h.nss-init	2007-11-15 10:57:04.000000000 +0200
++++ rpm-4.4.2.2/rpmio/rpmpgp.h	2007-11-15 10:57:04.000000000 +0200
+@@ -1380,6 +1380,15 @@ unsigned int pgpCRC(const byte *octets, 
+ }
+ 
+ /** \ingroup rpmio
++ * Perform cryptography initialization.
++ * It must be called before any cryptography can be used within rpm.
++ * It's not normally necessary to call it directly as it's called in
++ * general rpm initialization routines.
++ * @return		0 on success, -1 on failure
++ */
++int rpmInitCrypto(void);
++
++/** \ingroup rpmio
+  * Duplicate a digest context.
+  * @param octx		existing digest context
+  * @return		duplicated digest context
+diff -up rpm-4.4.2.2/rpmio/rpmpgp.c.nss-init rpm-4.4.2.2/rpmio/rpmpgp.c
+--- rpm-4.4.2.2/rpmio/rpmpgp.c.nss-init	2007-11-15 10:57:04.000000000 +0200
++++ rpm-4.4.2.2/rpmio/rpmpgp.c	2007-11-15 10:58:07.000000000 +0200
+@@ -17,6 +17,8 @@ static int _debug = 0;
+ /*@unchecked@*/
+ static int _print = 0;
+ 
++static int _crypto_initialized = 0;
++
+ /*@unchecked@*/ /*@null@*/
+ static pgpDig _dig = NULL;
+ 
+@@ -1094,7 +1096,6 @@ int pgpPrtPkt(const byte *pkt, unsigned 
+ pgpDig pgpNewDig(void)
+ {
+     pgpDig dig = xcalloc(1, sizeof(*dig));
+-    NSS_NoDB_Init(NULL);
+ 
+     return dig;
+ }
+@@ -1404,5 +1405,18 @@ char * pgpArmorWrap(int atype, const uns
+ 
+     return val;
+ }
+-
+ /*@=boundsread@*/
++
++int rpmInitCrypto(void) {
++    int rc = 0;
++
++    if (!_crypto_initialized && NSS_NoDB_Init(NULL) != SECSuccess) {
++        rc = -1;
++    } else {
++        _crypto_initialized = 1;
++    }
++
++    return rc;
++}
++
++
+diff -up rpm-4.4.2.2/lib/rpmrc.c.nss-init rpm-4.4.2.2/lib/rpmrc.c
+--- rpm-4.4.2.2/lib/rpmrc.c.nss-init	2007-09-11 09:28:15.000000000 +0300
++++ rpm-4.4.2.2/lib/rpmrc.c	2007-11-15 10:57:04.000000000 +0200
+@@ -1850,6 +1850,10 @@ static int rpmReadRC(/*@null@*/ const ch
+ 
+ int rpmReadConfigFiles(const char * file, const char * target)
+ {
++    /* Initialize crypto engine as early as possible */
++    if (rpmInitCrypto() < 0) {
++	return -1;
++    }	
+ 
+     /* Preset target macros */
+     /*@-nullstate@*/	/* FIX: target can be NULL */

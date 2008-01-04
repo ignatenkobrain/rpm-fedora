@@ -36,7 +36,7 @@ diff -up rpm-4.4.2.2/tools/debugedit.c.gcc43 rpm-4.4.2.2/tools/debugedit.c
  	      if (d == NULL)
  		goto bad;
 -	      process (d->d_buf, d->d_size);
-+	      rpmDigestUpdate(ctx, x.d_buf, x.d_size);
++	      rpmDigestUpdate(ctx, d->d_buf, d->d_size);
  	    }
  	}
    }

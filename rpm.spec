@@ -6,14 +6,14 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 11%{?dist}
+Release: 12%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
 Patch1: rpm-4.4.1-prereq.patch
 Patch2: rpm-4.4.2-ghost-conflicts.patch
 Patch3: rpm-4.4.2-trust.patch
-Patch4: rpm-4.4.2-devel-autodep.patch
+Patch4: rpm-4.4.2.2-devel-autodep.patch
 Patch5: rpm-4.4.2-rpmfc-skip.patch
 Patch6: rpm-4.4.2.2-matchpathcon.patch
 Patch7: rpm-4.4.2.1-no-popt.patch
@@ -25,6 +25,7 @@ Patch12: rpm-4.4.2.2-problem-nevra.patch
 Patch13: rpm-4.4.2.2-nss.patch
 Patch14: rpm-4.4.2.2-base64-unsigned-char.patch
 Patch15: rpm-4.4.2.2-cryptoinit.patch
+Patch16: rpm-4.4.2.2-gcc43.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -50,9 +51,9 @@ BuildRequires: elfutils-devel >= 0.112
 BuildRequires: elfutils-libelf-devel-static
 BuildRequires: readline-devel zlib-devel
 BuildRequires: nss-devel
-# The popt versions here just document an older known-good version, not
+# The popt version here just document an older known-good version, not
 # necessarily accurate
-BuildRequires: popt-devel >= 1.10.2, popt-static >= 1.10.2
+BuildRequires: popt-devel >= 1.10.2 
 BuildRequires: sqlite-devel
 BuildRequires: gettext-devel
 BuildRequires: libselinux-devel
@@ -155,6 +156,7 @@ that will manipulate RPM packages and databases.
 %patch13 -p1 -b .nss
 %patch14 -p1 -b .base64
 %patch15 -p1 -b .nss-init
+%patch16 -p1 -b .gcc43
 
 # force external popt
 rm -rf popt/
@@ -417,6 +419,11 @@ exit 0
 %endif
 
 %changelog
+* Fri Jan 04 2008 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-12
+- fix segfault in devel symlink dependency generation from Mark Salter (#338971)
+- fix debugedit build with gcc 4.3
+- drop popt-static build dependency
+
 * Thu Nov 15 2007 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-11
 - Unbreak debugedit (missing crypto initialization)
 

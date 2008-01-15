@@ -29,6 +29,7 @@ Patch16: rpm-4.4.2.2-gcc43.patch
 Patch17: rpm-4.4.2.2-secondary-arch-macros.patch
 Patch18: rpm-4.4.2.2-no-targetreset.patch
 Patch19: rpm-4.4.2.2-pkgconfig-path.patch
+Patch20: rpm-4.4.2.2-autofoo.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -162,6 +163,7 @@ that will manipulate RPM packages and databases.
 %patch17 -p1 -b .archmacros
 %patch18 -p1 -b .notargetreset
 %patch19 -p1 -b .pkgconfig-path
+%patch20 -p1 -b .autofoo
 
 # force external popt
 rm -rf popt/
@@ -421,6 +423,7 @@ exit 0
 - install x86 arch macros on x86_64 (#194123)
 - dont mess up target os+arch on rpmrc include (#232429)
 - set pkg-config path based on target (#212522)
+- fix funky automake breakage from nss libraries moving to /lib*
 
 * Fri Jan 04 2008 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-12
 - fix segfault in devel symlink dependency generation from Mark Salter (#338971)

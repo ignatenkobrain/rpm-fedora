@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.2
-Release: 12%{?dist}
+Release: 13%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
@@ -26,13 +26,15 @@ Patch13: rpm-4.4.2.2-nss.patch
 Patch14: rpm-4.4.2.2-base64-unsigned-char.patch
 Patch15: rpm-4.4.2.2-cryptoinit.patch
 Patch16: rpm-4.4.2.2-gcc43.patch
+Patch17: rpm-4.4.2.2-secondary-arch-macros.patch
+Patch18: rpm-4.4.2.2-no-targetreset.patch
+Patch19: rpm-4.4.2.2-pkgconfig-path.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD and MIT and Sleepycat
 License: GPLv2+
 
-Requires(pre): shadow-utils
 Requires(post): coreutils
 Requires: popt >= 1.10.2.1
 Requires: crontabs
@@ -157,6 +159,9 @@ that will manipulate RPM packages and databases.
 %patch14 -p1 -b .base64
 %patch15 -p1 -b .nss-init
 %patch16 -p1 -b .gcc43
+%patch17 -p1 -b .archmacros
+%patch18 -p1 -b .notargetreset
+%patch19 -p1 -b .pkgconfig-path
 
 # force external popt
 rm -rf popt/
@@ -240,13 +245,6 @@ find $RPM_BUILD_ROOT/%{_libdir}/python%{with_python_version} -name "*.py"|xargs 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre
-getent group rpm > /dev/null || groupadd -g 37 rpm
-getent passwd rpm > /dev/null || \
-/usr/sbin/useradd  -r -d /var/lib/rpm -u 37 -g 37 -s /sbin/nologin \
--c "RPM user" rpm > /dev/null 2>&1
-exit 0
-
 %post
 # XXX Detect (and remove) incompatible dbenv files during upgrade.
 # XXX Removing dbenv files in %%post opens a lock race window, a tolerable
@@ -261,8 +259,7 @@ exit 0
 %post libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig
 
-%define rpmattr   %attr(0755, rpm, rpm)
-%define rpmdbattr %attr(0644, rpm, rpm) %verify(not md5 size mtime) %ghost %config(missingok,noreplace)
+%define rpmdbattr %attr(0644, root, root) %verify(not md5 size mtime) %ghost %config(missingok,noreplace)
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
@@ -276,66 +273,66 @@ exit 0
 #%ghost %config(noreplace,missingok)   %{_sysconfdir}/rpm/platform
 #%ghost %config(noreplace,missingok)   %{_sysconfdir}/rpm/macros.tscolor
 
-%attr(0755, rpm, rpm)   %dir /var/lib/rpm
+%dir /var/lib/rpm
 %rpmdbattr /var/lib/rpm/*
-%attr(0755, rpm, rpm) %dir /var/spool/repackage
-%attr(0755, rpm, rpm) %dir %{rpmhome}
+%dir /var/spool/repackage
+%dir %{rpmhome}
 
-%{rpmattr} /bin/rpm
-%{rpmattr} %{_bindir}/rpm2cpio
-%{rpmattr} %{_bindir}/gendiff
-%{rpmattr} %{_bindir}/rpmdb
-%{rpmattr} %{_bindir}/rpmsign
-%{rpmattr} %{_bindir}/rpmquery
-%{rpmattr} %{_bindir}/rpmverify
+/bin/rpm
+%{_bindir}/rpm2cpio
+%{_bindir}/gendiff
+%{_bindir}/rpmdb
+%{_bindir}/rpmsign
+%{_bindir}/rpmquery
+%{_bindir}/rpmverify
 
-%{rpmattr} %{rpmhome}/config.guess
-%{rpmattr} %{rpmhome}/config.sub
-%{rpmattr} %{rpmhome}/convertrpmrc.sh
-%{rpmattr} %{rpmhome}/freshen.sh
-%{rpmattr} %{rpmhome}/mkinstalldirs
-%{rpmattr} %{rpmhome}/rpm2cpio.sh
-%{rpmattr} %{rpmhome}/rpm[deiukqv]
-%{rpmattr} %{rpmhome}/tgpg
-%{rpmattr} %{rpmhome}/rpmdb_*
-%{rpmattr} %{rpmhome}/rpmfile
+%{rpmhome}/config.guess
+%{rpmhome}/config.sub
+%{rpmhome}/convertrpmrc.sh
+%{rpmhome}/freshen.sh
+%{rpmhome}/mkinstalldirs
+%{rpmhome}/rpm2cpio.sh
+%{rpmhome}/rpm[deiukqv]
+%{rpmhome}/tgpg
+%{rpmhome}/rpmdb_*
+%{rpmhome}/rpmfile
 
-%attr(0644, rpm, rpm) %{rpmhome}/macros
-%attr(0644, rpm, rpm) %{rpmhome}/rpmpopt*
-%attr(0644, rpm, rpm) %{rpmhome}/rpmrc
+%{rpmhome}/macros
+%{rpmhome}/rpmpopt*
+%{rpmhome}/rpmrc
 
-%ifarch i386 i486 i586 i686 athlon pentium3 pentium4
-%attr(-, rpm, rpm) %{rpmhome}/i[3456]86*
-%attr(-, rpm, rpm) %{rpmhome}/athlon*
-%attr(-, rpm, rpm) %{rpmhome}/pentium*
+%ifarch i386 i486 i586 i686 athlon pentium3 pentium4 x86_64
+%{rpmhome}/i[3456]86*
+%{rpmhome}/athlon*
+%{rpmhome}/pentium*
 %endif
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
-%attr(-, rpm, rpm) %{rpmhome}/alpha*
+%{rpmhome}/alpha*
 %endif
 %ifarch sparc sparcv8 sparcv9 sparc64
-%attr(-, rpm, rpm) %{rpmhome}/sparc*
+%{rpmhome}/sparc*
 %endif
 %ifarch ia64
-%attr(-, rpm, rpm) %{rpmhome}/ia64*
+%{rpmhome}/ia64*
 %endif
 %ifarch powerpc ppc ppciseries ppcpseries ppcmac ppc64
-%attr(-, rpm, rpm) %{rpmhome}/ppc*
+%{rpmhome}/ppc*
 %endif
 %ifarch s390 s390x
-%attr(-, rpm, rpm) %{rpmhome}/s390*
+%{rpmhome}/s390*
 %endif
 %ifarch %{arm}
-%attr(-, rpm, rpm) %{rpmhome}/arm*
+%{rpmhome}/arm*
 %endif
 %ifarch mips mipsel
-%attr(-, rpm, rpm) %{rpmhome}/mips*
+%{rpmhome}/mips*
 %endif
 %ifarch x86_64
-%attr(-, rpm, rpm) %{rpmhome}/x86_64*
-%attr(-, rpm, rpm) %{rpmhome}/amd64*
-%attr(-, rpm, rpm) %{rpmhome}/ia32e*
+%{rpmhome}/x86_64*
+%{rpmhome}/amd64*
+%{rpmhome}/ia32e*
 %endif
-%attr(-, rpm, rpm) %{rpmhome}/noarch*
+%{rpmhome}/noarch*
 
 %{_mandir}/man1/gendiff.1*
 %{_mandir}/man8/rpm.8*
@@ -354,47 +351,47 @@ exit 0
 %files build
 %defattr(-,root,root)
 %{_usrsrc}/redhat
-%{rpmattr} %{_bindir}/rpmbuild
-%{rpmattr} %{rpmhome}/brp-*
-%{rpmattr} %{rpmhome}/check-buildroot
-%{rpmattr} %{rpmhome}/check-files
-%{rpmattr} %{rpmhome}/check-prereqs
-%{rpmattr} %{rpmhome}/check-rpaths*
-%{rpmattr} %{rpmhome}/cross-build
-%{rpmattr} %{rpmhome}/debugedit
-%{rpmattr} %{rpmhome}/find-debuginfo.sh
-%{rpmattr} %{rpmhome}/find-lang.sh
-%{rpmattr} %{rpmhome}/find-prov.pl
-%{rpmattr} %{rpmhome}/find-provides
-%{rpmattr} %{rpmhome}/find-provides.perl
-%{rpmattr} %{rpmhome}/find-req.pl
-%{rpmattr} %{rpmhome}/find-requires
-%{rpmattr} %{rpmhome}/find-requires.perl
-%{rpmattr} %{rpmhome}/get_magic.pl
-%{rpmattr} %{rpmhome}/getpo.sh
-%{rpmattr} %{rpmhome}/http.req
-%{rpmattr} %{rpmhome}/javadeps
-%{rpmattr} %{rpmhome}/magic.prov
-%{rpmattr} %{rpmhome}/magic.req
-%{rpmattr} %{rpmhome}/mono-find-provides
-%{rpmattr} %{rpmhome}/mono-find-requires
-%{rpmattr} %{rpmhome}/osgideps.pl
-%{rpmattr} %{rpmhome}/perldeps.pl
-%{rpmattr} %{rpmhome}/perl.prov
-%{rpmattr} %{rpmhome}/perl.req
-%{rpmattr} %{rpmhome}/pythondeps.sh
-%{rpmattr} %{rpmhome}/rpm[bt]
-%{rpmattr} %{rpmhome}/rpmdeps
-%{rpmattr} %{rpmhome}/trpm
-%{rpmattr} %{rpmhome}/u_pkg.sh
-%{rpmattr} %{rpmhome}/vpkg-provides.sh
-%{rpmattr} %{rpmhome}/vpkg-provides2.sh
+%{_bindir}/rpmbuild
+%{rpmhome}/brp-*
+%{rpmhome}/check-buildroot
+%{rpmhome}/check-files
+%{rpmhome}/check-prereqs
+%{rpmhome}/check-rpaths*
+%{rpmhome}/cross-build
+%{rpmhome}/debugedit
+%{rpmhome}/find-debuginfo.sh
+%{rpmhome}/find-lang.sh
+%{rpmhome}/find-prov.pl
+%{rpmhome}/find-provides
+%{rpmhome}/find-provides.perl
+%{rpmhome}/find-req.pl
+%{rpmhome}/find-requires
+%{rpmhome}/find-requires.perl
+%{rpmhome}/get_magic.pl
+%{rpmhome}/getpo.sh
+%{rpmhome}/http.req
+%{rpmhome}/javadeps
+%{rpmhome}/magic.prov
+%{rpmhome}/magic.req
+%{rpmhome}/mono-find-provides
+%{rpmhome}/mono-find-requires
+%{rpmhome}/osgideps.pl
+%{rpmhome}/perldeps.pl
+%{rpmhome}/perl.prov
+%{rpmhome}/perl.req
+%{rpmhome}/pythondeps.sh
+%{rpmhome}/rpm[bt]
+%{rpmhome}/rpmdeps
+%{rpmhome}/trpm
+%{rpmhome}/u_pkg.sh
+%{rpmhome}/vpkg-provides.sh
+%{rpmhome}/vpkg-provides2.sh
 
-%attr(0644, rpm, rpm) %{rpmhome}/config.site
-%attr(0644, rpm, rpm) %{rpmhome}/magic
-%attr(0644, rpm, rpm) %{rpmhome}/magic.mgc
-%attr(0644, rpm, rpm) %{rpmhome}/magic.mime
-%attr(0644, rpm, rpm) %{rpmhome}/magic.mime.mgc
+%{rpmhome}/config.site
+%{rpmhome}/magic
+%{rpmhome}/magic.mgc
+%{rpmhome}/magic.mime
+%{rpmhome}/magic.mime.mgc
 
 %{_mandir}/man8/rpmbuild.8*
 %{_mandir}/man8/rpmdeps.8*
@@ -409,8 +406,8 @@ exit 0
 %{_libdir}/librp*[a-z].so
 %{_mandir}/man8/rpmcache.8*
 %{_mandir}/man8/rpmgraph.8*
-%{rpmattr} %{rpmhome}/rpmcache
-%{rpmattr} %{_bindir}/rpmgraph
+%{rpmhome}/rpmcache
+%{_bindir}/rpmgraph
 
 %if %{with_apidocs}
 %files apidocs
@@ -419,6 +416,12 @@ exit 0
 %endif
 
 %changelog
+* Fri Jan 11 2008 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-13
+- lose the useless rpm user+group, use root:root like everything else
+- install x86 arch macros on x86_64 (#194123)
+- dont mess up target os+arch on rpmrc include (#232429)
+- set pkg-config path based on target (#212522)
+
 * Fri Jan 04 2008 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-12
 - fix segfault in devel symlink dependency generation from Mark Salter (#338971)
 - fix debugedit build with gcc 4.3

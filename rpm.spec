@@ -5,11 +5,11 @@
 
 Summary: The RPM package management system
 Name: rpm
-Version: 4.4.2.2
-Release: 13%{?dist}
+Version: 4.4.2.3
+Release: 0.1.rc1
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
+Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}-rc1.tar.gz
 Patch1: rpm-4.4.1-prereq.patch
 Patch2: rpm-4.4.2-ghost-conflicts.patch
 Patch3: rpm-4.4.2-trust.patch
@@ -17,19 +17,10 @@ Patch4: rpm-4.4.2.2-devel-autodep.patch
 Patch5: rpm-4.4.2-rpmfc-skip.patch
 Patch6: rpm-4.4.2.2-matchpathcon.patch
 Patch7: rpm-4.4.2.1-no-popt.patch
-Patch8: rpm-4.4.2.2-nonutf-comment.patch
-Patch9: rpm-4.4.2.2-osgideps.patch
-Patch10: rpm-4.4.2.2-debugedit-fpc.patch
-Patch11: rpm-4.4.2.2-pyproblem.patch
-Patch12: rpm-4.4.2.2-problem-nevra.patch
-Patch13: rpm-4.4.2.2-nss.patch
-Patch14: rpm-4.4.2.2-base64-unsigned-char.patch
-Patch15: rpm-4.4.2.2-cryptoinit.patch
-Patch16: rpm-4.4.2.2-gcc43.patch
-Patch17: rpm-4.4.2.2-secondary-arch-macros.patch
-Patch18: rpm-4.4.2.2-no-targetreset.patch
-Patch19: rpm-4.4.2.2-pkgconfig-path.patch
-Patch20: rpm-4.4.2.2-autofoo.patch
+Patch8: rpm-4.4.2.3-nss.patch
+Patch9: rpm-4.4.2.2-autofoo.patch
+Patch10: rpm-4.4.2.2-pkgconfig-path.patch
+Patch11: rpm-4.4.2.3-queryformat-arch.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -40,9 +31,6 @@ Requires(post): coreutils
 Requires: popt >= 1.10.2.1
 Requires: crontabs
 Requires: logrotate
-
-# XXX temporary
-Source2: find-debuginfo.sh
 
 # XXX for autoreconf due to popt removal
 BuildRequires: autoconf automake libtool
@@ -143,7 +131,7 @@ that will manipulate RPM packages and databases.
 %endif
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -n %{name}-%{version}-rc1
 %patch1 -p1 -b .prereq
 %patch2 -p1 -b .ghostconflicts
 %patch3 -p1 -b .trust
@@ -151,28 +139,16 @@ that will manipulate RPM packages and databases.
 %patch5 -p1 -b .fcskip
 %patch6 -p1 -b .matchpathcon
 %patch7 -p1 -b .no-popt
-%patch8 -p1 -b .nonutf-comment
-%patch9 -p1 -b .osgideps
-%patch10 -p1 -b .debugedit-fpc
-%patch11 -p1 -b .pyproblem
-%patch12 -p1 -b .problem-nevra
-%patch13 -p1 -b .nss
-%patch14 -p1 -b .base64
-%patch15 -p1 -b .nss-init
-%patch16 -p1 -b .gcc43
-%patch17 -p1 -b .archmacros
-%patch18 -p1 -b .notargetreset
-%patch19 -p1 -b .pkgconfig-path
-%patch20 -p1 -b .autofoo
+%patch8 -p1 -b .nss
+%patch9 -p1 -b .autofoo
+%patch10 -p1 -b .pkgconfig-path
+%patch11 -p1 -b .qfmt-arch
 
 # force external popt
 rm -rf popt/
 
 # XXX for popt removal 
 autoreconf
-
-# new buildid-aware debuginfo 
-cp -f %{SOURCE2} scripts/find-debuginfo.sh
 
 %build
 
@@ -418,6 +394,15 @@ exit 0
 %endif
 
 %changelog
+* Fri Jan 25 2008 Panu Matilainen <pmatilai@redhat.com> 4.4.2.3-0.1.rc1
+- update to 4.4.2.3-rc1 
+- merge nss-related patches into one
+- change default queryformat to include arch 
+- resolves (documentation): #159638, #233232, #332271, #350401
+- resolves (build): #124300, #140597, #124995, #147383, #220449
+- resolves (query): #244236, #323221, #60288
+- resolves (general): #223931, #164021, #83006, #205080, #217258, #428979
+
 * Fri Jan 11 2008 Panu Matilainen <pmatilai@redhat.com> 4.4.2.2-13
 - lose the useless rpm user+group, use root:root like everything else
 - install x86 arch macros on x86_64 (#194123)

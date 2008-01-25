@@ -22,6 +22,8 @@ Patch9: rpm-4.4.2.2-autofoo.patch
 Patch10: rpm-4.4.2.2-pkgconfig-path.patch
 Patch11: rpm-4.4.2.3-queryformat-arch.patch
 
+Patch50: rpm-4.4.2.3-geode-instplat.patch
+
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD and MIT and Sleepycat
@@ -143,6 +145,8 @@ that will manipulate RPM packages and databases.
 %patch9 -p1 -b .autofoo
 %patch10 -p1 -b .pkgconfig-path
 %patch11 -p1 -b .qfmt-arch
+
+%patch50 -p1 -b .geode-instplat
 
 # force external popt
 rm -rf popt/
@@ -279,9 +283,10 @@ exit 0
 %{rpmhome}/rpmpopt*
 %{rpmhome}/rpmrc
 
-%ifarch i386 i486 i586 i686 athlon pentium3 pentium4 x86_64
+%ifarch i386 i486 i586 i686 athlon geode pentium3 pentium4 x86_64
 %{rpmhome}/i[3456]86*
 %{rpmhome}/athlon*
+%{rpmhome}/geode*
 %{rpmhome}/pentium*
 %endif
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67

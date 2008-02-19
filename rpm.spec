@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.3
-Release: 0.1.rc1
+Release: 0.2.rc1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}-rc1.tar.gz
@@ -399,6 +399,9 @@ exit 0
 %endif
 
 %changelog
+* Tue Feb 19 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 4.4.2.3-0.2.rc1
+- Autorebuild for GCC 4.3
+
 * Fri Jan 25 2008 Panu Matilainen <pmatilai@redhat.com> 4.4.2.3-0.1.rc1
 - update to 4.4.2.3-rc1 
 - merge nss-related patches into one

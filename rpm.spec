@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.3
-Release: 0.2.rc1
+Release: 0.3.rc1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}-rc1.tar.gz
@@ -21,6 +21,7 @@ Patch8: rpm-4.4.2.3-nss.patch
 Patch9: rpm-4.4.2.2-autofoo.patch
 Patch10: rpm-4.4.2.2-pkgconfig-path.patch
 Patch11: rpm-4.4.2.3-queryformat-arch.patch
+Patch12: rpm-4.4.2.3-no-order-rescan-limit.patch
 
 Patch50: rpm-4.4.2.3-geode-instplat.patch
 
@@ -145,6 +146,7 @@ that will manipulate RPM packages and databases.
 %patch9 -p1 -b .autofoo
 %patch10 -p1 -b .pkgconfig-path
 %patch11 -p1 -b .qfmt-arch
+%patch12 -p1 -b .no-order-limit
 
 %patch50 -p1 -b .geode-instplat
 
@@ -399,6 +401,9 @@ exit 0
 %endif
 
 %changelog
+* Wed Mar 12 2008 Panu Matilainen <pmatilai@redhat.com> 4.4.2.3-0.3.rc1
+- Continue ordering loop elimination as long as progress is made (#437041)
+
 * Tue Feb 19 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 4.4.2.3-0.2.rc1
 - Autorebuild for GCC 4.3
 

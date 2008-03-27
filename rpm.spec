@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.3
-Release: 0.3.rc1
+Release: 0.4.rc1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}-rc1.tar.gz
@@ -24,6 +24,8 @@ Patch11: rpm-4.4.2.3-queryformat-arch.patch
 Patch12: rpm-4.4.2.3-no-order-rescan-limit.patch
 
 Patch50: rpm-4.4.2.3-geode-instplat.patch
+
+Patch51: rpm-4.4.2.3-rc1-sparc-mcpu.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -401,6 +403,9 @@ exit 0
 %endif
 
 %changelog
+* Thu Mar 27 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4.4.2.3-0.4.rc1
+- Fix sparc optflags
+
 * Wed Mar 12 2008 Panu Matilainen <pmatilai@redhat.com> 4.4.2.3-0.3.rc1
 - Continue ordering loop elimination as long as progress is made (#437041)
 

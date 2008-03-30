@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.3
-Release: 0.4.rc1
+Release: 0.5.rc1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}-rc1.tar.gz
@@ -151,6 +151,7 @@ that will manipulate RPM packages and databases.
 %patch12 -p1 -b .no-order-limit
 
 %patch50 -p1 -b .geode-instplat
+%patch51 -p1 -b .sparc-mcpu
 
 # force external popt
 rm -rf popt/
@@ -403,6 +404,9 @@ exit 0
 %endif
 
 %changelog
+* Sun Mar 30 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4.4.2.3-0.5.rc1
+- actually apply sparc optflags patch
+
 * Thu Mar 27 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4.4.2.3-0.4.rc1
 - Fix sparc optflags
 

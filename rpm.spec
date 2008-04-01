@@ -6,11 +6,11 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.3
-Release: 0.5.rc1
+Release: 1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}-rc1.tar.gz
-Patch1: rpm-4.4.1-prereq.patch
+Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
+Patch1: rpm-4.4.2.3-prereq.patch
 Patch2: rpm-4.4.2-ghost-conflicts.patch
 Patch3: rpm-4.4.2-trust.patch
 Patch4: rpm-4.4.2.2-devel-autodep.patch
@@ -23,9 +23,7 @@ Patch10: rpm-4.4.2.2-pkgconfig-path.patch
 Patch11: rpm-4.4.2.3-queryformat-arch.patch
 Patch12: rpm-4.4.2.3-no-order-rescan-limit.patch
 
-Patch50: rpm-4.4.2.3-geode-instplat.patch
-
-Patch51: rpm-4.4.2.3-rc1-sparc-mcpu.patch
+Patch50: rpm-4.4.2.3-rc1-sparc-mcpu.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
 # and several different components with their own licenses included...
@@ -136,7 +134,7 @@ that will manipulate RPM packages and databases.
 %endif
 
 %prep
-%setup -q -n %{name}-%{version}-rc1
+%setup -q -n %{name}-%{version}
 %patch1 -p1 -b .prereq
 %patch2 -p1 -b .ghostconflicts
 %patch3 -p1 -b .trust
@@ -150,8 +148,7 @@ that will manipulate RPM packages and databases.
 %patch11 -p1 -b .qfmt-arch
 %patch12 -p1 -b .no-order-limit
 
-%patch50 -p1 -b .geode-instplat
-%patch51 -p1 -b .sparc-mcpu
+%patch50 -p1 -b .sparc-mcpu
 
 # force external popt
 rm -rf popt/
@@ -404,6 +401,12 @@ exit 0
 %endif
 
 %changelog
+* Tue Apr 01 2008 Panu Matilainen <pmatilai@redhat.com> 4.4.2.3-1
+- update to 4.4.2.3 final
+- resolves #436770, #431009, #435620, #433188, #430428, #432496
+- adjust dependency printing wrt prereq (#431721)
+- rediff nss patch to fix fuzz brokenness
+
 * Sun Mar 30 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4.4.2.3-0.5.rc1
 - actually apply sparc optflags patch
 

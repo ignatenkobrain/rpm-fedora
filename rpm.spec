@@ -6,7 +6,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: 4.4.2.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source: http://rpm.org/releases/rpm-4.4.x/%{name}-%{version}.tar.gz
@@ -22,7 +22,7 @@ Patch9: rpm-4.4.2.2-autofoo.patch
 Patch10: rpm-4.4.2.2-pkgconfig-path.patch
 Patch11: rpm-4.4.2.3-queryformat-arch.patch
 Patch12: rpm-4.4.2.3-no-order-rescan-limit.patch
-
+Patch13: rpm-4.4.2.3-fix-find-requires.patch
 Patch50: rpm-4.4.2.3-rc1-sparc-mcpu.patch
 
 # XXX Beware, this is one murky license, partially GPL/LGPL dual-licensed
@@ -147,7 +147,7 @@ that will manipulate RPM packages and databases.
 %patch10 -p1 -b .pkgconfig-path
 %patch11 -p1 -b .qfmt-arch
 %patch12 -p1 -b .no-order-limit
-
+%patch13 -p1 -b .requires
 %patch50 -p1 -b .sparc-mcpu
 
 # force external popt
@@ -401,6 +401,9 @@ exit 0
 %endif
 
 %changelog
+* Fri Apr 18 2008 Bill Nottingham <notting@redhat.com> 4.4.2.3-2
+- fix find-requires (#443015)
+
 * Tue Apr 01 2008 Panu Matilainen <pmatilai@redhat.com> 4.4.2.3-1
 - update to 4.4.2.3 final
 - resolves #436770, #431009, #435620, #433188, #430428, #432496

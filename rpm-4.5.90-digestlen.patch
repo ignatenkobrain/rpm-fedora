@@ -1,0 +1,13 @@
+diff --git a/rpmio/digest.c b/rpmio/digest.c
+index c360919..64b678b 100644
+--- a/rpmio/digest.c
++++ b/rpmio/digest.c
+@@ -123,7 +123,7 @@ int
+ rpmDigestFinal(DIGEST_CTX ctx, void ** datap, size_t *lenp, int asAscii)
+ {
+     unsigned char * digest;
+-    size_t digestlen;
++    unsigned int digestlen;
+ 
+     if (ctx == NULL)
+ 	return -1;

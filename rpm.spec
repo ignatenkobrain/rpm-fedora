@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.5
+Release: 0.%{snapver}.6
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -30,6 +30,8 @@ Patch0: rpm-4.5.90-devel-autodep.patch
 Patch1: rpm-4.5.90-pkgconfig-path.patch
 # XXX only create provides for pkgconfig and libtool initially
 Patch100: rpm-4.6.x-no-pkgconfig-reqs.patch
+
+Patch200: rpm-4.5.90-digestlen.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -156,6 +158,7 @@ that will manipulate RPM packages and databases.
 %patch0 -p1 -b .devel-autodep
 %patch1 -p1 -b .pkgconfig-path
 %patch100 -p1 -b .pkgconfig-deps
+%patch200 -p1 -b .diglen
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -331,6 +334,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sat Jul 12 2008 Panu Matilainen <pmatilai@redhat.com>
+- 4.5.90-0.git8426.6
+- fix type mismatch causing funky breakage on ppc64
+
 * Fri Jul 11 2008 Panu Matilainen <pmatilai@redhat.com>
 - 4.5.90-0.git8426.5
 - flip back to external bdb

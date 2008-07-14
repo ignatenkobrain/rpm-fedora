@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.6
+Release: 0.%{snapver}.7
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -31,7 +31,9 @@ Patch1: rpm-4.5.90-pkgconfig-path.patch
 # XXX only create provides for pkgconfig and libtool initially
 Patch100: rpm-4.6.x-no-pkgconfig-reqs.patch
 
+# These are already upstream, drop on next snapshot update:
 Patch200: rpm-4.5.90-digestlen.patch
+Patch201: rpm-4.5.90-mono-magic.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -158,7 +160,9 @@ that will manipulate RPM packages and databases.
 %patch0 -p1 -b .devel-autodep
 %patch1 -p1 -b .pkgconfig-path
 %patch100 -p1 -b .pkgconfig-deps
+
 %patch200 -p1 -b .diglen
+%patch201 -p1 -b .mono-magic
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -334,6 +338,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Jul 14 2008 Panu Matilainen <pmatilai@redhat.com>
+- 4.5.90-0.git8426.7
+- fix mono dependency extraction (adjust for libmagic string change)
+
 * Sat Jul 12 2008 Panu Matilainen <pmatilai@redhat.com>
 - 4.5.90-0.git8426.6
 - fix type mismatch causing funky breakage on ppc64

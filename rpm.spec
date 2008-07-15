@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.7
+Release: 0.%{snapver}.8
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -34,6 +34,7 @@ Patch100: rpm-4.6.x-no-pkgconfig-reqs.patch
 # These are already upstream, drop on next snapshot update:
 Patch200: rpm-4.5.90-digestlen.patch
 Patch201: rpm-4.5.90-mono-magic.patch
+Patch202: rpm-4.5.90-macroarg.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -163,6 +164,7 @@ that will manipulate RPM packages and databases.
 
 %patch200 -p1 -b .diglen
 %patch201 -p1 -b .mono-magic
+%patch202 -p1 -b .macroarg
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -338,6 +340,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Jul 15 2008 Panu Matilainen <pmatilai@redhat.com>
+- 4.5.90-0.git8426.8
+- fix regression in macro argument handling (#455333)
+
 * Mon Jul 14 2008 Panu Matilainen <pmatilai@redhat.com>
 - 4.5.90-0.git8426.7
 - fix mono dependency extraction (adjust for libmagic string change)

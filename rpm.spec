@@ -10,7 +10,7 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.5.90
-%define snapver git8426
+%define snapver git8444
 %define srcver %{rpmver}.%{snapver}
 
 %define bdbver 4.5.20
@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.9
+Release: 0.%{snapver}.1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -31,11 +31,8 @@ Patch1: rpm-4.5.90-pkgconfig-path.patch
 # XXX only create provides for pkgconfig and libtool initially
 Patch100: rpm-4.6.x-no-pkgconfig-reqs.patch
 
-# These are already upstream, drop on next snapshot update:
-Patch200: rpm-4.5.90-digestlen.patch
-Patch201: rpm-4.5.90-mono-magic.patch
-Patch202: rpm-4.5.90-macroarg.patch
-Patch203: rpm-4.5.90-patchnum.patch
+# These are not yet upstream
+Patch200: rpm-4.5.90-posttrans.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -163,10 +160,7 @@ that will manipulate RPM packages and databases.
 %patch1 -p1 -b .pkgconfig-path
 %patch100 -p1 -b .pkgconfig-deps
 
-%patch200 -p1 -b .diglen
-%patch201 -p1 -b .mono-magic
-%patch202 -p1 -b .macroarg
-%patch203 -p1 -b .patchnum
+%patch200 -p1 -b .posttrans
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -342,6 +336,15 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Jul 31 2008 Florian Festi <ffesti@redhat.com>
+-  4.5.90-0.git8427.1
+- new snapshot from upstream
+
+* Thu Jul 31 2008 Florian Festi <ffesti@redhat.com>
+- 4.5.90-0.git8426.10
+- rpm-4.5.90-posttrans.patch
+- use header from rpmdb in posttrans to make anaconda happy
+
 * Sat Jul 19 2008 Panu Matilainen <pmatilai@redhat.com>
 - 4.5.90-0.git8426.9
 - fix regression in patch number handling (#455872)

@@ -10,7 +10,7 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.5.90
-%define snapver git8444
+%define snapver git8461
 %define srcver %{rpmver}.%{snapver}
 
 %define bdbver 4.5.20
@@ -160,7 +160,8 @@ that will manipulate RPM packages and databases.
 %patch1 -p1 -b .pkgconfig-path
 %patch100 -p1 -b .pkgconfig-deps
 
-%patch200 -p1 -b .posttrans
+# needs a bit of upstream love first...
+#%patch200 -p1 -b .posttrans
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -336,8 +337,15 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Aug 08 2008 Panu Matilainen <pmatilai@redhat.com>
+- 4.5.90-0.git8461.1
+- new snapshot from upstream
+- fixes #68290, #455972, #446202, #453364, #456708, #456103, #456321, #456913,
+  #458260, #458261
+- partial fix for #457360
+
 * Thu Jul 31 2008 Florian Festi <ffesti@redhat.com>
--  4.5.90-0.git8427.1
+- 4.5.90-0.git8427.1
 - new snapshot from upstream
 
 * Thu Jul 31 2008 Florian Festi <ffesti@redhat.com>

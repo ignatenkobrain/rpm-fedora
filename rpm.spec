@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.1
+Release: 0.%{snapver}.2
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -31,8 +31,11 @@ Patch1: rpm-4.5.90-pkgconfig-path.patch
 # XXX only create provides for pkgconfig and libtool initially
 Patch100: rpm-4.6.x-no-pkgconfig-reqs.patch
 
+# Already in upstream, remove on next snapshot update
+Patch200: rpm-4.5.90-archivesize.patch
+
 # These are not yet upstream
-Patch200: rpm-4.5.90-posttrans.patch
+Patch300: rpm-4.5.90-posttrans.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -160,8 +163,10 @@ that will manipulate RPM packages and databases.
 %patch1 -p1 -b .pkgconfig-path
 %patch100 -p1 -b .pkgconfig-deps
 
+%patch200 -p1 -b .archivesize
+
 # needs a bit of upstream love first...
-#%patch200 -p1 -b .posttrans
+#%patch300 -p1 -b .posttrans
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -337,6 +342,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Aug 13 2008 Panu Matilainen <pmatilai@redhat.com>
+- 4.5.90-0.git8461.2
+- fix archivesize tag generation on ppc (#458817)
+
 * Fri Aug 08 2008 Panu Matilainen <pmatilai@redhat.com>
 - 4.5.90-0.git8461.1
 - new snapshot from upstream

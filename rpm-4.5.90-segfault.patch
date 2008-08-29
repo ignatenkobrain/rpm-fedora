@@ -1,0 +1,12 @@
+diff -up rpm-4.5.90.git8461/lib/rpmps.c.460146 rpm-4.5.90.git8461/lib/rpmps.c
+--- rpm-4.5.90.git8461/lib/rpmps.c.460146	2008-06-30 14:50:49.000000000 +0200
++++ rpm-4.5.90.git8461/lib/rpmps.c	2008-08-26 19:35:30.000000000 +0200
+@@ -319,7 +319,7 @@ char * rpmProblemString(const rpmProblem
+ 	break;
+     case RPMPROB_DISKSPACE:
+ 	rc = rasprintf(&buf,
+-	    _("installing package %s needs %ld%cB on the %s filesystem"),
++	    _("installing package %s needs %llu%cB on the %s filesystem"),
+ 		pkgNEVR,
+ 		prob->num1 > (1024*1024)
+ 		    ? (prob->num1 + 1024 * 1024 - 1) / (1024 * 1024)

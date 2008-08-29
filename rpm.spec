@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.2
+Release: 0.%{snapver}.3
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -33,6 +33,8 @@ Patch100: rpm-4.6.x-no-pkgconfig-reqs.patch
 
 # Already in upstream, remove on next snapshot update
 Patch200: rpm-4.5.90-archivesize.patch
+Patch201: rpm-4.5.90-noarch-subpackages.patch
+Patch202: rpm-4.5.90-segfault.patch
 
 # These are not yet upstream
 Patch300: rpm-4.5.90-posttrans.patch
@@ -164,6 +166,8 @@ that will manipulate RPM packages and databases.
 %patch100 -p1 -b .pkgconfig-deps
 
 %patch200 -p1 -b .archivesize
+%patch201 -p1 -b .noarch-subpackages
+%patch202 -p1 -b .segfault
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -342,6 +346,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Aug 26 2008 Jindrich Novy <jnovy@redhat.com>
+- add support for noarch subpackages
+- fix segfault in case of insufficient disk space detected (#460146)
+
 * Wed Aug 13 2008 Panu Matilainen <pmatilai@redhat.com>
 - 4.5.90-0.git8461.2
 - fix archivesize tag generation on ppc (#458817)

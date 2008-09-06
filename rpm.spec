@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.4
+Release: 0.%{snapver}.5
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -36,6 +36,7 @@ Patch200: rpm-4.5.90-archivesize.patch
 Patch201: rpm-4.5.90-noarch-subpackages.patch
 Patch202: rpm-4.5.90-segfault.patch
 Patch203: rpm-4.5.90-macrofix.patch
+Patch204: rpm-4.5.90-patches.patch
 
 # These are not yet upstream
 Patch300: rpm-4.5.90-posttrans.patch
@@ -170,6 +171,7 @@ that will manipulate RPM packages and databases.
 %patch201 -p1 -b .noarch-subpackages
 %patch202 -p1 -b .segfault
 %patch203 -p1 -b .macrofix
+%patch204 -p1 -b .patches
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -348,6 +350,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sat Sep 06 2008 Jindrich Novy <jnovy@redhat.com>
+- fail hard if patch isn't found (#461347)
+
 * Mon Sep 01 2008 Jindrich Novy <jnovy@redhat.com>
 - fix parsing of boolean expressions in spec (#456103)
   (unbreaks pam, jpilot and maybe other builds)

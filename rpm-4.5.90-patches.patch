@@ -1,0 +1,19 @@
+commit ce1db5af7036df54a21abab9a5d70b06a821fff4
+Author: Jindrich Novy <jnovy@redhat.com>
+Date:   Sat Sep 6 15:30:40 2008 +0200
+
+    Fail hard if patch isn't found (rhbz#461347)
+
+diff --git a/build/parsePrep.c b/build/parsePrep.c
+index fcc28c8..2be0693 100644
+--- a/build/parsePrep.c
++++ b/build/parsePrep.c
+@@ -538,7 +538,7 @@ int parsePrep(rpmSpec spec)
+ 	}
+ 	if (res && !spec->force) {
+ 	    /* fixup from RPMRC_FAIL do*Macro() codes for now */
+-	    res = PART_ERROR; 
++	    nextPart = PART_ERROR; 
+ 	    goto exit;
+ 	}
+     }

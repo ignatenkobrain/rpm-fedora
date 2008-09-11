@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.6
+Release: 0.%{snapver}.7
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -28,6 +28,7 @@ Source1: db-%{bdbver}.tar.gz
 
 Patch0: rpm-4.5.90-devel-autodep.patch
 Patch1: rpm-4.5.90-pkgconfig-path.patch
+Patch2: rpm-4.5.90-gstreamer-provides.patch
 # XXX only create provides for pkgconfig and libtool initially
 Patch100: rpm-4.6.x-no-pkgconfig-reqs.patch
 
@@ -40,6 +41,7 @@ Patch204: rpm-4.5.90-patches.patch
 Patch205: rpm-4.5.90-topdir.patch
 Patch206: rpm-4.5.90-rpmbuild-dirs.patch
 Patch207: rpm-4.5.90-cpio-hardlink.patch
+Patch208: rpm-4.5.90-macro-args.patch
 
 # These are not yet upstream
 Patch300: rpm-4.5.90-posttrans.patch
@@ -168,6 +170,7 @@ that will manipulate RPM packages and databases.
 %setup -q -n %{name}-%{srcver} %{?with_int_bdb:-a 1}
 %patch0 -p1 -b .devel-autodep
 %patch1 -p1 -b .pkgconfig-path
+%patch2 -p1 -b .gstreamer-prov
 %patch100 -p1 -b .pkgconfig-deps
 
 %patch200 -p1 -b .archivesize
@@ -178,6 +181,7 @@ that will manipulate RPM packages and databases.
 %patch205 -p1 -b .topdir
 %patch206 -p1 -b .rpmbuild-dirs
 %patch207 -p1 -b .cpio-hardlink
+%patch208 -p1 -b .macro-args
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -356,6 +360,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Sep 11 2008 Panu Matilainen <pmatilai@redhat.com>
+- add hack to support extracting gstreamer plugin provides (#438225)
+- fix another macro argument handling regression (#461180)
+
 * Thu Sep 11 2008 Jindrich Novy <jnovy@redhat.com>
 - create directory structure for rpmbuild prior to build if it doesn't exist (#455387)
 - create _topdir if it doesn't exist when installing SRPM

@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.5
+Release: 0.%{snapver}.6
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -37,6 +37,9 @@ Patch201: rpm-4.5.90-noarch-subpackages.patch
 Patch202: rpm-4.5.90-segfault.patch
 Patch203: rpm-4.5.90-macrofix.patch
 Patch204: rpm-4.5.90-patches.patch
+Patch205: rpm-4.5.90-topdir.patch
+Patch206: rpm-4.5.90-rpmbuild-dirs.patch
+Patch207: rpm-4.5.90-cpio-hardlink.patch
 
 # These are not yet upstream
 Patch300: rpm-4.5.90-posttrans.patch
@@ -172,6 +175,9 @@ that will manipulate RPM packages and databases.
 %patch202 -p1 -b .segfault
 %patch203 -p1 -b .macrofix
 %patch204 -p1 -b .patches
+%patch205 -p1 -b .topdir
+%patch206 -p1 -b .rpmbuild-dirs
+%patch207 -p1 -b .cpio-hardlink
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -350,6 +356,12 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Sep 11 2008 Jindrich Novy <jnovy@redhat.com>
+- create directory structure for rpmbuild prior to build if it doesn't exist (#455387)
+- create _topdir if it doesn't exist when installing SRPM
+- don't generate broken cpio in case of hardlink pointing on softlink,
+  thanks to pixel@mandriva.com
+
 * Sat Sep 06 2008 Jindrich Novy <jnovy@redhat.com>
 - fail hard if patch isn't found (#461347)
 

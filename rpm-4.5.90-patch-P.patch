@@ -1,0 +1,22 @@
+commit c4fa73c573f63d2e2b53e75d25feafbf65ebf671
+Author: Jindrich Novy <jnovy@redhat.com>
+Date:   Wed Sep 24 18:39:43 2008 +0200
+
+    Don't treat %patch numberless if -P parameter is present
+
+diff --git a/build/parsePrep.c b/build/parsePrep.c
+index 2be0693..bfef325 100644
+--- a/build/parsePrep.c
++++ b/build/parsePrep.c
+@@ -431,7 +431,10 @@ static rpmRC doPatchMacro(rpmSpec spec, const char *line)
+     if (! strchr(" \t\n", line[6])) {
+ 	rasprintf(&buf, "%%patch -P %s", line + 6);
+     } else {
+-	rasprintf(&buf, "%%patch -P %d %s", INT_MAX, line + 6); /* INT_MAX denotes not numbered %patch */
++	if (strstr(line+6, " -P") == NULL)
++	    rasprintf(&buf, "%%patch -P %d %s", INT_MAX, line + 6); /* INT_MAX denotes not numbered %patch */
++	else
++	    buf = strdup(line); /* it is not numberless patch because -P is present */
+     }
+     poptParseArgvString(buf, &argc, &argv);
+     free(buf);

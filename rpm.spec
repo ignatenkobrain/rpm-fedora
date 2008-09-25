@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.7
+Release: 0.%{snapver}.8
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -42,6 +42,7 @@ Patch205: rpm-4.5.90-topdir.patch
 Patch206: rpm-4.5.90-rpmbuild-dirs.patch
 Patch207: rpm-4.5.90-cpio-hardlink.patch
 Patch208: rpm-4.5.90-macro-args.patch
+Patch209: rpm-4.5.90-patch-P.patch
 
 # These are not yet upstream
 Patch300: rpm-4.5.90-posttrans.patch
@@ -182,6 +183,7 @@ that will manipulate RPM packages and databases.
 %patch206 -p1 -b .rpmbuild-dirs
 %patch207 -p1 -b .cpio-hardlink
 %patch208 -p1 -b .macro-args
+%patch209 -p1 -b .patch-P
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -360,6 +362,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Sep 25 2008 Jindrich Novy <jnovy@redhat.com>
+- don't treat %patch numberless if -P parameter is present (#463942)
+
 * Thu Sep 11 2008 Panu Matilainen <pmatilai@redhat.com>
 - add hack to support extracting gstreamer plugin provides (#438225)
 - fix another macro argument handling regression (#461180)

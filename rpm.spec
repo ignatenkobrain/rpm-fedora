@@ -10,7 +10,7 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.5.90
-%define snapver git8461
+%define snapver git8514
 %define srcver %{rpmver}.%{snapver}
 
 %define bdbver 4.5.20
@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.8
+Release: 0.%{snapver}.1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -33,16 +33,7 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 Patch100: rpm-4.6.x-no-pkgconfig-reqs.patch
 
 # Already in upstream, remove on next snapshot update
-Patch200: rpm-4.5.90-archivesize.patch
-Patch201: rpm-4.5.90-noarch-subpackages.patch
-Patch202: rpm-4.5.90-segfault.patch
-Patch203: rpm-4.5.90-macrofix.patch
-Patch204: rpm-4.5.90-patches.patch
-Patch205: rpm-4.5.90-topdir.patch
-Patch206: rpm-4.5.90-rpmbuild-dirs.patch
-Patch207: rpm-4.5.90-cpio-hardlink.patch
-Patch208: rpm-4.5.90-macro-args.patch
-Patch209: rpm-4.5.90-patch-P.patch
+Patch200: rpm-4.5.90-ppc-isa.patch
 
 # These are not yet upstream
 Patch300: rpm-4.5.90-posttrans.patch
@@ -174,16 +165,7 @@ that will manipulate RPM packages and databases.
 %patch2 -p1 -b .gstreamer-prov
 %patch100 -p1 -b .pkgconfig-deps
 
-%patch200 -p1 -b .archivesize
-%patch201 -p1 -b .noarch-subpackages
-%patch202 -p1 -b .segfault
-%patch203 -p1 -b .macrofix
-%patch204 -p1 -b .patches
-%patch205 -p1 -b .topdir
-%patch206 -p1 -b .rpmbuild-dirs
-%patch207 -p1 -b .cpio-hardlink
-%patch208 -p1 -b .macro-args
-%patch209 -p1 -b .patch-P
+%patch200 -p1 -b .ppc-isa
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -194,9 +176,11 @@ ln -s db-%{bdbver} db
 
 %build
 %if %{without int_bdb}
-export CPPFLAGS=-I%{_includedir}/db%{bdbver} 
-export LDFLAGS=-L%{_libdir}/db%{bdbver}
+CPPFLAGS=-I%{_includedir}/db%{bdbver} 
+LDFLAGS=-L%{_libdir}/db%{bdbver}
 %endif
+CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss`"
+export CPPFLAGS LDFLAGS
 
 %configure \
     %{!?with_int_bdb: --with-external-db} \
@@ -236,6 +220,9 @@ done
 
 find $RPM_BUILD_ROOT -name "*.la"|xargs rm -f
 
+# avoid dragging in tonne of perl libs for an unused script
+chmod 0644 $RPM_BUILD_ROOT/%{rpmhome}/perldeps.pl
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -250,7 +237,7 @@ dbstat=/usr/lib/rpm/rpmdb_stat
 dbstat=%{_bindir}/db45_stat
 %endif
 if [ -x "$dbstat" ]; then
-    if "$dbstat" -e -h /var/lib/rpm 2>&1 | grep -q "Invalid argument"; then
+    if "$dbstat" -e -h /var/lib/rpm 2>&1 | grep -q "doesn't match environment version \| Invalid argument"; then
         rm -f /var/lib/rpm/__db.* 
     fi
 fi
@@ -362,6 +349,13 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Oct 01 2008 Panu Matilainen <pmatilai@redhat.com>
+- update to official 4.5.90 alpha tarball 
+- a big pile of misc bugfixes + translation updates
+- isa-macro generation fix for ppc (#464754)
+- avoid pulling in pile of perl dependencies for an unused script
+- handle both "invalid argument" and clear env version mismatch on posttrans
+
 * Thu Sep 25 2008 Jindrich Novy <jnovy@redhat.com>
 - don't treat %patch numberless if -P parameter is present (#463942)
 

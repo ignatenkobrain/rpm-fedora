@@ -9,9 +9,9 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.5.90
-%define snapver git8514
-%define srcver %{rpmver}.%{snapver}
+%define rpmver 4.6.0
+%define snapver rc1
+%define srcver %{rpmver}-%{snapver}
 
 %define bdbver 4.5.20
 
@@ -31,9 +31,6 @@ Patch1: rpm-4.5.90-pkgconfig-path.patch
 Patch2: rpm-4.5.90-gstreamer-provides.patch
 # XXX only create provides for pkgconfig and libtool initially
 Patch100: rpm-4.6.x-no-pkgconfig-reqs.patch
-
-# Already in upstream, remove on next snapshot update
-Patch200: rpm-4.5.90-ppc-isa.patch
 
 # These are not yet upstream
 Patch300: rpm-4.5.90-posttrans.patch
@@ -165,8 +162,6 @@ that will manipulate RPM packages and databases.
 %patch2 -p1 -b .gstreamer-prov
 %patch100 -p1 -b .pkgconfig-deps
 
-%patch200 -p1 -b .ppc-isa
-
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
 
@@ -180,9 +175,17 @@ CPPFLAGS=-I%{_includedir}/db%{bdbver}
 LDFLAGS=-L%{_libdir}/db%{bdbver}
 %endif
 CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss`"
-export CPPFLAGS LDFLAGS
+CFLAGS="$RPM_OPT_FLAGS"
+export CPPFLAGS CFLAGS LDFLAGS
 
-%configure \
+# Using configure macro has some unwanted side-effects on rpm platform
+# setup, use the old-fashioned way for now only defining minimal paths.
+./configure \
+    --prefix=%{_usr} \
+    --sysconfdir=%{_sysconfdir} \
+    --localstatedir=%{_var} \
+    --mandir=%{_mandir} \
+    --libdir=%{_libdir} \
     %{!?with_int_bdb: --with-external-db} \
     %{?with_sqlite: --enable-sqlite3} \
     --with-lua \
@@ -349,6 +352,11 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Oct 16 2008 Panu Matilainen <pmatilai@redhat.com>
+- update to 4.6.0-rc1 
+- fixes #465586, #466597, #465409, #216221, #466503, #466009, #463447...
+- avoid using %%configure macro for now, it has unwanted side-effects on rpm
+
 * Wed Oct 01 2008 Panu Matilainen <pmatilai@redhat.com>
 - update to official 4.5.90 alpha tarball 
 - a big pile of misc bugfixes + translation updates

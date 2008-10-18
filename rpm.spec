@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.1
+Release: 0.%{snapver}.2
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -31,6 +31,9 @@ Patch1: rpm-4.5.90-pkgconfig-path.patch
 Patch2: rpm-4.5.90-gstreamer-provides.patch
 # XXX only create provides for pkgconfig and libtool initially
 Patch100: rpm-4.6.x-no-pkgconfig-reqs.patch
+
+# Patches already in upstream
+Patch200: rpm-4.6.0-rc1-permit-tab.patch
 
 # These are not yet upstream
 Patch300: rpm-4.5.90-posttrans.patch
@@ -161,6 +164,8 @@ that will manipulate RPM packages and databases.
 %patch1 -p1 -b .pkgconfig-path
 %patch2 -p1 -b .gstreamer-prov
 %patch100 -p1 -b .pkgconfig-deps
+
+%patch200 -p1 -b .permit-tab
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -352,6 +357,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sun Oct 19 2008 Panu Matilainen <pmatilai@redhat.com>
+- permit tab as macro argument separator (#467567)
+
 * Thu Oct 16 2008 Panu Matilainen <pmatilai@redhat.com>
 - update to 4.6.0-rc1 
 - fixes #465586, #466597, #465409, #216221, #466503, #466009, #463447...

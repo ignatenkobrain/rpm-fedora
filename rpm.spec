@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.2
+Release: 0.%{snapver}.3
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -34,6 +34,7 @@ Patch100: rpm-4.6.x-no-pkgconfig-reqs.patch
 
 # Patches already in upstream
 Patch200: rpm-4.6.0-rc1-permit-tab.patch
+Patch201: rpm-4.6.0-rc1-skip-equal-nevr.patch
 
 # These are not yet upstream
 Patch300: rpm-4.5.90-posttrans.patch
@@ -166,6 +167,7 @@ that will manipulate RPM packages and databases.
 %patch100 -p1 -b .pkgconfig-deps
 
 %patch200 -p1 -b .permit-tab
+%patch201 -p1 -b .skip-equal-nevr
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -357,6 +359,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Oct 22 2008 Panu Matilainen <pmatilai@redhat.com>
+- never add identical NEVRA to transaction more than once (#467822)
+
 * Sun Oct 19 2008 Panu Matilainen <pmatilai@redhat.com>
 - permit tab as macro argument separator (#467567)
 

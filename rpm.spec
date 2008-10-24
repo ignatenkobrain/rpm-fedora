@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.3
+Release: 0.%{snapver}.4
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -44,16 +44,18 @@ Patch300: rpm-4.5.90-posttrans.patch
 License: GPLv2+
 
 Requires(post): coreutils
+%if %{without int_bdb}
+Requires(post): compat-db45
+%endif
 Requires: popt >= 1.10.2.1
 Requires: crontabs
 Requires: logrotate
 Requires: curl
 
 %if %{without int_bdb}
-# XXX using BDB 4.5.20 from compat-db for now to provide a safe downgrade
-# route to older rpm. Only compat-db >= 4.6.21 has the necessary symlinks
-# for building however.
-BuildRequires: compat-db >= 4.6.21-2.fc10
+# XXX using BDB 4.5.20 from compat-db45 for now to provide a safe downgrade
+# route to older rpm.
+BuildRequires: compat-db45
 %endif
 
 # XXX generally assumed to be installed but make it explicit as rpm
@@ -359,6 +361,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Oct 24 2008 Jindrich Novy <jnovy@redhat.com>
+- update compat-db dependencies (#459710)
+
 * Wed Oct 22 2008 Panu Matilainen <pmatilai@redhat.com>
 - never add identical NEVRA to transaction more than once (#467822)
 

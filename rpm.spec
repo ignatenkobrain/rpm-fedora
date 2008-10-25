@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.4
+Release: 0.%{snapver}.5
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -35,6 +35,8 @@ Patch100: rpm-4.6.x-no-pkgconfig-reqs.patch
 # Patches already in upstream
 Patch200: rpm-4.6.0-rc1-permit-tab.patch
 Patch201: rpm-4.6.0-rc1-skip-equal-nevr.patch
+Patch202: rpm-4.6.0-rc1-noarch-subpkg.patch
+Patch203: rpm-4.6.0-rc1-defaultdocdir.patch
 
 # These are not yet upstream
 Patch300: rpm-4.5.90-posttrans.patch
@@ -170,6 +172,8 @@ that will manipulate RPM packages and databases.
 
 %patch200 -p1 -b .permit-tab
 %patch201 -p1 -b .skip-equal-nevr
+%patch202 -p1 -b .noarch-subpkg
+%patch203 -p1 -b .defaultdocdir
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -193,7 +197,6 @@ export CPPFLAGS CFLAGS LDFLAGS
     --prefix=%{_usr} \
     --sysconfdir=%{_sysconfdir} \
     --localstatedir=%{_var} \
-    --mandir=%{_mandir} \
     --libdir=%{_libdir} \
     %{!?with_int_bdb: --with-external-db} \
     %{?with_sqlite: --enable-sqlite3} \
@@ -361,6 +364,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sat Oct 25 2008 Panu Matilainen <pmatilai@redhat.com>
+- Make noarch sub-packages actually work
+- Fix defaultdocdir logic in installplatform to avoid hardwiring mandir
+
 * Fri Oct 24 2008 Jindrich Novy <jnovy@redhat.com>
 - update compat-db dependencies (#459710)
 

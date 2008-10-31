@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.6
+Release: 0.%{snapver}.7
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -38,6 +38,7 @@ Patch201: rpm-4.6.0-rc1-skip-equal-nevr.patch
 Patch202: rpm-4.6.0-rc1-noarch-subpkg.patch
 Patch203: rpm-4.6.0-rc1-defaultdocdir.patch
 Patch204: rpm-4.6.0-rc1-fp-hash.patch
+Patch205: rpm-4.6.0-rc1-file-debuginfo.patch
 
 # These are not yet upstream
 Patch300: rpm-4.5.90-posttrans.patch
@@ -176,6 +177,7 @@ that will manipulate RPM packages and databases.
 %patch202 -p1 -b .noarch-subpkg
 %patch203 -p1 -b .defaultdocdir
 %patch204 -p1 -b .fp-hash
+%patch205 -p1 -b .file-debuginfo
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -366,6 +368,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Oct 31 2008 Panu Matilainen <pmatilai@redhat.com>
+- adjust find-debuginfo for "file" output change (#468129)
+
 * Tue Oct 28 2008 Panu Matilainen <pmatilai@redhat.com>
 - Florian's improved fingerprinting hash algorithm from upstream
 

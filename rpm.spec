@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.1
+Release: 0.%{snapver}.2
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -29,8 +29,6 @@ Source1: db-%{bdbver}.tar.gz
 Patch0: rpm-4.5.90-devel-autodep.patch
 Patch1: rpm-4.5.90-pkgconfig-path.patch
 Patch2: rpm-4.5.90-gstreamer-provides.patch
-# XXX only create provides for pkgconfig and libtool initially
-Patch100: rpm-4.6.x-no-pkgconfig-reqs.patch
 
 # Patches already in upstream
 
@@ -164,7 +162,6 @@ that will manipulate RPM packages and databases.
 %patch0 -p1 -b .devel-autodep
 %patch1 -p1 -b .pkgconfig-path
 %patch2 -p1 -b .gstreamer-prov
-%patch100 -p1 -b .pkgconfig-deps
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -358,6 +355,7 @@ exit 0
 * Sat Nov 29 2008 Panu Matilainen <pmatilai@redhat.com>
 - update to 4.6.0-rc2
 - fixes #471820, #473167, #469355, #468319, #472507, #247374, #426672, #444661
+- enable automatic generation of pkg-config and libtool dependencies #465377
 
 * Fri Oct 31 2008 Panu Matilainen <pmatilai@redhat.com>
 - adjust find-debuginfo for "file" output change (#468129)

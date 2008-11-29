@@ -10,7 +10,7 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.6.0
-%define snapver rc1
+%define snapver rc2
 %define srcver %{rpmver}-%{snapver}
 
 %define bdbver 4.5.20
@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.7
+Release: 0.%{snapver}.1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -33,12 +33,6 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 Patch100: rpm-4.6.x-no-pkgconfig-reqs.patch
 
 # Patches already in upstream
-Patch200: rpm-4.6.0-rc1-permit-tab.patch
-Patch201: rpm-4.6.0-rc1-skip-equal-nevr.patch
-Patch202: rpm-4.6.0-rc1-noarch-subpkg.patch
-Patch203: rpm-4.6.0-rc1-defaultdocdir.patch
-Patch204: rpm-4.6.0-rc1-fp-hash.patch
-Patch205: rpm-4.6.0-rc1-file-debuginfo.patch
 
 # These are not yet upstream
 Patch300: rpm-4.5.90-posttrans.patch
@@ -171,13 +165,6 @@ that will manipulate RPM packages and databases.
 %patch1 -p1 -b .pkgconfig-path
 %patch2 -p1 -b .gstreamer-prov
 %patch100 -p1 -b .pkgconfig-deps
-
-%patch200 -p1 -b .permit-tab
-%patch201 -p1 -b .skip-equal-nevr
-%patch202 -p1 -b .noarch-subpkg
-%patch203 -p1 -b .defaultdocdir
-%patch204 -p1 -b .fp-hash
-%patch205 -p1 -b .file-debuginfo
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -368,6 +355,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sat Nov 29 2008 Panu Matilainen <pmatilai@redhat.com>
+- update to 4.6.0-rc2
+- fixes #471820, #473167, #469355, #468319, #472507, #247374, #426672, #444661
+
 * Fri Oct 31 2008 Panu Matilainen <pmatilai@redhat.com>
 - adjust find-debuginfo for "file" output change (#468129)
 

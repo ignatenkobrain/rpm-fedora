@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.2
+Release: 0.%{snapver}.3
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -352,6 +352,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sun Nov 30 2008 Panu Matilainen <pmatilai@redhat.com>
+- rebuild for python 2.6
+
 * Sat Nov 29 2008 Panu Matilainen <pmatilai@redhat.com>
 - update to 4.6.0-rc2
 - fixes #471820, #473167, #469355, #468319, #472507, #247374, #426672, #444661

@@ -1,0 +1,20 @@
+commit 0b80d38f32b438d81d47fc61074b1f163518d68f
+Author: Jindrich Novy <jnovy@redhat.com>
+Date:   Mon Dec 1 12:16:56 2008 +0100
+
+    Include rpmfileutil.h from rpmmacro.h so that
+    prototype for rpmGenPath() is included (rhbz#473420)
+    - unbreaks net-snmp
+
+diff --git a/rpmio/rpmmacro.h b/rpmio/rpmmacro.h
+index 7391efd..765c78c 100644
+--- a/rpmio/rpmmacro.h
++++ b/rpmio/rpmmacro.h
+@@ -9,6 +9,7 @@
+ #include <stddef.h>
+ 
+ #include <rpm/rpmutil.h>
++#include <rpm/rpmfileutil.h>
+ 
+ #ifdef __cplusplus
+ extern "C" {

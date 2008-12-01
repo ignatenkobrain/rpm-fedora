@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.4
+Release: 0.%{snapver}.5
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -29,6 +29,7 @@ Source1: db-%{bdbver}.tar.gz
 Patch0: rpm-4.5.90-devel-autodep.patch
 Patch1: rpm-4.5.90-pkgconfig-path.patch
 Patch2: rpm-4.5.90-gstreamer-provides.patch
+Patch3: rpm-4.5.90-rpmfileutil.patch
 
 # Patches already in upstream
 
@@ -162,6 +163,7 @@ that will manipulate RPM packages and databases.
 %patch0 -p1 -b .devel-autodep
 %patch1 -p1 -b .pkgconfig-path
 %patch2 -p1 -b .gstreamer-prov
+%patch3 -p1 -b .rpmfileutil
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -352,6 +354,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Dec 01 2008 Jindrich Novy <jnovy@redhat.com>
+- include rpmfileutil.h from rpmmacro.h, unbreaks
+  net-snmp (#473420)
+
 * Sun Nov 30 2008 Panu Matilainen <pmatilai@redhat.com>
 - rebuild for python 2.6
 

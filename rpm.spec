@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.7
+Release: 0.%{snapver}.8
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -357,6 +357,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Dec  3 2008 Jeremy Katz <katzj@redhat.com> - 4.6.0-0.rc2.8
+- python 2.6 rebuild again
+
 * Wed Dec 03 2008 Panu Matilainen <pmatilai@redhat.com>
 - make rpm-build require pkgconfig (#473978)
 

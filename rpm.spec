@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.6
+Release: 0.%{snapver}.7
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -133,6 +133,7 @@ Requires: rpm = %{version}-%{release}
 Requires: elfutils >= 0.128 binutils
 Requires: findutils sed grep gawk diffutils file patch >= 2.5
 Requires: unzip gzip bzip2 cpio lzma
+Requires: pkgconfig
 
 %description build
 The rpm-build package contains the scripts and executable programs
@@ -356,6 +357,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Dec 03 2008 Panu Matilainen <pmatilai@redhat.com>
+- make rpm-build require pkgconfig (#473978)
+
 * Tue Dec 02 2008 Panu Matilainen <pmatilai@redhat.com>
 - fix pkg-config provide generation when pc's depend on each other (#473814)
 

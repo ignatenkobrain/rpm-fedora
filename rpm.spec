@@ -10,7 +10,7 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.6.0
-%define snapver rc2
+%define snapver rc3
 %define srcver %{rpmver}-%{snapver}
 
 %define bdbver 4.5.20
@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.9
+Release: 0.%{snapver}.1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -29,8 +29,6 @@ Source1: db-%{bdbver}.tar.gz
 Patch0: rpm-4.5.90-devel-autodep.patch
 Patch1: rpm-4.5.90-pkgconfig-path.patch
 Patch2: rpm-4.5.90-gstreamer-provides.patch
-Patch3: rpm-4.5.90-rpmfileutil.patch
-Patch4: rpm-4.6.0-rc2-pkgconfig-provides.patch
 
 # Patches already in upstream
 
@@ -165,8 +163,6 @@ that will manipulate RPM packages and databases.
 %patch0 -p1 -b .devel-autodep
 %patch1 -p1 -b .pkgconfig-path
 %patch2 -p1 -b .gstreamer-prov
-%patch3 -p1 -b .rpmfileutil
-%patch4 -p1 -b .pkgconfig-provides
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -357,6 +353,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Dec 09 2008 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc3.1
+- update to rpm 4.6.0-rc3
+- fixes #475214, #474550, #473239
+
 * Wed Dec  3 2008 Jeremy Katz <katzj@redhat.com> - 4.6.0-0.rc2.9
 - I built into the wrong place
 

@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.1
+Release: 0.%{snapver}.1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -353,6 +353,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Dec 12 2008 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc3.1
+- add dist-tag, rebuild
+
 * Tue Dec 09 2008 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc3.1
 - update to rpm 4.6.0-rc3
 - fixes #475214, #474550, #473239

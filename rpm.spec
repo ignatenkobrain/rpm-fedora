@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.1%{?dist}
+Release: 0.%{snapver}.2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -31,6 +31,7 @@ Patch1: rpm-4.5.90-pkgconfig-path.patch
 Patch2: rpm-4.5.90-gstreamer-provides.patch
 
 # Patches already in upstream
+Patch200: rpm-4.6.0-rc1-defaultdocdir.patch
 
 # These are not yet upstream
 Patch300: rpm-4.5.90-posttrans.patch
@@ -163,6 +164,9 @@ that will manipulate RPM packages and databases.
 %patch0 -p1 -b .devel-autodep
 %patch1 -p1 -b .pkgconfig-path
 %patch2 -p1 -b .gstreamer-prov
+
+# upstream but not on 4.6.x branch yet, oops
+%patch200 -p1 -b .defaultdocdir
 
 # needs a bit of upstream love first...
 #%patch300 -p1 -b .posttrans
@@ -353,6 +357,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Dec 12 2008 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc3.2
+- add back defaultdocdir patch which hadn't been applied on 4.6.x branch yet
+
 * Fri Dec 12 2008 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc3.1
 - add dist-tag, rebuild
 

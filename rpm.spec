@@ -10,7 +10,7 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.6.0
-%define snapver rc3
+%define snapver rc4
 %define srcver %{rpmver}-%{snapver}
 
 %define bdbver 4.5.20
@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.2%{?dist}
+Release: 0.%{snapver}.1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -357,6 +357,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Jan 30 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc4.1
+- update to 4.6.0-rc4
+- fixes #475582, #478907, #476737, #479869, #476201
+
 * Fri Dec 12 2008 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc3.2
 - add back defaultdocdir patch which hadn't been applied on 4.6.x branch yet
 

@@ -228,12 +228,14 @@ done
 
 # plant links to db utils as rpmdb_foo so existing documantion is usable
 %if %{without int_bdb}
+dbprefix=db45
 for dbutil in \
     archive deadlock dump load printlog \
-    recover stat svc upgrade verify
+    recover stat upgrade verify
 do
-    ln -s ../../bin/db45_$dbutil $RPM_BUILD_ROOT/%{rpmhome}/rpmdb_$dbutil
+    ln -s ../../bin/${dbprefix}_${dbutil} $RPM_BUILD_ROOT/%{rpmhome}/rpmdb_${dbutil}
 done
+ln -s ../../bin/berkeley_${dbprefix}_svc $RPM_BUILD_ROOT/%{rpmhome}/rpmdb_svc
 %endif
 
 %find_lang %{name}

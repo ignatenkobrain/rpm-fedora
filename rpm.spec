@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.1%{?dist}
+Release: 0.%{snapver}.2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -42,7 +42,8 @@ License: GPLv2+
 
 Requires(post): coreutils
 %if %{without int_bdb}
-Requires(post): compat-db45
+# normally db4-utils = %{bdbver} for the rpmdb_foo symlinks
+Requires: compat-db45
 %endif
 Requires: popt >= 1.10.2.1
 Requires: crontabs
@@ -190,6 +191,7 @@ export CPPFLAGS CFLAGS LDFLAGS
     --prefix=%{_usr} \
     --sysconfdir=%{_sysconfdir} \
     --localstatedir=%{_var} \
+    --sharedstatedir=%{_var}/lib \
     --libdir=%{_libdir} \
     %{!?with_int_bdb: --with-external-db} \
     %{?with_sqlite: --enable-sqlite3} \
@@ -224,6 +226,16 @@ do
     touch $RPM_BUILD_ROOT/var/lib/rpm/$dbi
 done
 
+# plant links to db utils as rpmdb_foo so existing documantion is usable
+%if %{without int_bdb}
+for dbutil in \
+    archive deadlock dump load printlog \
+    recover stat svc upgrade verify
+do
+    ln -s ../../bin/db45_$dbutil $RPM_BUILD_ROOT/%{rpmhome}/rpmdb_$dbutil
+done
+%endif
+
 %find_lang %{name}
 
 find $RPM_BUILD_ROOT -name "*.la"|xargs rm -f
@@ -239,11 +251,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %posttrans
 # XXX this is klunky and ugly, rpm itself should handle this
-%if %{with int_bdb}
 dbstat=/usr/lib/rpm/rpmdb_stat
-%else
-dbstat=%{_bindir}/db45_stat
-%endif
 if [ -x "$dbstat" ]; then
     if "$dbstat" -e -h /var/lib/rpm 2>&1 | grep -q "doesn't match environment version \| Invalid argument"; then
         rm -f /var/lib/rpm/__db.* 
@@ -357,6 +365,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sat Jan 31 2009 Panu Matilainen <pmatilai@redhat.com>
+- change platform sharedstatedir to something more sensible (#185862)
+- add rpmdb_foo links to db utils for documentation compatibility
+
 * Fri Jan 30 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc4.1
 - update to 4.6.0-rc4
 - fixes #475582, #478907, #476737, #479869, #476201

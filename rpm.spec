@@ -18,13 +18,14 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.2%{?dist}
+Release: 0.%{snapver}.3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %endif
+Source10: desktop-file.prov
 
 Patch0: rpm-4.5.90-devel-autodep.patch
 Patch1: rpm-4.5.90-pkgconfig-path.patch
@@ -34,7 +35,7 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 Patch200: rpm-4.6.0-rc1-defaultdocdir.patch
 
 # These are not yet upstream
-Patch300: rpm-4.5.90-posttrans.patch
+Patch300: rpm-4.6.0-extra-provides.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -169,8 +170,7 @@ that will manipulate RPM packages and databases.
 # upstream but not on 4.6.x branch yet, oops
 %patch200 -p1 -b .defaultdocdir
 
-# needs a bit of upstream love first...
-#%patch300 -p1 -b .posttrans
+%patch300 -p1 -b .extra-prov
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -212,6 +212,8 @@ install -m 755 scripts/rpm.daily ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.daily/rpm
 
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/logrotate.d
 install -m 644 scripts/rpm.log ${RPM_BUILD_ROOT}%{_sysconfdir}/logrotate.d/rpm
+
+install -p -m 755 %{SOURCE10} ${RPM_BUILD_ROOT}%{rpmhome}/
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm
 
@@ -341,6 +343,7 @@ exit 0
 %{rpmhome}/config.sub
 %{rpmhome}/mkinstalldirs
 %{rpmhome}/rpmdiff*
+%{rpmhome}/desktop-file.prov
 
 %{rpmhome}/macros.perl
 %{rpmhome}/macros.python
@@ -367,7 +370,13 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
-* Sat Jan 31 2009 Panu Matilainen <pmatilai@redhat.com>
+* Wed Feb 04 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc4.3
+- extract mimehandler provides from .desktop files
+- preliminaries for extracting font provides (not enabled yet)
+- dont classify font metrics data as fonts
+- only run script dep extraction once per file, duh
+
+* Sat Jan 31 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc4.2
 - change platform sharedstatedir to something more sensible (#185862)
 - add rpmdb_foo links to db utils for documentation compatibility
 

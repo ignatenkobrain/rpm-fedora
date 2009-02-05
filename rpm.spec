@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.3%{?dist}
+Release: 0.%{snapver}.4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -30,6 +30,9 @@ Source10: desktop-file.prov
 Patch0: rpm-4.5.90-devel-autodep.patch
 Patch1: rpm-4.5.90-pkgconfig-path.patch
 Patch2: rpm-4.5.90-gstreamer-provides.patch
+# Fedora specspo is setup differently than what rpm expects, considering
+# this as Fedora-specific patch for now
+Patch3: rpm-4.6.0-fedora-specspo.patch
 
 # Patches already in upstream
 Patch200: rpm-4.6.0-rc1-defaultdocdir.patch
@@ -166,6 +169,7 @@ that will manipulate RPM packages and databases.
 %patch0 -p1 -b .devel-autodep
 %patch1 -p1 -b .pkgconfig-path
 %patch2 -p1 -b .gstreamer-prov
+%patch3 -p1 -b .fedora-specspo
 
 # upstream but not on 4.6.x branch yet, oops
 %patch200 -p1 -b .defaultdocdir
@@ -370,6 +374,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Feb 05 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc4.4
+- fixup rpm translation lookup to match Fedora specspo (#436941)
+
 * Wed Feb 04 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc4.3
 - extract mimehandler provides from .desktop files
 - preliminaries for extracting font provides (not enabled yet)

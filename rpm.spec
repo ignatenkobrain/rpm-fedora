@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.4%{?dist}
+Release: 0.%{snapver}.5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -26,6 +26,7 @@ Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
 Source1: db-%{bdbver}.tar.gz
 %endif
 Source10: desktop-file.prov
+Source11: fontconfig.prov
 
 Patch0: rpm-4.5.90-devel-autodep.patch
 Patch1: rpm-4.5.90-pkgconfig-path.patch
@@ -217,7 +218,7 @@ install -m 755 scripts/rpm.daily ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.daily/rpm
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/logrotate.d
 install -m 644 scripts/rpm.log ${RPM_BUILD_ROOT}%{_sysconfdir}/logrotate.d/rpm
 
-install -p -m 755 %{SOURCE10} ${RPM_BUILD_ROOT}%{rpmhome}/
+install -p -m 755 %{SOURCE10} %{SOURCE11} ${RPM_BUILD_ROOT}%{rpmhome}/
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm
 
@@ -348,6 +349,7 @@ exit 0
 %{rpmhome}/mkinstalldirs
 %{rpmhome}/rpmdiff*
 %{rpmhome}/desktop-file.prov
+%{rpmhome}/fontconfig.prov
 
 %{rpmhome}/macros.perl
 %{rpmhome}/macros.python
@@ -374,6 +376,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Feb 06 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc4.5
+- enable fontconfig provides generation
+
 * Thu Feb 05 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc4.4
 - fixup rpm translation lookup to match Fedora specspo (#436941)
 

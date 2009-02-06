@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# Script to install in:
+# /usr/lib/rpm/redhat/find-provides.d
+#
+# Transform font files into RPM provides
+# Requires fontconfig >= 2.6.90
+#
+# Author: Behdad Esfahbod <behdad@redhat.com>
+# Based on other provides scripts from RPM
+#
+
+fcquery=/usr/bin/fc-query
+
+[ -x $fcquery ] || exit 0
+
+# filter out anything outside main fontconfig path
+grep /usr/share/fonts/ |
+xargs $fcquery --format '%{family}\n:lang=%{lang}\n' 2> /dev/null |
+while read line; do
+	case $line in
+	:lang=*)
+		langs=${line#:lang=}
+		OLDIFS=$IFS
+		IFS='|'
+		for lang in $langs; do
+			echo :lang=$lang
+		done
+		IFS=$OLDIFS
+	;;
+	*)
+		echo "$line" | tr 'A-Z_' 'a-z-' | tr -d -c 'a-z0-9-\n'
+	;;
+	esac
+done |
+sed 's/\(.*\)/Font(\1)/' |
+sort -u

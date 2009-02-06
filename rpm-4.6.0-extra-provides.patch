@@ -75,7 +75,7 @@ diff -up rpm-4.6.0-rc4/macros.in.extra-prov rpm-4.6.0-rc4/macros.in
  %__pkgconfig_provides   @RPMCONFIGDIR@/pkgconfigdeps.sh --provides
  %__pkgconfig_requires   @RPMCONFIGDIR@/pkgconfigdeps.sh --requires
  
-+#%__fontconfig_provides	/usr/lib/rpm/fontconfig.prov
++%__fontconfig_provides	/usr/lib/rpm/fontconfig.prov
 +%__desktop_provides     /usr/lib/rpm/desktop-file.prov
 +
  #==============================================================================

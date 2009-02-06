@@ -10,15 +10,14 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.6.0
-%define snapver rc4
-%define srcver %{rpmver}-%{snapver}
+%define srcver %{rpmver}
 
 %define bdbver 4.5.20
 
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.5%{?dist}
+Release: 1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -376,6 +375,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Feb 06 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-1
+- update to 4.6.0 final
+- revert libmagic looking into compressed files for now, breaks ooffice build
+
 * Fri Feb 06 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-0.rc4.5
 - enable fontconfig provides generation
 

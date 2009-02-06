@@ -64,7 +64,7 @@ diff -up rpm-4.6.0-rc4/build/rpmfc.c.extra-prov rpm-4.6.0-rc4/build/rpmfc.c
      int fcolor;
      int xx;
 -    int msflags = MAGIC_CHECK;	/* XXX MAGIC_COMPRESS flag? */
-+    int msflags = MAGIC_CHECK | MAGIC_COMPRESS;
++    int msflags = MAGIC_CHECK; /* add MAGIC_COMPRESS eventually */
      magic_t ms = NULL;
  
      if (fc == NULL || argv == NULL)

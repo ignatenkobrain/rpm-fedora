@@ -12,12 +12,13 @@
 %define rpmver 4.6.0
 %define srcver %{rpmver}
 
-%define bdbver 4.5.20
+%define bdbver 4.7.25
+%define dbprefix db
 
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -46,8 +47,8 @@ License: GPLv2+
 
 Requires(post): coreutils
 %if %{without int_bdb}
-# normally db4-utils = %{bdbver} for the rpmdb_foo symlinks
-Requires: compat-db45
+# db recovery tools, rpmdb_util symlinks
+Requires: db4-utils = %{bdbver}
 %endif
 Requires: popt >= 1.10.2.1
 Requires: crontabs
@@ -55,9 +56,7 @@ Requires: logrotate
 Requires: curl
 
 %if %{without int_bdb}
-# XXX using BDB 4.5.20 from compat-db45 for now to provide a safe downgrade
-# route to older rpm.
-BuildRequires: compat-db45
+BuildRequires: db4-devel = %{bdbver}
 %endif
 
 # XXX generally assumed to be installed but make it explicit as rpm
@@ -182,8 +181,8 @@ ln -s db-%{bdbver} db
 
 %build
 %if %{without int_bdb}
-CPPFLAGS=-I%{_includedir}/db%{bdbver} 
-LDFLAGS=-L%{_libdir}/db%{bdbver}
+#CPPFLAGS=-I%{_includedir}/db%{bdbver} 
+#LDFLAGS=-L%{_libdir}/db%{bdbver}
 %endif
 CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss`"
 CFLAGS="$RPM_OPT_FLAGS"
@@ -234,14 +233,13 @@ done
 
 # plant links to db utils as rpmdb_foo so existing documantion is usable
 %if %{without int_bdb}
-dbprefix=db45
 for dbutil in \
     archive deadlock dump load printlog \
     recover stat upgrade verify
 do
-    ln -s ../../bin/${dbprefix}_${dbutil} $RPM_BUILD_ROOT/%{rpmhome}/rpmdb_${dbutil}
+    ln -s ../../bin/%{dbprefix}_${dbutil} $RPM_BUILD_ROOT/%{rpmhome}/rpmdb_${dbutil}
 done
-ln -s ../../bin/berkeley_${dbprefix}_svc $RPM_BUILD_ROOT/%{rpmhome}/rpmdb_svc
+ln -s ../../bin/berkeley_%{dbprefix}_svc $RPM_BUILD_ROOT/%{rpmhome}/rpmdb_svc
 %endif
 
 %find_lang %{name}
@@ -375,6 +373,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Feb 09 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-2
+- build against db 4.7.x
+
 * Fri Feb 06 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-1
 - update to 4.6.0 final
 - revert libmagic looking into compressed files for now, breaks ooffice build

@@ -1,0 +1,40 @@
+diff -up rpm-4.6.0/build/parsePreamble.c.inherit-group rpm-4.6.0/build/parsePreamble.c
+--- rpm-4.6.0/build/parsePreamble.c.inherit-group	2008-12-05 12:49:44.000000000 +0100
++++ rpm-4.6.0/build/parsePreamble.c	2009-02-16 12:43:41.000000000 +0100
+@@ -900,20 +900,30 @@ int parsePreamble(rpmSpec spec, int init
+ 	goto exit;
+     }
+ 
+-    if (pkg == spec->packages)
++    /* It is the main package */
++    if (pkg == spec->packages) {
+ 	fillOutMainPackage(pkg->header);
++	/* Define group tag to something when group is undefined in main package*/
++	if (!headerIsEntry(pkg->header, RPMTAG_GROUP)) {
++	    headerPutString(pkg->header, RPMTAG_GROUP, "Unspecified");
++	}
++    }
+ 
+     if (checkForDuplicates(pkg->header, NVR)) {
+ 	goto exit;
+     }
+ 
+-    if (pkg != spec->packages)
++    if (pkg != spec->packages) {
+ 	headerCopyTags(spec->packages->header, pkg->header,
+ 			(rpmTag *)copyTagsDuringParse);
+-
+-    /* Many things expect group to always exist, put something in there... */
+-    if (!headerIsEntry(pkg->header, RPMTAG_GROUP)) {
+-	headerPutString(pkg->header, RPMTAG_GROUP, "Unspecified");
++	/* inherit group tag from the main package if unspecified */
++	if (!headerIsEntry(pkg->header, RPMTAG_GROUP)) {
++	    struct rpmtd_s td;
++
++	    headerGet(spec->packages->header, RPMTAG_GROUP, &td, HEADERGET_DEFAULT);
++	    headerPut(pkg->header, &td, HEADERPUT_DEFAULT);
++	    rpmtdFreeData(&td);
++	}
+     }
+ 
+     if (checkForRequired(pkg->header, NVR)) {

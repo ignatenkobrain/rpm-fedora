@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 3%{?dist}
+Release: 4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -37,6 +37,8 @@ Patch3: rpm-4.6.0-fedora-specspo.patch
 
 # Patches already in upstream
 Patch200: rpm-4.6.0-rc1-defaultdocdir.patch
+Patch201: rpm-4.6.0-inherit-group.patch
+Patch202: rpm-4.6.0-anyarch-actions-fix.patch
 
 # These are not yet upstream
 Patch300: rpm-4.6.0-extra-provides.patch
@@ -172,6 +174,8 @@ that will manipulate RPM packages and databases.
 
 # upstream but not on 4.6.x branch yet, oops
 %patch200 -p1 -b .defaultdocdir
+%patch201 -p1 -b .inherit-group
+%patch202 -p1 -b .anyarch-actions-fix
 
 %patch300 -p1 -b .extra-prov
 
@@ -373,6 +377,13 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Feb 16 2009 Jindrich Novy <jnovy@redhat.com> - 4.6.0-4
+- inherit group tag from the main package (#470714)
+- ignore BuildArch tags for anyarch actions (#442105)
+- don't check package BuildRequires when doing --rmsource (#452477)
+- don't fail because of missing sources when only spec removal
+  is requested (#472427)
+
 * Mon Feb 16 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-3
 - updated fontconfig provide script - fc-query does all the hard work now
 

@@ -1,0 +1,119 @@
+diff -up rpm-4.6.0/build/build.c.anyarch-actions-fix rpm-4.6.0/build/build.c
+--- rpm-4.6.0/build/build.c.anyarch-actions-fix	2008-12-05 12:49:22.000000000 +0100
++++ rpm-4.6.0/build/build.c	2009-02-16 13:19:43.000000000 +0100
+@@ -15,21 +15,18 @@ static int _build_debug = 0;
+ 
+ /**
+  */
+-static void doRmSource(rpmSpec spec)
++rpmRC doRmSource(rpmSpec spec)
+ {
+     struct Source *p;
+     Package pkg;
+-    int rc;
++    int rc = 0;
+     
+-#if 0
+-    rc = unlink(spec->specFile);
+-#endif
+-
+     for (p = spec->sources; p != NULL; p = p->next) {
+ 	if (! (p->flags & RPMBUILD_ISNO)) {
+ 	    char *fn = rpmGetPath("%{_sourcedir}/", p->source, NULL);
+ 	    rc = unlink(fn);
+ 	    fn = _free(fn);
++	    if (rc) goto exit;
+ 	}
+     }
+ 
+@@ -39,9 +36,12 @@ static void doRmSource(rpmSpec spec)
+ 		char *fn = rpmGetPath("%{_sourcedir}/", p->source, NULL);
+ 		rc = unlink(fn);
+ 		fn = _free(fn);
++	        if (rc) goto exit;
+ 	    }
+ 	}
+     }
++exit:
++    return !rc ? RPMRC_OK : RPMRC_FAIL;
+ }
+ 
+ /*
+diff -up rpm-4.6.0/build.c.anyarch-actions-fix rpm-4.6.0/build.c
+--- rpm-4.6.0/build.c.anyarch-actions-fix	2008-12-05 12:49:16.000000000 +0100
++++ rpm-4.6.0/build.c	2009-02-16 13:19:43.000000000 +0100
+@@ -240,6 +240,12 @@ static int buildForTarget(rpmts ts, cons
+ 	goto exit;
+     }
+     
++    /* Don't parse spec if only its removal is requested */
++    if (ba->buildAmount == RPMBUILD_RMSPEC) {
++	rc = unlink(specFile);
++	goto exit;
++    }
++
+     /* Parse the spec file */
+ #define	_anyarch(_f)	\
+ (((_f)&(RPMBUILD_PREP|RPMBUILD_BUILD|RPMBUILD_INSTALL|RPMBUILD_PACKAGEBINARY)) == 0)
+@@ -253,6 +259,13 @@ static int buildForTarget(rpmts ts, cons
+ 	goto exit;
+     }
+ 
++    if ( ba->buildAmount&RPMBUILD_RMSOURCE && !(ba->buildAmount&~(RPMBUILD_RMSOURCE|RPMBUILD_RMSPEC)) ) {
++	rc = doRmSource(spec);
++	if ( rc == RPMRC_OK && ba->buildAmount&RPMBUILD_RMSPEC )
++	    rc = unlink(specFile);
++	goto exit;
++    }
++
+     /* Assemble source header from parsed components */
+     initSourceHeader(spec);
+ 
+diff -up rpm-4.6.0/build/parsePreamble.c.anyarch-actions-fix rpm-4.6.0/build/parsePreamble.c
+--- rpm-4.6.0/build/parsePreamble.c.anyarch-actions-fix	2009-02-16 13:19:43.000000000 +0100
++++ rpm-4.6.0/build/parsePreamble.c	2009-02-16 13:19:43.000000000 +0100
+@@ -859,8 +859,14 @@ int parsePreamble(rpmSpec spec, int init
+ 		    goto exit;
+ 		}
+ 		if (spec->BANames && !spec->recursing) {
+-		    res = PART_BUILDARCHITECTURES;
+-		    goto exit;
++		    /* Ignore BuildArch tags for anyarch actions */
++		    if (spec->anyarch) {
++			spec->BANames = _free(spec->BANames);
++			spec->BACount = 0;
++		    } else {
++			res = PART_BUILDARCHITECTURES;
++			goto exit;
++		    }
+ 		}
+ 	    }
+ 	    if ((rc =
+@@ -895,8 +901,8 @@ int parsePreamble(rpmSpec spec, int init
+ 	addMacro(spec->macros, "buildroot", NULL, spec->buildRoot, RMIL_SPEC);
+     }
+ 
+-    /* XXX Skip valid arch check if not building binary package */
+-    if (!spec->anyarch && checkForValidArchitectures(spec)) {
++    /* This check is harmless as BuildArch tags are ignored in case of anyarch != 0 */
++    if (checkForValidArchitectures(spec)) {
+ 	goto exit;
+     }
+ 
+diff -up rpm-4.6.0/build/rpmbuild.h.anyarch-actions-fix rpm-4.6.0/build/rpmbuild.h
+--- rpm-4.6.0/build/rpmbuild.h.anyarch-actions-fix	2008-12-05 12:49:22.000000000 +0100
++++ rpm-4.6.0/build/rpmbuild.h	2009-02-16 13:19:43.000000000 +0100
+@@ -273,6 +273,13 @@ int parseExpressionBoolean(rpmSpec spec,
+ char * parseExpressionString(rpmSpec spec, const char * expr);
+ 
+ /** \ingroup rpmbuild
++ * Remove all sources assigned to spec file.
++ *
++ * @param spec		spec file control structure
++ * @return		RPMRC_OK on success
++ */
++rpmRC doRmSource(rpmSpec spec);
++/** \ingroup rpmbuild
+  * Run a build script, assembled from spec file scriptlet section.
+  *
+  * @param spec		spec file control structure

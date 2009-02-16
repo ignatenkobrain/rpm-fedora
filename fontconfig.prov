@@ -16,22 +16,4 @@ fcquery=/usr/bin/fc-query
 
 # filter out anything outside main fontconfig path
 grep /usr/share/fonts/ |
-xargs $fcquery --format '%{family}\n:lang=%{lang}\n' 2> /dev/null |
-while read line; do
-	case $line in
-	:lang=*)
-		langs=${line#:lang=}
-		OLDIFS=$IFS
-		IFS='|'
-		for lang in $langs; do
-			echo :lang=$lang
-		done
-		IFS=$OLDIFS
-	;;
-	*)
-		echo "$line" | tr 'A-Z_' 'a-z-' | tr -d -c 'a-z0-9-\n'
-	;;
-	esac
-done |
-sed 's/\(.*\)/Font(\1)/' |
-sort -u
+xargs $fcquery --format '%{=pkgkit}' 2> /dev/null

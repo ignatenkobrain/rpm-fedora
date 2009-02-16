@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 2%{?dist}
+Release: 3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -373,6 +373,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Feb 16 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-3
+- updated fontconfig provide script - fc-query does all the hard work now
+
 * Mon Feb 09 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-2
 - build against db 4.7.x
 

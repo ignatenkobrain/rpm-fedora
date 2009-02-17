@@ -69,37 +69,6 @@ diff -up rpm-4.6.0/build.c.anyarch-actions-fix rpm-4.6.0/build.c
      /* Assemble source header from parsed components */
      initSourceHeader(spec);
  
-diff -up rpm-4.6.0/build/parsePreamble.c.anyarch-actions-fix rpm-4.6.0/build/parsePreamble.c
---- rpm-4.6.0/build/parsePreamble.c.anyarch-actions-fix	2009-02-16 13:19:43.000000000 +0100
-+++ rpm-4.6.0/build/parsePreamble.c	2009-02-16 13:19:43.000000000 +0100
-@@ -859,8 +859,14 @@ int parsePreamble(rpmSpec spec, int init
- 		    goto exit;
- 		}
- 		if (spec->BANames && !spec->recursing) {
--		    res = PART_BUILDARCHITECTURES;
--		    goto exit;
-+		    /* Ignore BuildArch tags for anyarch actions */
-+		    if (spec->anyarch) {
-+			spec->BANames = _free(spec->BANames);
-+			spec->BACount = 0;
-+		    } else {
-+			res = PART_BUILDARCHITECTURES;
-+			goto exit;
-+		    }
- 		}
- 	    }
- 	    if ((rc =
-@@ -895,8 +901,8 @@ int parsePreamble(rpmSpec spec, int init
- 	addMacro(spec->macros, "buildroot", NULL, spec->buildRoot, RMIL_SPEC);
-     }
- 
--    /* XXX Skip valid arch check if not building binary package */
--    if (!spec->anyarch && checkForValidArchitectures(spec)) {
-+    /* This check is harmless as BuildArch tags are ignored in case of anyarch != 0 */
-+    if (checkForValidArchitectures(spec)) {
- 	goto exit;
-     }
- 
 diff -up rpm-4.6.0/build/rpmbuild.h.anyarch-actions-fix rpm-4.6.0/build/rpmbuild.h
 --- rpm-4.6.0/build/rpmbuild.h.anyarch-actions-fix	2008-12-05 12:49:22.000000000 +0100
 +++ rpm-4.6.0/build/rpmbuild.h	2009-02-16 13:19:43.000000000 +0100

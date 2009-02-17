@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 4%{?dist}
+Release: 5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -377,6 +377,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Feb 17 2009 Jindrich Novy <jnovy@redhat.com> - 4.6.0-5
+- remove two offending hunks from anyarch patch causing that
+  RPMTAG_BUILDARCHS isn't written to SRPMs
+
 * Mon Feb 16 2009 Jindrich Novy <jnovy@redhat.com> - 4.6.0-4
 - inherit group tag from the main package (#470714)
 - ignore BuildArch tags for anyarch actions (#442105)

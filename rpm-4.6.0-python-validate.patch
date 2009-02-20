@@ -1,0 +1,17 @@
+diff -up rpm-4.6.0/scripts/brp-python-bytecompile.validate rpm-4.6.0/scripts/brp-python-bytecompile
+--- rpm-4.6.0/scripts/brp-python-bytecompile.validate	2009-02-20 20:31:30.000000000 +0200
++++ rpm-4.6.0/scripts/brp-python-bytecompile	2009-02-20 20:31:37.000000000 +0200
+@@ -20,7 +20,12 @@ if [ -z "$depth" -o "$depth" -le "1" ]; 
+ fi
+ 
+ # Generate normal (.pyc) byte-compiled files.
+-$python    -c 'import compileall; compileall.compile_dir("'"$RPM_BUILD_ROOT"'", '"$depth"', "/", 1)' > /dev/null
++$python    -c 'import compileall, sys; sys.exit (not compileall.compile_dir("'"$RPM_BUILD_ROOT"'", '"$depth"', "/", 1, quiet=1))'
++if [ $? != 0 ]; then
++  # One or more of the files has a syntax error.
++  exit 1
++fi
++
+ 
+ # Generate optimized (.pyo) byte-compiled files.
+ $python -O -c 'import compileall; compileall.compile_dir("'"$RPM_BUILD_ROOT"'", '"$depth"', "/", 1)' > /dev/null

@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 5%{?dist}
+Release: 6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -42,6 +42,7 @@ Patch202: rpm-4.6.0-anyarch-actions-fix.patch
 
 # These are not yet upstream
 Patch300: rpm-4.6.0-extra-provides.patch
+Patch301: rpm-4.6.0-python-validate.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -178,6 +179,7 @@ that will manipulate RPM packages and databases.
 %patch202 -p1 -b .anyarch-actions-fix
 
 %patch300 -p1 -b .extra-prov
+%patch301 -p1 -b .python-bytecompile
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -377,6 +379,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Feb 20 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-6
+- error out on uncompilable python code (Tim Waugh)
+
 * Tue Feb 17 2009 Jindrich Novy <jnovy@redhat.com> - 4.6.0-5
 - remove two offending hunks from anyarch patch causing that
   RPMTAG_BUILDARCHS isn't written to SRPMs

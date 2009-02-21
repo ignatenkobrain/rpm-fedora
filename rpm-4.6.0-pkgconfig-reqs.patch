@@ -1,0 +1,20 @@
+commit 6ce7def270994a675836e2b945a7f70eb2b03c2b
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Mon Feb 2 14:17:27 2009 +0200
+
+    Prepend PKG_CONFIG_PATH on pkgconfig requires extraction too (rhbz#473814)
+    - similar to ab02fb183a441b6a30c863aebf49be992cd431fe but for requires
+
+diff --git a/scripts/pkgconfigdeps.sh b/scripts/pkgconfigdeps.sh
+index 6baa0f1..2251abe 100755
+--- a/scripts/pkgconfigdeps.sh
++++ b/scripts/pkgconfigdeps.sh
+@@ -34,6 +34,8 @@ case $1 in
+     *.pc)
+ 	i="`expr $i + 1`"
+ 	[ $i -eq 1 ] && echo "$pkgconfig"
++	DIR="`dirname ${filename}`"
++	export PKG_CONFIG_PATH="$DIR:$DIR/../../share/pkgconfig"
+ 	$pkgconfig --print-requires "$filename" 2> /dev/null | while read n r v ; do
+ 	    echo "pkgconfig($n)" "$r" "$v"
+ 	done

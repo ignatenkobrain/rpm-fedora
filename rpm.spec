@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 6%{?dist}
+Release: 7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -39,10 +39,13 @@ Patch3: rpm-4.6.0-fedora-specspo.patch
 Patch200: rpm-4.6.0-rc1-defaultdocdir.patch
 Patch201: rpm-4.6.0-inherit-group.patch
 Patch202: rpm-4.6.0-anyarch-actions-fix.patch
+Patch203: rpm-4.6.0-utf-dependencies.patch
+Patch204: rpm-4.6.0-noarch-elf-check.patch
+Patch205: rpm-4.6.0-pkgconfig-reqs.patch
+Patch206: rpm-4.6.0-python-validate.patch
 
 # These are not yet upstream
 Patch300: rpm-4.6.0-extra-provides.patch
-Patch301: rpm-4.6.0-python-validate.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -173,13 +176,15 @@ that will manipulate RPM packages and databases.
 %patch2 -p1 -b .gstreamer-prov
 %patch3 -p1 -b .fedora-specspo
 
-# upstream but not on 4.6.x branch yet, oops
 %patch200 -p1 -b .defaultdocdir
 %patch201 -p1 -b .inherit-group
 %patch202 -p1 -b .anyarch-actions-fix
+%patch203 -p1 -b .utf-dependencies
+%patch204 -p1 -b .noarch-elf-check
+%patch205 -p1 -b .pkgconfig-reqs
+%patch206 -p1 -b .python-bytecompile
 
 %patch300 -p1 -b .extra-prov
-%patch301 -p1 -b .python-bytecompile
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -379,6 +384,11 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sat Feb 21 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-7
+- loosen up restrictions on dependency names (#455119)
+- handle inter-dependent pkg-config files for requires too (#473814)
+- error/warn on elf binaries in noarch package in build
+
 * Fri Feb 20 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-6
 - error out on uncompilable python code (Tim Waugh)
 

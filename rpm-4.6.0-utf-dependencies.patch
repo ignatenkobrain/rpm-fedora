@@ -1,0 +1,29 @@
+commit 58e92b976aebe43ebddbe2d2ec41bff0dd46b6fc
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Sat Feb 21 12:11:54 2009 +0200
+
+    Loosen up restrictions on dependency token names (rhbz#455119)
+    - Package names aren't restricted to ascii, no point restricting
+      dependency names either.
+    - This lets UTF-8 to go through but also all sorts of other junk but
+      as we haven't got a clue about the specs encoding, no can do. So we
+      only check for bad characters from plain ascii.
+
+diff --git a/build/parseReqs.c b/build/parseReqs.c
+index 54230c7..f2130ec 100644
+--- a/build/parseReqs.c
++++ b/build/parseReqs.c
+@@ -100,8 +100,11 @@ rpmRC parseRCPOT(rpmSpec spec, Package pkg, const char *field, rpmTag tagN,
+ 
+ 	Flags = (tagflags & ~RPMSENSE_SENSEMASK);
+ 
+-	/* Tokens must begin with alphanumeric, _, or / */
+-	if (!(risalnum(r[0]) || r[0] == '_' || r[0] == '/')) {
++	/* 
++	 * Tokens must begin with alphanumeric, _, or /, but we don't know
++	 * the spec's encoding so we only check what we can: plain ascii.
++	 */
++	if (isascii(r[0]) && !(risalnum(r[0]) || r[0] == '_' || r[0] == '/')) {
+ 	    rpmlog(RPMLOG_ERR,
+ 		     _("line %d: Dependency tokens must begin with alpha-numeric, '_' or '/': %s\n"),
+ 		     spec->lineNum, spec->line);

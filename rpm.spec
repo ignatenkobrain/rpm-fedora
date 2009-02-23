@@ -18,10 +18,10 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 7%{?dist}
+Release: 8%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
+Source0: http://rpm.org/releases/4.6.x/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %endif
@@ -164,6 +164,7 @@ programs that will manipulate RPM packages and databases.
 %package apidocs
 Summary: API documentation for RPM libraries
 Group: Documentation
+BuildArch: noarch
 
 %description apidocs
 This package contains API documentation for developing applications
@@ -384,6 +385,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Feb 23 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-8
+- make -apidocs sub-package noarch
+- fix source URL
+
 * Sat Feb 21 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-7
 - loosen up restrictions on dependency names (#455119)
 - handle inter-dependent pkg-config files for requires too (#473814)

@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 8%{?dist}
+Release: 9%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/4.6.x/%{name}-%{srcver}.tar.bz2
@@ -183,7 +183,7 @@ that will manipulate RPM packages and databases.
 %patch203 -p1 -b .utf-dependencies
 %patch204 -p1 -b .noarch-elf-check
 %patch205 -p1 -b .pkgconfig-reqs
-%patch206 -p1 -b .python-bytecompile
+#%patch206 -p1 -b .python-bytecompile
 
 %patch300 -p1 -b .extra-prov
 
@@ -385,6 +385,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Feb 25 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-9
+- pull out python byte-compile syntax check for now
+
 * Mon Feb 23 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-8
 - make -apidocs sub-package noarch
 - fix source URL

@@ -1,0 +1,30 @@
+commit 3448b552964a526641d2e85b4ed27ebe3465f100
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Thu Feb 26 10:49:38 2009 +0200
+
+    Handle empty argv passed to rpmdsDupArgv()
+    - same as 94552b96256c3620b4be407c501d0d926c081963, apt-rpm expects to
+      pass empty version as NULL to rpmdsSingle()
+
+diff --git a/lib/rpmds.c b/lib/rpmds.c
+index 02b539c..bc829f4 100644
+--- a/lib/rpmds.c
++++ b/lib/rpmds.c
+@@ -508,15 +508,14 @@ const char ** rpmdsDupArgv(const char ** argv, int argc)
+ 
+     if (argv == NULL)
+ 	return NULL;
+-    for (ac = 0; ac < argc; ac++) {
+-assert(argv[ac] != NULL);
++    for (ac = 0; ac < argc && argv[ac]; ac++) {
+ 	nb += strlen(argv[ac]) + 1;
+     }
+     nb += (ac + 1) * sizeof(*av);
+ 
+     av = xmalloc(nb);
+     t = (char *) (av + ac + 1);
+-    for (ac = 0; ac < argc; ac++) {
++    for (ac = 0; ac < argc && argv[ac]; ac++) {
+ 	av[ac] = t;
+ 	t = stpcpy(t, argv[ac]) + 1;
+     }

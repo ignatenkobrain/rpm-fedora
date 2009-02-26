@@ -18,7 +18,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 9%{?dist}
+Release: 10%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/4.6.x/%{name}-%{srcver}.tar.bz2
@@ -43,6 +43,7 @@ Patch203: rpm-4.6.0-utf-dependencies.patch
 Patch204: rpm-4.6.0-noarch-elf-check.patch
 Patch205: rpm-4.6.0-pkgconfig-reqs.patch
 Patch206: rpm-4.6.0-python-validate.patch
+Patch207: rpm-4.6.0-rpmds-null.patch
 
 # These are not yet upstream
 Patch300: rpm-4.6.0-extra-provides.patch
@@ -184,6 +185,7 @@ that will manipulate RPM packages and databases.
 %patch204 -p1 -b .noarch-elf-check
 %patch205 -p1 -b .pkgconfig-reqs
 #%patch206 -p1 -b .python-bytecompile
+%patch207 -p1 -b .rpmds-null
 
 %patch300 -p1 -b .extra-prov
 
@@ -385,6 +387,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Feb 26 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-10
+- handle NULL passed as EVR in rpmdsSingle() again (#485616)
+
 * Wed Feb 25 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-9
 - pull out python byte-compile syntax check for now
 

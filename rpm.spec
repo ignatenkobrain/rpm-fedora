@@ -5,6 +5,10 @@
 # just for giggles, option to build with internal Berkeley DB
 %bcond_with int_bdb
 
+# switch rpm itself back to md5 file digests until the dust settles a bit
+%define _source_filedigest_algorithm 0
+%define _binary_filedigest_algorithm 0
+
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 %define rpmhome /usr/lib/rpm
@@ -18,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 10%{?dist}
+Release: 11%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/4.6.x/%{name}-%{srcver}.tar.bz2
@@ -387,6 +391,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Feb 27 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-11
+- build rpm itself with md5 file digests for now to ensure upgradability
+
 * Thu Feb 26 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-10
 - handle NULL passed as EVR in rpmdsSingle() again (#485616)
 

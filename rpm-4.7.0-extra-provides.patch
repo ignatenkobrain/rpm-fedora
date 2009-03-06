@@ -1,0 +1,73 @@
+diff -up rpm-4.7.0-beta1/build/rpmfc.c.extra-prov rpm-4.7.0-beta1/build/rpmfc.c
+--- rpm-4.7.0-beta1/build/rpmfc.c.extra-prov	2009-02-26 17:31:12.000000000 +0200
++++ rpm-4.7.0-beta1/build/rpmfc.c	2009-02-26 17:31:55.000000000 +0200
+@@ -485,6 +485,7 @@ static const struct rpmfcTokens_s const 
+   { "RPM v4",			RPMFC_ARCHIVE|RPMFC_INCLUDE },
+ 
+   { " image",			RPMFC_IMAGE|RPMFC_INCLUDE },
++  { " font metrics",		RPMFC_WHITE|RPMFC_INCLUDE },
+   { " font",			RPMFC_FONT|RPMFC_INCLUDE },
+   { " Font",			RPMFC_FONT|RPMFC_INCLUDE },
+ 
+@@ -1189,6 +1190,31 @@ exit:
+ #endif
+ }
+ 
++static int rpmfcMISC(rpmfc fc)
++{
++    struct stat st;
++    int rc = -1;
++    const char *what = NULL;
++    const char * fn = fc->fn[fc->ix];
++    /* this part is enumerated, compare equality not bit flags */
++    int ftype = fc->fcolor->vals[fc->ix] & 0x000F0000;
++
++    if (ftype == RPMFC_FONT) {
++	what = "fontconfig";
++    } else if (ftype == RPMFC_TEXT && rpmFileHasSuffix(fn, ".desktop")) {
++	what = "desktop";
++    }
++
++    if (what == NULL || stat(fn, &st) < 0 || !S_ISREG(st.st_mode)) {
++	goto exit;
++    }
++
++    (void) rpmfcHelper(fc, 'P', what);
++    rc = 0;
++
++exit:
++    return rc;
++}
+ typedef const struct rpmfcApplyTbl_s {
+     int (*func) (rpmfc fc);
+     int colormask;
+@@ -1201,6 +1227,7 @@ static const struct rpmfcApplyTbl_s cons
+     { rpmfcSCRIPT,	(RPMFC_SCRIPT|RPMFC_BOURNE|
+ 			 RPMFC_PERL|RPMFC_PYTHON|RPMFC_MONO|
+ 			 RPMFC_PKGCONFIG|RPMFC_LIBTOOL) },
++    { rpmfcMISC,	RPMFC_FONT|RPMFC_TEXT },
+     { rpmfcSYMLINK,	RPMFC_SYMLINK },
+     { NULL, 0 }
+ };
+@@ -1320,7 +1347,7 @@ rpmRC rpmfcClassify(rpmfc fc, ARGV_t arg
+     size_t slen;
+     int fcolor;
+     int xx;
+-    int msflags = MAGIC_CHECK;	/* XXX MAGIC_COMPRESS flag? */
++    int msflags = MAGIC_CHECK; /* add MAGIC_COMPRESS eventually */
+     magic_t ms = NULL;
+ 
+     if (fc == NULL || argv == NULL)
+diff -up rpm-4.7.0-beta1/macros.in.extra-prov rpm-4.7.0-beta1/macros.in
+--- rpm-4.7.0-beta1/macros.in.extra-prov	2009-02-26 17:31:12.000000000 +0200
++++ rpm-4.7.0-beta1/macros.in	2009-02-26 17:32:38.000000000 +0200
+@@ -494,6 +494,9 @@ print (t)\
+ %__pkgconfig_provides   %{_rpmconfigdir}/pkgconfigdeps.sh --provides
+ %__pkgconfig_requires   %{_rpmconfigdir}/pkgconfigdeps.sh --requires
+ 
++%__fontconfig_provides	%{_rpmconfigdir}/fontconfig.prov
++%__desktop_provides     %{_rpmconfigdir}/desktop-file.prov
++
+ #==============================================================================
+ # ---- Database configuration macros.
+ #	Macros used to configure Berkley db parameters.

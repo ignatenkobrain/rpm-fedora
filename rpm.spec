@@ -4,6 +4,8 @@
 %bcond_with sqlite
 # just for giggles, option to build with internal Berkeley DB
 %bcond_with int_bdb
+# not yet, a missing test-data file in beta1 tarball causes two tests to fail
+%bcond_with check
 
 # switch rpm itself back to md5 file digests until the dust settles a bit
 %define _source_filedigest_algorithm 0
@@ -13,8 +15,9 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.6.0
-%define srcver %{rpmver}
+%define rpmver 4.7.0
+%define snapver beta1
+%define srcver %{rpmver}-%{snapver}
 
 %define bdbver 4.7.25
 %define dbprefix db
@@ -22,17 +25,17 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 11%{?dist}
+Release: 0.%{snapver}.1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source0: http://rpm.org/releases/4.6.x/%{name}-%{srcver}.tar.bz2
+Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %endif
 Source10: desktop-file.prov
 Source11: fontconfig.prov
 
-Patch0: rpm-4.5.90-devel-autodep.patch
+Patch0: rpm-4.7.0-devel-autodep.patch
 Patch1: rpm-4.5.90-pkgconfig-path.patch
 Patch2: rpm-4.5.90-gstreamer-provides.patch
 # Fedora specspo is setup differently than what rpm expects, considering
@@ -40,17 +43,9 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 Patch3: rpm-4.6.0-fedora-specspo.patch
 
 # Patches already in upstream
-Patch200: rpm-4.6.0-rc1-defaultdocdir.patch
-Patch201: rpm-4.6.0-inherit-group.patch
-Patch202: rpm-4.6.0-anyarch-actions-fix.patch
-Patch203: rpm-4.6.0-utf-dependencies.patch
-Patch204: rpm-4.6.0-noarch-elf-check.patch
-Patch205: rpm-4.6.0-pkgconfig-reqs.patch
-Patch206: rpm-4.6.0-python-validate.patch
-Patch207: rpm-4.6.0-rpmds-null.patch
 
 # These are not yet upstream
-Patch300: rpm-4.6.0-extra-provides.patch
+Patch300: rpm-4.7.0-extra-provides.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -68,6 +63,10 @@ Requires: curl
 
 %if %{without int_bdb}
 BuildRequires: db4-devel = %{bdbver}
+%endif
+
+%if %{with check}
+BuildRequires: fakechroot
 %endif
 
 # XXX generally assumed to be installed but make it explicit as rpm
@@ -93,6 +92,8 @@ BuildRequires: lzma-devel >= 4.42
 %if %{with sqlite}
 BuildRequires: sqlite-devel
 %endif
+# Not enabling these yet
+# BuildRequires: libcap-devel libacl-devel
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -182,15 +183,6 @@ that will manipulate RPM packages and databases.
 %patch2 -p1 -b .gstreamer-prov
 %patch3 -p1 -b .fedora-specspo
 
-%patch200 -p1 -b .defaultdocdir
-%patch201 -p1 -b .inherit-group
-%patch202 -p1 -b .anyarch-actions-fix
-%patch203 -p1 -b .utf-dependencies
-%patch204 -p1 -b .noarch-elf-check
-%patch205 -p1 -b .pkgconfig-reqs
-#%patch206 -p1 -b .python-bytecompile
-%patch207 -p1 -b .rpmds-null
-
 %patch300 -p1 -b .extra-prov
 
 %if %{with int_bdb}
@@ -270,6 +262,11 @@ chmod 0644 $RPM_BUILD_ROOT/%{rpmhome}/perldeps.pl
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%if %{with check}
+%check
+make check
+%endif
+
 %post libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig
 
@@ -328,7 +325,7 @@ exit 0
 
 %files libs
 %defattr(-,root,root)
-%{_libdir}/librpm*-*.so
+%{_libdir}/librpm*.so.*
 
 %files build
 %defattr(-,root,root)
@@ -391,6 +388,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Mar 06 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.1
+- update to 4.7.0-beta1 (http://rpm.org/wiki/Releases/4.7.0)
+
 * Fri Feb 27 2009 Panu Matilainen <pmatilai@redhat.com> - 4.6.0-11
 - build rpm itself with md5 file digests for now to ensure upgradability
 

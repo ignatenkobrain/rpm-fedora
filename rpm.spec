@@ -25,7 +25,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.1%{?dist}
+Release: 0.%{snapver}.2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -43,6 +43,7 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 Patch3: rpm-4.6.0-fedora-specspo.patch
 
 # Patches already in upstream
+Patch200: rpm-4.7.0-beta1-srcrpm-macros.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
@@ -182,6 +183,8 @@ that will manipulate RPM packages and databases.
 %patch1 -p1 -b .pkgconfig-path
 %patch2 -p1 -b .gstreamer-prov
 %patch3 -p1 -b .fedora-specspo
+
+%patch200 -p1 -b .srcrpm-macros
 
 %patch300 -p1 -b .extra-prov
 
@@ -388,6 +391,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sun Mar 08 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.2
+- load macros before creating directories on src.rpm install (#489104)
+
 * Fri Mar 06 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.1
 - update to 4.7.0-beta1 (http://rpm.org/wiki/Releases/4.7.0)
 

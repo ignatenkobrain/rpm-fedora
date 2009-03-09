@@ -1,0 +1,68 @@
+commit 2b4507d852ac8469608bef2ce8e219d76b0c543e
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Mon Mar 9 14:48:47 2009 +0200
+
+    Fix RPMTAG_FILESTATES in rpmdb
+    - sizeof(rpmfileState) != sizeof(char), and char is what goes to headers
+      resulting in some pretty weird states despite being correct on disk
+    - add rpm_fstate_t type for the header presentation of states and
+      use where appropriate
+
+diff --git a/lib/psm.c b/lib/psm.c
+index 112d344..b493b33 100644
+--- a/lib/psm.c
++++ b/lib/psm.c
+@@ -1417,11 +1417,11 @@ rpmRC rpmpsmStage(rpmpsm psm, pkgStage stage)
+ 	    rpm_time_t installTime = (rpm_time_t) time(NULL);
+ 	    rpmfs fs = rpmteGetFileStates(psm->te);
+ 	    rpm_count_t fc = rpmfsFC(fs);
+-	    rpmfileState * fileStates = rpmfsGetStates(fs);
++	    rpm_fstate_t * fileStates = rpmfsGetStates(fs);
+ 	    Header h = rpmteHeader(psm->te);
+ 
+ 	    if (fileStates != NULL && fc > 0) {
+-		headerPutChar(h, RPMTAG_FILESTATES, (char *) fileStates, fc);
++		headerPutChar(h, RPMTAG_FILESTATES, fileStates, fc);
+ 	    }
+ 
+ 	    headerPutUint32(h, RPMTAG_INSTALLTIME, &installTime, 1);
+diff --git a/lib/rpmte.c b/lib/rpmte.c
+index 130c1d9..bda5411 100644
+--- a/lib/rpmte.c
++++ b/lib/rpmte.c
+@@ -988,7 +988,7 @@ rpmfileState rpmfsGetState(rpmfs fs, unsigned int ix)
+     return RPMFILE_STATE_MISSING;
+ }
+ 
+-rpmfileState * rpmfsGetStates(rpmfs fs)
++rpm_fstate_t * rpmfsGetStates(rpmfs fs)
+ {
+     return fs->states;
+ }
+diff --git a/lib/rpmte_internal.h b/lib/rpmte_internal.h
+index 5706d56..3ce4112 100644
+--- a/lib/rpmte_internal.h
++++ b/lib/rpmte_internal.h
+@@ -36,10 +36,12 @@ struct sharedFileInfo_s {
+     int otherFileNum;
+ };
+ 
++typedef char rpm_fstate_t;
++
+ struct rpmfs_s {
+     unsigned int fc;
+ 
+-    rpmfileState * states;
++    rpm_fstate_t * states;
+     rpmFileAction * actions;	/*!< File disposition(s). */
+ 
+     sharedFileInfo replaced;	/*!< (TR_ADDED) to be replaced files in the rpmdb */
+@@ -106,7 +108,7 @@ rpmfileState rpmfsGetState(rpmfs fs, unsigned int ix);
+  * May return NULL
+  */
+ RPM_GNUC_INTERNAL
+-rpmfileState * rpmfsGetStates(rpmfs fs);
++rpm_fstate_t * rpmfsGetStates(rpmfs fs);
+ 
+ RPM_GNUC_INTERNAL
+ rpmFileAction rpmfsGetAction(rpmfs fs, unsigned int ix);

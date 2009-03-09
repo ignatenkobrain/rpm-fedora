@@ -25,7 +25,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.2%{?dist}
+Release: 0.%{snapver}.3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -44,6 +44,8 @@ Patch3: rpm-4.6.0-fedora-specspo.patch
 
 # Patches already in upstream
 Patch200: rpm-4.7.0-beta1-srcrpm-macros.patch
+Patch201: rpm-4.7.0-beta1-fstates.patch
+Patch202: rpm-4.7.0-beta1-installangs.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
@@ -185,6 +187,8 @@ that will manipulate RPM packages and databases.
 %patch3 -p1 -b .fedora-specspo
 
 %patch200 -p1 -b .srcrpm-macros
+%patch201 -p1 -b .fstates
+%patch202 -p1 -b .installangs
 
 %patch300 -p1 -b .extra-prov
 
@@ -391,6 +395,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Mar 09 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.3
+- fix _install_langs behavior (#489235)
+- fix recording of file states into rpmdb on install
+
 * Sun Mar 08 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.2
 - load macros before creating directories on src.rpm install (#489104)
 

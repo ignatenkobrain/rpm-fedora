@@ -1,0 +1,22 @@
+commit 48c70edaa1ed3bab085cebea5749c812cee3109a
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Tue Mar 3 08:48:12 2009 +0200
+
+    Add ISA bits for alpha (Oliver Falk)
+    (cherry picked from commit d39a6c7de51c0d01ce69ee1f464b94ca70309751)
+
+diff --git a/installplatform b/installplatform
+index fded6f6..96919b6 100755
+--- a/installplatform
++++ b/installplatform
+@@ -109,6 +109,10 @@ for SUBST in $SUBSTS ; do
+ 	ISANAME=`echo ${ARCH} | sed "s/^\([^-]*\)-.*/\1/"`
+ 	ISABITS=32
+ 	;;
++    alpha*)
++	ISANAME=alpha
++	ISABITS=64
++	;;
+   esac
+ 
+   case $VENDOR in

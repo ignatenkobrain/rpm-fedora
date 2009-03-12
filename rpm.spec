@@ -4,8 +4,8 @@
 %bcond_with sqlite
 # just for giggles, option to build with internal Berkeley DB
 %bcond_with int_bdb
-# not yet, a missing test-data file in beta1 tarball causes two tests to fail
-%bcond_with check
+# run internal testsuite?
+%bcond_without check
 
 # switch rpm itself back to md5 file digests until the dust settles a bit
 %define _source_filedigest_algorithm 0
@@ -25,7 +25,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.3%{?dist}
+Release: 0.%{snapver}.4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -46,6 +46,8 @@ Patch3: rpm-4.6.0-fedora-specspo.patch
 Patch200: rpm-4.7.0-beta1-srcrpm-macros.patch
 Patch201: rpm-4.7.0-beta1-fstates.patch
 Patch202: rpm-4.7.0-beta1-installangs.patch
+Patch203: rpm-4.7.0-alpha-isa.patch
+Patch204: rpm-4.7.0-rsa-v4.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
@@ -189,6 +191,8 @@ that will manipulate RPM packages and databases.
 %patch200 -p1 -b .srcrpm-macros
 %patch201 -p1 -b .fstates
 %patch202 -p1 -b .installangs
+%patch203 -p1 -b .alpha-isa
+%patch204 -p1 -b .rsa-v4
 
 %patch300 -p1 -b .extra-prov
 
@@ -271,7 +275,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with check}
 %check
-make check
+# missing file in beta1 tarball causes two failures, permit failure for now
+make check ||:
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -395,6 +400,11 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Mar 12 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.4
+- handle RSA V4 signatures (#436812)
+- add alpha arch ISA-bits
+- enable internal testsuite on build
+
 * Mon Mar 09 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.3
 - fix _install_langs behavior (#489235)
 - fix recording of file states into rpmdb on install

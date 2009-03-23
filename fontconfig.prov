@@ -16,4 +16,6 @@ fcquery=/usr/bin/fc-query
 
 # filter out anything outside main fontconfig path
 grep /usr/share/fonts/ |
-xargs $fcquery --format '%{=pkgkit}' 2> /dev/null
+while read fn; do
+    $fcquery --format '%{=pkgkit}' "${fn}" 2> /dev/null
+done

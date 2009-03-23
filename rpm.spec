@@ -25,7 +25,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.5%{?dist}
+Release: 0.%{snapver}.6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -400,6 +400,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Mar 23 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.6
+- with the fd leak gone, let libmagic look into compressed files again (#491596)
+
 * Mon Mar 23 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.5
 - fix font provide generation on filenames with whitespace (#491510)
 

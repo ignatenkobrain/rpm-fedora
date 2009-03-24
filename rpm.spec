@@ -25,7 +25,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.6%{?dist}
+Release: 0.%{snapver}.7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -51,6 +51,7 @@ Patch204: rpm-4.7.0-rsa-v4.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
+Patch301: rpm-4.7.0-rpmfc-order.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -195,6 +196,7 @@ that will manipulate RPM packages and databases.
 %patch204 -p1 -b .rsa-v4
 
 %patch300 -p1 -b .extra-prov
+%patch301 -p1 -b .rpmfc-order
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -400,11 +402,14 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Mar 24 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.7
+- prefer more specific types over generic "text" in classification (#491349)
+
 * Mon Mar 23 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.6
 - with the fd leak gone, let libmagic look into compressed files again (#491596)
 
 * Mon Mar 23 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.5
-- fix font provide generation on filenames with whitespace (#491510)
+- fix font provide generation on filenames with whitespace (#491597)
 
 * Thu Mar 12 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.4
 - handle RSA V4 signatures (#436812)

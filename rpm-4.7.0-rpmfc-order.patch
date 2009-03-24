@@ -1,8 +1,7 @@
-diff --git a/build/rpmfc.c b/build/rpmfc.c
-index 7142a9a..1c2d42b 100644
---- a/build/rpmfc.c
-+++ b/build/rpmfc.c
-@@ -452,7 +452,6 @@ static const struct rpmfcTokens_s const rpmfcTokens[] = {
+diff -up rpm-4.7.0-beta1/build/rpmfc.c.rpmfc-order rpm-4.7.0-beta1/build/rpmfc.c
+--- rpm-4.7.0-beta1/build/rpmfc.c.rpmfc-order	2009-03-24 09:41:33.000000000 +0200
++++ rpm-4.7.0-beta1/build/rpmfc.c	2009-03-24 09:41:44.000000000 +0200
+@@ -452,7 +452,6 @@ static const struct rpmfcTokens_s const 
    { "ELF 64-bit",		RPMFC_ELF64|RPMFC_INCLUDE },
  
    { " script",			RPMFC_SCRIPT },
@@ -10,8 +9,8 @@ index 7142a9a..1c2d42b 100644
    { " document",		RPMFC_DOCUMENT },
  
    { " compressed",		RPMFC_COMPRESSED },
-@@ -510,6 +509,7 @@ static const struct rpmfcTokens_s const rpmfcTokens[] = {
-   { "symbolic link to",		RPMFC_SYMLINK },
+@@ -510,6 +509,7 @@ static const struct rpmfcTokens_s const 
+   { "symbolic link to",		RPMFC_SYMLINK|RPMFC_INCLUDE },
    { "socket",			RPMFC_DEVICE },
    { "special",			RPMFC_DEVICE },
 +  { " text",			RPMFC_TEXT },

@@ -25,7 +25,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.7%{?dist}
+Release: 0.%{snapver}.8%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -52,6 +52,7 @@ Patch204: rpm-4.7.0-rsa-v4.patch
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
 Patch301: rpm-4.7.0-rpmfc-order.patch
+Patch302: rpm-4.6.0-niagara.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -197,6 +198,7 @@ that will manipulate RPM packages and databases.
 
 %patch300 -p1 -b .extra-prov
 %patch301 -p1 -b .rpmfc-order
+%patch302 -p1 -b .niagara
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -402,6 +404,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Apr  2 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 4.7.0-0.beta1.8
+- Fix sparcv9v and sparc64v targets
+
 * Tue Mar 24 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.7
 - prefer more specific types over generic "text" in classification (#491349)
 

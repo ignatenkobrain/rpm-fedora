@@ -25,7 +25,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.8%{?dist}
+Release: 0.%{snapver}.9%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -48,6 +48,7 @@ Patch201: rpm-4.7.0-beta1-fstates.patch
 Patch202: rpm-4.7.0-beta1-installangs.patch
 Patch203: rpm-4.7.0-alpha-isa.patch
 Patch204: rpm-4.7.0-rsa-v4.patch
+Patch205: rpm-4.7.0-beta1-default-filestate.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
@@ -195,6 +196,7 @@ that will manipulate RPM packages and databases.
 %patch202 -p1 -b .installangs
 %patch203 -p1 -b .alpha-isa
 %patch204 -p1 -b .rsa-v4
+%patch205 -p1 -b .default-fstate
 
 %patch300 -p1 -b .extra-prov
 %patch301 -p1 -b .rpmfc-order
@@ -274,6 +276,9 @@ find $RPM_BUILD_ROOT -name "*.la"|xargs rm -f
 # avoid dragging in tonne of perl libs for an unused script
 chmod 0644 $RPM_BUILD_ROOT/%{rpmhome}/perldeps.pl
 
+# compress our ChangeLog, it's fairly big...
+bzip2 -9 ChangeLog
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -298,7 +303,7 @@ exit 0
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
-%doc CHANGES GROUPS COPYING CREDITS ChangeLog doc/manual/[a-z]*
+%doc GROUPS COPYING CREDITS ChangeLog.bz2 doc/manual/[a-z]*
 
 %{_sysconfdir}/cron.daily/rpm
 %config(noreplace,missingok)    %{_sysconfdir}/logrotate.d/rpm
@@ -404,6 +409,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Apr 03 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.9
+- fix recorded file state of otherwise skipped files (#492947)
+- compress ChangeLog, drop old CHANGES file (#492440)
+
 * Thu Apr  2 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 4.7.0-0.beta1.8
 - Fix sparcv9v and sparc64v targets
 

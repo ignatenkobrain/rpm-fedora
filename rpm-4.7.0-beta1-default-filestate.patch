@@ -1,0 +1,81 @@
+commit 4e77d95a7856216e49453009c855cce701734b9c
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Fri Apr 3 10:28:59 2009 +0300
+
+    Make sure installed files have state (rhbz#492947)
+    - rpmfsSetState() doesn't get called for skipped files like %ghost and
+      %config(noreplace), causing incorrect file state ("no state") getting
+      recorded in rpmdb, leading to inapproriate removal/rename on erase, ick
+    - For TR_ADDED, always default file states to RPMFILE_STATE_NORMAL, fsm
+      changes it as necessary for skipped colors and such. Lazy alloc on
+      rpmfsSetState() is not correct as rpmfsSetState() might not get called
+      at all.
+    - originally broken by commit 8d6c4b8c95b59f5a71d90c582c2e98f5c7ed7b9d
+
+diff --git a/lib/fsm.c b/lib/fsm.c
+index b892b03..752f0cc 100644
+--- a/lib/fsm.c
++++ b/lib/fsm.c
+@@ -663,8 +663,6 @@ static int fsmMapPath(FSM_t fsm)
+ 	    break;
+ 	case FA_COPYIN:
+ 	case FA_CREATE:
+-	    if (rpmteType(te) == TR_ADDED)
+-		rpmfsSetState(fs, i, RPMFILE_STATE_NORMAL);
+ 	    break;
+ 
+ 	case FA_SKIPNSTATE:
+diff --git a/lib/rpmte.c b/lib/rpmte.c
+index 6ff20f5..e1ef060 100644
+--- a/lib/rpmte.c
++++ b/lib/rpmte.c
+@@ -285,7 +285,7 @@ static void addTE(rpmts ts, rpmte p, Header h,
+ 	struct rpmtd_s bnames;
+ 	headerGet(h, RPMTAG_BASENAMES, &bnames, HEADERGET_MINMEM);
+ 
+-	p->fs = rpmfsNew(rpmtdCount(&bnames));
++	p->fs = rpmfsNew(rpmtdCount(&bnames), p->type);
+ 
+ 	rpmtdFreeData(&bnames);
+     }
+@@ -896,11 +896,15 @@ rpmfs rpmteGetFileStates(rpmte te) {
+     return te->fs;
+ }
+ 
+-rpmfs rpmfsNew(unsigned int fc) {
++rpmfs rpmfsNew(unsigned int fc, rpmElementType type) {
+     rpmfs fs = xmalloc(sizeof(*fs));
+     fs->fc = fc;
+     fs->replaced = NULL;
+     fs->states = NULL;
++    if (type == TR_ADDED) {
++	fs->states = xmalloc(sizeof(*fs->states) * fs->fc);
++	memset(fs->states, RPMFILE_STATE_NORMAL, fs->fc);
++    }
+     fs->actions = xmalloc(fc * sizeof(*fs->actions));
+     memset(fs->actions, FA_UNKNOWN, fc * sizeof(*fs->actions));
+     fs->numReplaced = fs->allocatedReplaced = 0;
+@@ -958,10 +962,6 @@ sharedFileInfo rpmfsNextReplaced(rpmfs fs , sharedFileInfo replaced)
+ void rpmfsSetState(rpmfs fs, unsigned int ix, rpmfileState state)
+ {
+     assert(ix < fs->fc);
+-    if (fs->states == NULL) {
+-	fs->states = xmalloc(sizeof(*fs->states) * fs->fc);
+-	memset(fs->states, RPMFILE_STATE_MISSING, fs->fc);
+-    }
+     fs->states[ix] = state;
+ }
+ 
+diff --git a/lib/rpmte_internal.h b/lib/rpmte_internal.h
+index 3ce4112..60c52bd 100644
+--- a/lib/rpmte_internal.h
++++ b/lib/rpmte_internal.h
+@@ -81,7 +81,7 @@ int rpmteHaveTransScript(rpmte te, rpmTag tag);
+ rpmfs rpmteGetFileStates(rpmte te);
+ 
+ RPM_GNUC_INTERNAL
+-rpmfs rpmfsNew(unsigned int fc);
++rpmfs rpmfsNew(unsigned int fc, rpmElementType type);
+ 
+ RPM_GNUC_INTERNAL
+ rpmfs rpmfsFree(rpmfs fs);

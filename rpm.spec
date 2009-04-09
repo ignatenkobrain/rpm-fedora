@@ -16,7 +16,7 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.7.0
-%define snapver beta1
+%define snapver rc1
 %define srcver %{rpmver}-%{snapver}
 
 %define bdbver 4.7.25
@@ -25,7 +25,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.9%{?dist}
+Release: 0.%{snapver}.1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -43,17 +43,10 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 Patch3: rpm-4.6.0-fedora-specspo.patch
 
 # Patches already in upstream
-Patch200: rpm-4.7.0-beta1-srcrpm-macros.patch
-Patch201: rpm-4.7.0-beta1-fstates.patch
-Patch202: rpm-4.7.0-beta1-installangs.patch
-Patch203: rpm-4.7.0-alpha-isa.patch
-Patch204: rpm-4.7.0-rsa-v4.patch
-Patch205: rpm-4.7.0-beta1-default-filestate.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
-Patch301: rpm-4.7.0-rpmfc-order.patch
-Patch302: rpm-4.6.0-niagara.patch
+Patch301: rpm-4.6.0-niagara.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -191,16 +184,8 @@ that will manipulate RPM packages and databases.
 %patch2 -p1 -b .gstreamer-prov
 %patch3 -p1 -b .fedora-specspo
 
-%patch200 -p1 -b .srcrpm-macros
-%patch201 -p1 -b .fstates
-%patch202 -p1 -b .installangs
-%patch203 -p1 -b .alpha-isa
-%patch204 -p1 -b .rsa-v4
-%patch205 -p1 -b .default-fstate
-
 %patch300 -p1 -b .extra-prov
-%patch301 -p1 -b .rpmfc-order
-%patch302 -p1 -b .niagara
+%patch301 -p1 -b .niagara
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -409,6 +394,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Apr 09 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.rc1.1
+- update to 4.7.0-rc1
+- fixes #493157, #493777, #493696, #491388, #487597, #493162
+
 * Fri Apr 03 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.beta1.9
 - fix recorded file state of otherwise skipped files (#492947)
 - compress ChangeLog, drop old CHANGES file (#492440)

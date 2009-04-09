@@ -1,7 +1,7 @@
-diff -up rpm-4.7.0-beta1/build/rpmfc.c.devel-autodep rpm-4.7.0-beta1/build/rpmfc.c
---- rpm-4.7.0-beta1/build/rpmfc.c.devel-autodep	2009-02-23 09:16:11.000000000 +0200
-+++ rpm-4.7.0-beta1/build/rpmfc.c	2009-02-26 17:30:04.000000000 +0200
-@@ -506,7 +506,7 @@ static const struct rpmfcTokens_s const 
+diff -up rpm-4.7.0.git9101/build/rpmfc.c.devel-autodep rpm-4.7.0.git9101/build/rpmfc.c
+--- rpm-4.7.0.git9101/build/rpmfc.c.devel-autodep	2009-04-03 09:26:59.000000000 +0300
++++ rpm-4.7.0.git9101/build/rpmfc.c	2009-04-03 11:34:44.000000000 +0300
+@@ -505,7 +505,7 @@ static const struct rpmfcTokens_s const 
    { "ASCII text",		RPMFC_WHITE|RPMFC_INCLUDE },
    { "ISO-8859 text",		RPMFC_WHITE|RPMFC_INCLUDE },
  
@@ -9,7 +9,7 @@ diff -up rpm-4.7.0-beta1/build/rpmfc.c.devel-autodep rpm-4.7.0-beta1/build/rpmfc
 +  { "symbolic link to",		RPMFC_SYMLINK|RPMFC_INCLUDE },
    { "socket",			RPMFC_DEVICE },
    { "special",			RPMFC_DEVICE },
- 
+   { " text",			RPMFC_TEXT },
 @@ -667,6 +667,105 @@ rpmds rpmfcRequires(rpmfc fc)
  
  

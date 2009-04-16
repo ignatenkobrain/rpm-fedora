@@ -16,8 +16,8 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.7.0
-%define snapver rc1
-%define srcver %{rpmver}-%{snapver}
+%define snapver {nil}
+%define srcver %{rpmver}
 
 %define bdbver 4.7.25
 %define dbprefix db
@@ -25,7 +25,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.1%{?dist}
+Release: 1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -269,8 +269,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with check}
 %check
-# missing file in beta1 tarball causes two failures, permit failure for now
-make check ||:
+make check
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -394,6 +393,11 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Apr 16 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-1
+- update to 4.7.0 final (http://rpm.org/wiki/Releases/4.7.0)
+- fixes #494049, #495429
+- dont permit test-suite failure anymore
+
 * Thu Apr 09 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-0.rc1.1
 - update to 4.7.0-rc1
 - fixes #493157, #493777, #493696, #491388, #487597, #493162

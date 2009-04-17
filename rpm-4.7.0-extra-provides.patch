@@ -1,7 +1,8 @@
-diff -up rpm-4.7.0-beta1/build/rpmfc.c.extra-prov rpm-4.7.0-beta1/build/rpmfc.c
---- rpm-4.7.0-beta1/build/rpmfc.c.extra-prov	2009-02-26 17:31:12.000000000 +0200
-+++ rpm-4.7.0-beta1/build/rpmfc.c	2009-02-26 17:31:55.000000000 +0200
-@@ -485,6 +485,7 @@ static const struct rpmfcTokens_s const 
+diff --git a/build/rpmfc.c b/build/rpmfc.c
+index 1bb1c3b..4e57869 100644
+--- a/build/rpmfc.c
++++ b/build/rpmfc.c
+@@ -484,6 +484,7 @@ static const struct rpmfcTokens_s const rpmfcTokens[] = {
    { "RPM v4",			RPMFC_ARCHIVE|RPMFC_INCLUDE },
  
    { " image",			RPMFC_IMAGE|RPMFC_INCLUDE },
@@ -9,7 +10,28 @@ diff -up rpm-4.7.0-beta1/build/rpmfc.c.extra-prov rpm-4.7.0-beta1/build/rpmfc.c
    { " font",			RPMFC_FONT|RPMFC_INCLUDE },
    { " Font",			RPMFC_FONT|RPMFC_INCLUDE },
  
-@@ -1189,6 +1190,31 @@ exit:
+@@ -496,19 +497,14 @@ static const struct rpmfcTokens_s const rpmfcTokens[] = {
+   { "SGML",			RPMFC_WHITE|RPMFC_INCLUDE },
+   { "XML",			RPMFC_WHITE|RPMFC_INCLUDE },
+ 
+-  { " program text",		RPMFC_WHITE|RPMFC_INCLUDE },
+   { " source",			RPMFC_WHITE|RPMFC_INCLUDE },
+   { "GLS_BINARY_LSB_FIRST",	RPMFC_WHITE|RPMFC_INCLUDE },
+   { " DB ",			RPMFC_WHITE|RPMFC_INCLUDE },
+ 
+-  { "ASCII English text",	RPMFC_WHITE|RPMFC_INCLUDE },
+-  { "ASCII text",		RPMFC_WHITE|RPMFC_INCLUDE },
+-  { "ISO-8859 text",		RPMFC_WHITE|RPMFC_INCLUDE },
+-
+   { "symbolic link to",		RPMFC_SYMLINK|RPMFC_INCLUDE },
+   { "socket",			RPMFC_DEVICE },
+   { "special",			RPMFC_DEVICE },
+-  { " text",			RPMFC_TEXT },
++  { " text",			RPMFC_TEXT|RPMFC_INCLUDE },
+ 
+   { "ASCII",			RPMFC_WHITE },
+   { "ISO-8859",			RPMFC_WHITE },
+@@ -1184,6 +1180,31 @@ exit:
  #endif
  }
  
@@ -41,7 +63,7 @@ diff -up rpm-4.7.0-beta1/build/rpmfc.c.extra-prov rpm-4.7.0-beta1/build/rpmfc.c
  typedef const struct rpmfcApplyTbl_s {
      int (*func) (rpmfc fc);
      int colormask;
-@@ -1201,6 +1227,7 @@ static const struct rpmfcApplyTbl_s cons
+@@ -1196,6 +1217,7 @@ static const struct rpmfcApplyTbl_s const rpmfcApplyTable[] = {
      { rpmfcSCRIPT,	(RPMFC_SCRIPT|RPMFC_BOURNE|
  			 RPMFC_PERL|RPMFC_PYTHON|RPMFC_MONO|
  			 RPMFC_PKGCONFIG|RPMFC_LIBTOOL) },
@@ -49,19 +71,20 @@ diff -up rpm-4.7.0-beta1/build/rpmfc.c.extra-prov rpm-4.7.0-beta1/build/rpmfc.c
      { rpmfcSYMLINK,	RPMFC_SYMLINK },
      { NULL, 0 }
  };
-@@ -1320,7 +1347,7 @@ rpmRC rpmfcClassify(rpmfc fc, ARGV_t arg
+@@ -1315,7 +1337,7 @@ rpmRC rpmfcClassify(rpmfc fc, ARGV_t argv, rpm_mode_t * fmode)
      size_t slen;
      int fcolor;
      int xx;
 -    int msflags = MAGIC_CHECK;	/* XXX MAGIC_COMPRESS flag? */
-+    int msflags = MAGIC_CHECK | MAGIC_COMPRESS;
++    int msflags = MAGIC_CHECK | MAGIC_COMPRESS | MAGIC_NO_CHECK_TOKENS;
      magic_t ms = NULL;
  
      if (fc == NULL || argv == NULL)
-diff -up rpm-4.7.0-beta1/macros.in.extra-prov rpm-4.7.0-beta1/macros.in
---- rpm-4.7.0-beta1/macros.in.extra-prov	2009-02-26 17:31:12.000000000 +0200
-+++ rpm-4.7.0-beta1/macros.in	2009-02-26 17:32:38.000000000 +0200
-@@ -494,6 +494,9 @@ print (t)\
+diff --git a/macros.in b/macros.in
+index c187f62..945e89b 100644
+--- a/macros.in
++++ b/macros.in
+@@ -489,6 +489,9 @@ print (t)\
  %__pkgconfig_provides   %{_rpmconfigdir}/pkgconfigdeps.sh --provides
  %__pkgconfig_requires   %{_rpmconfigdir}/pkgconfigdeps.sh --requires
  

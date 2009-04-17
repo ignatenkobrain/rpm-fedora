@@ -25,7 +25,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -393,6 +393,11 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Apr 17 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-2
+- file classification tweaks for text files (#494817)
+  - disable libmagic text token checks, it's way too error-prone
+  - consistently classify all text as such and include description
+
 * Thu Apr 16 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-1
 - update to 4.7.0 final (http://rpm.org/wiki/Releases/4.7.0)
 - fixes #494049, #495429

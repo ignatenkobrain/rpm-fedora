@@ -7,10 +7,6 @@
 # run internal testsuite?
 %bcond_without check
 
-# switch rpm itself back to md5 file digests until the dust settles a bit
-%define _source_filedigest_algorithm 0
-%define _binary_filedigest_algorithm 0
-
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 %define rpmhome /usr/lib/rpm
@@ -25,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 2%{?dist}
+Release: 3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -43,6 +39,7 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 Patch3: rpm-4.6.0-fedora-specspo.patch
 
 # Patches already in upstream
+Patch200: rpm-4.7.0-findlang-kde3.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
@@ -184,6 +181,8 @@ that will manipulate RPM packages and databases.
 %patch2 -p1 -b .gstreamer-prov
 %patch3 -p1 -b .fedora-specspo
 
+%patch200 -p1 -b .findlang-kde3
+
 %patch300 -p1 -b .extra-prov
 %patch301 -p1 -b .niagara
 
@@ -294,7 +293,7 @@ exit 0
 %dir                            %{_sysconfdir}/rpm
 
 %attr(0755, root, root)   %dir /var/lib/rpm
-%attr(0644, rpm, rpm) %verify(not md5 size mtime) %ghost %config(missingok,noreplace) /var/lib/rpm/*
+%attr(0644, root, root) %verify(not md5 size mtime) %ghost %config(missingok,noreplace) /var/lib/rpm/*
 %attr(0755, root, root) %dir %{rpmhome}
 
 /bin/rpm
@@ -393,6 +392,13 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Apr 21 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-3
+- couple of merge-review fixes (#226377)
+  - eliminate bogus leftover rpm:rpm rpmdb ownership
+  - unescaped macro in changelog
+- fix find-lang --with-kde with KDE3 (#466009)
+- switch back to default file digest algorithm
+
 * Fri Apr 17 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-2
 - file classification tweaks for text files (#494817)
   - disable libmagic text token checks, it's way too error-prone
@@ -566,7 +572,7 @@ exit 0
 - handle both "invalid argument" and clear env version mismatch on posttrans
 
 * Thu Sep 25 2008 Jindrich Novy <jnovy@redhat.com>
-- don't treat %patch numberless if -P parameter is present (#463942)
+- don't treat %%patch numberless if -P parameter is present (#463942)
 
 * Thu Sep 11 2008 Panu Matilainen <pmatilai@redhat.com>
 - add hack to support extracting gstreamer plugin provides (#438225)

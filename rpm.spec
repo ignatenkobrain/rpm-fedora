@@ -1,6 +1,6 @@
 # rawhide doesn't have new enough lzma yet
 %bcond_with lzma
-# sqlite backend is broken atm, disabled for now
+# sqlite backend is pretty useless
 %bcond_with sqlite
 # just for giggles, option to build with internal Berkeley DB
 %bcond_with int_bdb
@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 3%{?dist}
+Release: 4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -40,6 +40,7 @@ Patch3: rpm-4.6.0-fedora-specspo.patch
 
 # Patches already in upstream
 Patch200: rpm-4.7.0-findlang-kde3.patch
+Patch201: rpm-4.7.0-prtsig.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
@@ -49,14 +50,12 @@ Patch301: rpm-4.6.0-niagara.patch
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
 License: GPLv2+
 
-Requires(post): coreutils
+Requires: coreutils
 %if %{without int_bdb}
 # db recovery tools, rpmdb_util symlinks
 Requires: db4-utils = %{bdbver}
 %endif
 Requires: popt >= 1.10.2.1
-Requires: crontabs
-Requires: logrotate
 Requires: curl
 
 %if %{without int_bdb}
@@ -84,6 +83,8 @@ BuildRequires: ncurses-devel
 BuildRequires: bzip2-devel >= 0.9.0c-2
 BuildRequires: python-devel >= 2.2
 BuildRequires: lua-devel >= 5.1
+BuildRequires: libcap-devel
+BuildRequires: libacl-devel
 %if %{with lzma}
 BuildRequires: lzma-devel >= 4.42
 %endif
@@ -174,6 +175,16 @@ BuildArch: noarch
 This package contains API documentation for developing applications
 that will manipulate RPM packages and databases.
 
+%package cron
+Summary: Create daily logs of installed packages.
+Group: System Environment/Base
+BuildArch: noarch
+Requires: crontabs logrotate rpm = %{version}-%{release}
+
+%description cron
+This package contains a cron job which creates daily logs of installed
+packages on a system.
+
 %prep
 %setup -q -n %{name}-%{srcver} %{?with_int_bdb:-a 1}
 %patch0 -p1 -b .devel-autodep
@@ -182,6 +193,7 @@ that will manipulate RPM packages and databases.
 %patch3 -p1 -b .fedora-specspo
 
 %patch200 -p1 -b .findlang-kde3
+%patch201 -p1 -b .prtsig
 
 %patch300 -p1 -b .extra-prov
 %patch301 -p1 -b .niagara
@@ -211,6 +223,8 @@ export CPPFLAGS CFLAGS LDFLAGS
     %{?with_sqlite: --enable-sqlite3} \
     --with-lua \
     --with-selinux \
+    --with-cap \
+    --with-acl \
     --enable-python
 
 make %{?_smp_mflags}
@@ -288,8 +302,6 @@ exit 0
 %defattr(-,root,root,-)
 %doc GROUPS COPYING CREDITS ChangeLog.bz2 doc/manual/[a-z]*
 
-%{_sysconfdir}/cron.daily/rpm
-%config(noreplace,missingok)    %{_sysconfdir}/logrotate.d/rpm
 %dir                            %{_sysconfdir}/rpm
 
 %attr(0755, root, root)   %dir /var/lib/rpm
@@ -384,14 +396,24 @@ exit 0
 %{_libdir}/librp*[a-z].so
 %{_mandir}/man8/rpmgraph.8*
 %{_bindir}/rpmgraph
-
 %{_libdir}/pkgconfig/rpm.pc
+
+%files cron
+%defattr(-,root,root)
+%{_sysconfdir}/cron.daily/rpm
+%config(noreplace) %{_sysconfdir}/logrotate.d/rpm
 
 %files apidocs
 %defattr(-,root,root)
 %doc doc/librpm/html/*
 
 %changelog
+* Thu May 14 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-4
+- split cron-job into a sub-package to avoid silly deps on core rpm (#500722)
+- rpm requires coreutils but not in %%post
+- build with libcap and libacl
+- fix pgp pubkey signature tag parsing
+
 * Tue Apr 21 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-3
 - couple of merge-review fixes (#226377)
   - eliminate bogus leftover rpm:rpm rpmdb ownership

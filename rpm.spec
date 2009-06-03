@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 4%{?dist}
+Release: 5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -41,6 +41,8 @@ Patch3: rpm-4.6.0-fedora-specspo.patch
 # Patches already in upstream
 Patch200: rpm-4.7.0-findlang-kde3.patch
 Patch201: rpm-4.7.0-prtsig.patch
+Patch202: rpm-4.7.0-python-altnevr.patch
+Patch203: rpm-4.7.0-hardlink-sizes.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
@@ -194,6 +196,8 @@ packages on a system.
 
 %patch200 -p1 -b .findlang-kde3
 %patch201 -p1 -b .prtsig
+%patch202 -p1 -b .py-altnevr
+%patch203 -p1 -b .hardlink-sizes
 
 %patch300 -p1 -b .extra-prov
 %patch301 -p1 -b .niagara
@@ -408,6 +412,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Jun 03 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-5
+- don't mess up problem altNEVR in python ts.check() (#501068)
+- fix hardlink size calculation on build (#503020)
+
 * Thu May 14 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-4
 - split cron-job into a sub-package to avoid silly deps on core rpm (#500722)
 - rpm requires coreutils but not in %%post

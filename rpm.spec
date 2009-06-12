@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 5%{?dist}
+Release: 6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -93,8 +93,6 @@ BuildRequires: lzma-devel >= 4.42
 %if %{with sqlite}
 BuildRequires: sqlite-devel
 %endif
-# Not enabling these yet
-# BuildRequires: libcap-devel libacl-devel
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -110,6 +108,9 @@ Summary:  Libraries for manipulating RPM packages
 Group: Development/Libraries
 License: GPLv2+ and LGPLv2+ with exceptions
 Requires: rpm = %{version}-%{release}
+# librpm uses cap_compare, introduced sometimes between libcap 2.10 and 2.16.
+# A manual require is needed, see #505596
+Requires: libcap >= 2.16
 
 %description libs
 This package contains the RPM shared libraries.
@@ -412,6 +413,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Jun 12 2009 Stepan Kasal <skasal@redhat.com> - 4.7.0-6
+- require libcap >= 2.16 (#505596)
+
 * Tue Jun 03 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-5
 - don't mess up problem altNEVR in python ts.check() (#501068)
 - fix hardlink size calculation on build (#503020)

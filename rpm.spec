@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 6%{?dist}
+Release: 7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -43,6 +43,7 @@ Patch200: rpm-4.7.0-findlang-kde3.patch
 Patch201: rpm-4.7.0-prtsig.patch
 Patch202: rpm-4.7.0-python-altnevr.patch
 Patch203: rpm-4.7.0-hardlink-sizes.patch
+Patch204: rpm-4.7.0-dwarf3.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
@@ -199,6 +200,7 @@ packages on a system.
 %patch201 -p1 -b .prtsig
 %patch202 -p1 -b .py-altnevr
 %patch203 -p1 -b .hardlink-sizes
+%patch204 -p1 -b .dwarf3
 
 %patch300 -p1 -b .extra-prov
 %patch301 -p1 -b .niagara
@@ -413,6 +415,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Jun 16 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-7
+- add dwarf-3 support to debugedit (#505774)
+
 * Fri Jun 12 2009 Stepan Kasal <skasal@redhat.com> - 4.7.0-6
 - require libcap >= 2.16 (#505596)
 

@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 7%{?dist}
+Release: 8%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -44,6 +44,7 @@ Patch201: rpm-4.7.0-prtsig.patch
 Patch202: rpm-4.7.0-python-altnevr.patch
 Patch203: rpm-4.7.0-hardlink-sizes.patch
 Patch204: rpm-4.7.0-dwarf3.patch
+Patch205: rpm-4.7.0-osgideps.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
@@ -201,6 +202,7 @@ packages on a system.
 %patch202 -p1 -b .py-altnevr
 %patch203 -p1 -b .hardlink-sizes
 %patch204 -p1 -b .dwarf3
+%patch205 -p1 -b .osgideps
 
 %patch300 -p1 -b .extra-prov
 %patch301 -p1 -b .niagara
@@ -415,6 +417,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Jun 18 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-8
+- updated OSGi dependency extractor (#506471)
+
 * Tue Jun 16 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-7
 - add dwarf-3 support to debugedit (#505774)
 

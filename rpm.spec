@@ -45,6 +45,7 @@ Patch202: rpm-4.7.0-python-altnevr.patch
 Patch203: rpm-4.7.0-hardlink-sizes.patch
 Patch204: rpm-4.7.0-dwarf3.patch
 Patch205: rpm-4.7.0-osgideps.patch
+Patch206: rpm-4.7.0-fp-symlink.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
@@ -203,6 +204,7 @@ packages on a system.
 %patch203 -p1 -b .hardlink-sizes
 %patch204 -p1 -b .dwarf3
 %patch205 -p1 -b .osgideps
+%patch206 -p1 -b .fp-symlink
 
 %patch300 -p1 -b .extra-prov
 %patch301 -p1 -b .niagara
@@ -419,6 +421,7 @@ exit 0
 %changelog
 * Thu Jun 18 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-8
 - updated OSGi dependency extractor (#506471)
+- fix segfault in symlink fingerprinting (#505777)
 
 * Tue Jun 16 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-7
 - add dwarf-3 support to debugedit (#505774)

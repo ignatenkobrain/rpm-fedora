@@ -1,5 +1,5 @@
-# rawhide doesn't have new enough lzma yet
-%bcond_with lzma
+# build against xz?
+%bcond_without xz
 # sqlite backend is pretty useless
 %bcond_with sqlite
 # just for giggles, option to build with internal Berkeley DB
@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 8%{?dist}
+Release: 9%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -91,8 +91,8 @@ BuildRequires: python-devel >= 2.2
 BuildRequires: lua-devel >= 5.1
 BuildRequires: libcap-devel
 BuildRequires: libacl-devel
-%if %{with lzma}
-BuildRequires: lzma-devel >= 4.42
+%if ! %{without xz}
+BuildRequires: xz-devel >= 4.999.8
 %endif
 %if %{with sqlite}
 BuildRequires: sqlite-devel
@@ -129,8 +129,8 @@ Requires: nss-devel
 Requires: libselinux-devel
 Requires: elfutils-libelf-devel
 Requires: popt-devel
-%if %{with lzma}
-Requires: lzma-devel >= 4.42
+%if ! %{without xz}
+Requires: xz-devel >= 4.999.8
 %endif
 %if %{with sqlite}
 Requires: sqlite-devel
@@ -153,7 +153,7 @@ Group: Development/Tools
 Requires: rpm = %{version}-%{release}
 Requires: elfutils >= 0.128 binutils
 Requires: findutils sed grep gawk diffutils file patch >= 2.5
-Requires: unzip gzip bzip2 cpio lzma
+Requires: unzip gzip bzip2 cpio lzma xz
 Requires: pkgconfig
 
 %description build
@@ -421,6 +421,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Jul 20 2009 Bill Nottingham <notting@redhat.com> - 4.7.0-9
+- enable XZ support
+
 * Thu Jun 18 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-8
 - updated OSGi dependency extractor (#506471)
 - fix segfault in symlink fingerprinting (#505777)

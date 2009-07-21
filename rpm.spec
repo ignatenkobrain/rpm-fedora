@@ -11,7 +11,7 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.7.0
+%define rpmver 4.7.1
 %define snapver {nil}
 %define srcver %{rpmver}
 
@@ -21,10 +21,10 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 9%{?dist}
+Release: 1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
+Source0: http://rpm.org/releases/rpm-4.7.x/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %endif
@@ -39,14 +39,6 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 Patch3: rpm-4.6.0-fedora-specspo.patch
 
 # Patches already in upstream
-Patch200: rpm-4.7.0-findlang-kde3.patch
-Patch201: rpm-4.7.0-prtsig.patch
-Patch202: rpm-4.7.0-python-altnevr.patch
-Patch203: rpm-4.7.0-hardlink-sizes.patch
-Patch204: rpm-4.7.0-dwarf3.patch
-Patch205: rpm-4.7.0-osgideps.patch
-Patch206: rpm-4.7.0-fp-symlink.patch
-Patch207: rpm-4.7.0-fp-findbyfile.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
@@ -198,15 +190,6 @@ packages on a system.
 %patch1 -p1 -b .pkgconfig-path
 %patch2 -p1 -b .gstreamer-prov
 %patch3 -p1 -b .fedora-specspo
-
-%patch200 -p1 -b .findlang-kde3
-%patch201 -p1 -b .prtsig
-%patch202 -p1 -b .py-altnevr
-%patch203 -p1 -b .hardlink-sizes
-%patch204 -p1 -b .dwarf3
-%patch205 -p1 -b .osgideps
-%patch206 -p1 -b .fp-symlink
-%patch207 -p1 -b .fp-findbyfile
 
 %patch300 -p1 -b .extra-prov
 %patch301 -p1 -b .niagara
@@ -421,6 +404,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Jul 21 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.1-1
+- update to 4.7.1 ((http://rpm.org/wiki/Releases/4.7.1)
+- fix source url
+
 * Mon Jul 20 2009 Bill Nottingham <notting@redhat.com> - 4.7.0-9
 - enable XZ support
 

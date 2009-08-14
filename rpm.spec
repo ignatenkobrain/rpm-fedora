@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 3%{?dist}
+Release: 4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.7.x/%{name}-%{srcver}.tar.bz2
@@ -43,6 +43,7 @@ Patch3: rpm-4.6.0-fedora-specspo.patch
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
 Patch301: rpm-4.6.0-niagara.patch
+Patch302: rpm-4.7.1-geode-i686.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -193,6 +194,7 @@ packages on a system.
 
 %patch300 -p1 -b .extra-prov
 %patch301 -p1 -b .niagara
+%patch302 -p1 -b .geode
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -404,6 +406,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Aug 14 2009 Jesse Keating <jkeating@redhat.com> - 4.7.1-4
+- Patch to make geode appear as i686 (#517475)
+
 * Thu Aug 06 2009 Jindrich Novy <jnovy@redhat.com> - 4.7.1-3
 - rebuild because of the new xz
 

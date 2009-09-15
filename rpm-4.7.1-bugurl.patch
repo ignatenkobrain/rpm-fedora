@@ -1,7 +1,6 @@
-diff --git a/build/files.c b/build/files.c
-index f3cf261..e1230a5 100644
---- a/build/files.c
-+++ b/build/files.c
+diff -up rpm-4.7.1/build/files.c.bugurl rpm-4.7.1/build/files.c
+--- rpm-4.7.1/build/files.c.bugurl	2009-07-21 09:42:51.000000000 +0300
++++ rpm-4.7.1/build/files.c	2009-09-15 11:37:45.000000000 +0300
 @@ -1977,6 +1977,7 @@ static const rpmTag sourceTags[] = {
      RPMTAG_CHANGELOGNAME,
      RPMTAG_CHANGELOGTEXT,
@@ -10,11 +9,10 @@ index f3cf261..e1230a5 100644
      HEADER_I18NTABLE,
      0
  };
-diff --git a/build/parsePreamble.c b/build/parsePreamble.c
-index c000780..70b20a8 100644
---- a/build/parsePreamble.c
-+++ b/build/parsePreamble.c
-@@ -32,6 +32,7 @@ static const rpmTag copyTagsDuringParse[] = {
+diff -up rpm-4.7.1/build/parsePreamble.c.bugurl rpm-4.7.1/build/parsePreamble.c
+--- rpm-4.7.1/build/parsePreamble.c.bugurl	2009-06-23 14:40:57.000000000 +0300
++++ rpm-4.7.1/build/parsePreamble.c	2009-09-15 11:37:45.000000000 +0300
+@@ -32,6 +32,7 @@ static const rpmTag copyTagsDuringParse[
      RPMTAG_CHANGELOGTEXT,
      RPMTAG_PREFIXES,
      RPMTAG_DISTTAG,
@@ -30,7 +28,7 @@ index c000780..70b20a8 100644
      { -1, NULL }
  };
  
-@@ -501,6 +503,7 @@ static int handlePreambleTag(rpmSpec spec, Package pkg, rpmTag tag,
+@@ -501,6 +503,7 @@ static int handlePreambleTag(rpmSpec spe
  	}
      case RPMTAG_URL:
      case RPMTAG_DISTTAG:
@@ -38,7 +36,7 @@ index c000780..70b20a8 100644
  	SINGLE_TOKEN_ONLY;
  	/* These macros are for backward compatibility */
  	if (tag == RPMTAG_VERSION) {
-@@ -734,6 +737,7 @@ static struct PreambleRec_s preambleList[] = {
+@@ -734,6 +737,7 @@ static struct PreambleRec_s preambleList
      {RPMTAG_AUTOPROV,		0, 0, 0, "autoprov"},
      {RPMTAG_DOCDIR,		0, 0, 0, "docdir"},
      {RPMTAG_DISTTAG,		0, 0, 0, "disttag"},
@@ -46,10 +44,9 @@ index c000780..70b20a8 100644
     	/* LCL: can't add null annotation */
      {0, 0, 0, 0, 0}
  };
-diff --git a/lib/rpmtag.h b/lib/rpmtag.h
-index a0bbd79..7a3aa01 100644
---- a/lib/rpmtag.h
-+++ b/lib/rpmtag.h
+diff -up rpm-4.7.1/lib/rpmtag.h.bugurl rpm-4.7.1/lib/rpmtag.h
+--- rpm-4.7.1/lib/rpmtag.h.bugurl	2009-06-23 14:40:57.000000000 +0300
++++ rpm-4.7.1/lib/rpmtag.h	2009-09-15 11:37:45.000000000 +0300
 @@ -282,6 +282,7 @@ typedef enum rpmTag_e {
      RPMTAG_LONGSIZE		= 5009, /* l */
      RPMTAG_FILECAPS		= 5010, /* s[] */
@@ -58,10 +55,9 @@ index a0bbd79..7a3aa01 100644
  
      RPMTAG_FIRSTFREE_TAG	/*!< internal */
  } rpmTag;
-diff --git a/macros.in b/macros.in
-index 158ae34..ee10586 100644
---- a/macros.in
-+++ b/macros.in
+diff -up rpm-4.7.1/macros.in.bugurl rpm-4.7.1/macros.in
+--- rpm-4.7.1/macros.in.bugurl	2009-09-15 11:37:45.000000000 +0300
++++ rpm-4.7.1/macros.in	2009-09-15 11:37:45.000000000 +0300
 @@ -264,6 +264,12 @@ package or when debugging this package.\
  #
  #%disturl
@@ -75,12 +71,22 @@ index 158ae34..ee10586 100644
  #	Boolean (i.e. 1 == "yes", 0 == "no") that controls whether files
  #	marked as %doc should be installed.
  #%_excludedocs
-diff --git a/tests/rpmgeneral.at b/tests/rpmgeneral.at
-index d6f11a5..4956780 100644
---- a/tests/rpmgeneral.at
-+++ b/tests/rpmgeneral.at
+diff -up rpm-4.7.1/tests/rpmgeneral.at.bugurl rpm-4.7.1/tests/rpmgeneral.at
+--- rpm-4.7.1/tests/rpmgeneral.at.bugurl	2009-06-23 14:40:59.000000000 +0300
++++ rpm-4.7.1/tests/rpmgeneral.at	2009-09-15 11:37:45.000000000 +0300
 @@ -71,6 +71,7 @@ AT_CHECK([run rpm --querytags],[0],
  [ARCH
+ ARCHIVESIZE
+ BASENAMES
++BUGURL
+ BUILDARCHS
+ BUILDHOST
+ BUILDTIME
+diff -up rpm-4.7.1/tests/rpmtests.bugurl rpm-4.7.1/tests/rpmtests
+--- rpm-4.7.1/tests/rpmtests.bugurl	2009-09-15 11:38:00.000000000 +0300
++++ rpm-4.7.1/tests/rpmtests	2009-09-15 11:38:10.000000000 +0300
+@@ -2165,6 +2165,7 @@ at_func_diff_devnull "$at_stderr" || at_
+ echo >>"$at_stdout"; $as_echo "ARCH
  ARCHIVESIZE
  BASENAMES
 +BUGURL

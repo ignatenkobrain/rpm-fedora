@@ -1,0 +1,89 @@
+diff --git a/build/files.c b/build/files.c
+index f3cf261..e1230a5 100644
+--- a/build/files.c
++++ b/build/files.c
+@@ -1977,6 +1977,7 @@ static const rpmTag sourceTags[] = {
+     RPMTAG_CHANGELOGNAME,
+     RPMTAG_CHANGELOGTEXT,
+     RPMTAG_URL,
++    RPMTAG_BUGURL,
+     HEADER_I18NTABLE,
+     0
+ };
+diff --git a/build/parsePreamble.c b/build/parsePreamble.c
+index c000780..70b20a8 100644
+--- a/build/parsePreamble.c
++++ b/build/parsePreamble.c
+@@ -32,6 +32,7 @@ static const rpmTag copyTagsDuringParse[] = {
+     RPMTAG_CHANGELOGTEXT,
+     RPMTAG_PREFIXES,
+     RPMTAG_DISTTAG,
++    RPMTAG_BUGURL,
+     0
+ };
+ 
+@@ -307,6 +308,7 @@ static struct optionalTag {
+     { RPMTAG_PACKAGER,		"%{packager}" },
+     { RPMTAG_DISTRIBUTION,	"%{distribution}" },
+     { RPMTAG_DISTURL,		"%{disturl}" },
++    { RPMTAG_BUGURL,		"%{bugurl}" },
+     { -1, NULL }
+ };
+ 
+@@ -501,6 +503,7 @@ static int handlePreambleTag(rpmSpec spec, Package pkg, rpmTag tag,
+ 	}
+     case RPMTAG_URL:
+     case RPMTAG_DISTTAG:
++    case RPMTAG_BUGURL:
+ 	SINGLE_TOKEN_ONLY;
+ 	/* These macros are for backward compatibility */
+ 	if (tag == RPMTAG_VERSION) {
+@@ -734,6 +737,7 @@ static struct PreambleRec_s preambleList[] = {
+     {RPMTAG_AUTOPROV,		0, 0, 0, "autoprov"},
+     {RPMTAG_DOCDIR,		0, 0, 0, "docdir"},
+     {RPMTAG_DISTTAG,		0, 0, 0, "disttag"},
++    {RPMTAG_BUGURL,		0, 0, 0, "bugurl"},
+    	/* LCL: can't add null annotation */
+     {0, 0, 0, 0, 0}
+ };
+diff --git a/lib/rpmtag.h b/lib/rpmtag.h
+index a0bbd79..7a3aa01 100644
+--- a/lib/rpmtag.h
++++ b/lib/rpmtag.h
+@@ -282,6 +282,7 @@ typedef enum rpmTag_e {
+     RPMTAG_LONGSIZE		= 5009, /* l */
+     RPMTAG_FILECAPS		= 5010, /* s[] */
+     RPMTAG_FILEDIGESTALGO	= 5011, /* i file digest algorithm */
++    RPMTAG_BUGURL		= 5012, /* s */
+ 
+     RPMTAG_FIRSTFREE_TAG	/*!< internal */
+ } rpmTag;
+diff --git a/macros.in b/macros.in
+index 158ae34..ee10586 100644
+--- a/macros.in
++++ b/macros.in
+@@ -264,6 +264,12 @@ package or when debugging this package.\
+ #
+ #%disturl
+ 
++#	Configurable bug URL, same as BugURL: tag in a specfile.
++#	The URL will be used to supply reliable information to where
++#	to file bugs.
++#
++#%bugurl
++
+ #	Boolean (i.e. 1 == "yes", 0 == "no") that controls whether files
+ #	marked as %doc should be installed.
+ #%_excludedocs
+diff --git a/tests/rpmgeneral.at b/tests/rpmgeneral.at
+index d6f11a5..4956780 100644
+--- a/tests/rpmgeneral.at
++++ b/tests/rpmgeneral.at
+@@ -71,6 +71,7 @@ AT_CHECK([run rpm --querytags],[0],
+ [ARCH
+ ARCHIVESIZE
+ BASENAMES
++BUGURL
+ BUILDARCHS
+ BUILDHOST
+ BUILDTIME

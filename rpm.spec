@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 4%{?dist}
+Release: 5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.7.x/%{name}-%{srcver}.tar.bz2
@@ -39,6 +39,10 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 Patch3: rpm-4.6.0-fedora-specspo.patch
 
 # Patches already in upstream
+Patch200: rpm-4.7.1-bugurl.patch
+Patch201: rpm-4.7.1-abs-filelist.patch
+Patch202: rpm-4.7.1-debug-perms.patch
+Patch203: rpm-4.7.1-duplicate-deps.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
@@ -191,6 +195,11 @@ packages on a system.
 %patch1 -p1 -b .pkgconfig-path
 %patch2 -p1 -b .gstreamer-prov
 %patch3 -p1 -b .fedora-specspo
+
+%patch200 -p1 -b .bugurl
+%patch201 -p1 -b .abs-filelist
+%patch202 -p1 -b .debug-perms
+%patch203 -p1 -b .duplicate-deps
 
 %patch300 -p1 -b .extra-prov
 %patch301 -p1 -b .niagara
@@ -406,6 +415,12 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Sep 15 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.1-5
+- fix duplicate dependency filtering on build (#490378)
+- permit absolute paths in file lists again (#521760)
+- use permissions 444 for all .debug files (#522194)
+- add support for optional bugurl tag (#512774)
+
 * Fri Aug 14 2009 Jesse Keating <jkeating@redhat.com> - 4.7.1-4
 - Patch to make geode appear as i686 (#517475)
 

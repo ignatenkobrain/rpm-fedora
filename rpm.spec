@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 5%{?dist}
+Release: 6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.7.x/%{name}-%{srcver}.tar.bz2
@@ -43,6 +43,10 @@ Patch200: rpm-4.7.1-bugurl.patch
 Patch201: rpm-4.7.1-abs-filelist.patch
 Patch202: rpm-4.7.1-debug-perms.patch
 Patch203: rpm-4.7.1-duplicate-deps.patch
+Patch204: rpm-4.7.1-chroot-env-paths.patch
+Patch205: rpm-4.7.1-rpm2cpio-init.patch
+Patch206: rpm-4.7.1-filedep-dnevr.patch
+Patch207: rpm-4.7.1-chroot-remove-env.patch
 
 # These are not yet upstream
 Patch300: rpm-4.7.0-extra-provides.patch
@@ -200,6 +204,10 @@ packages on a system.
 %patch201 -p1 -b .abs-filelist
 %patch202 -p1 -b .debug-perms
 %patch203 -p1 -b .duplicate-deps
+%patch204 -p1 -b .chroot-env-paths
+%patch205 -p1 -b .rpm2cpio.init
+%patch206 -p1 -b .filedep-dnevr
+%patch207 -p1 -b .chroot-remove-env
 
 %patch300 -p1 -b .extra-prov
 %patch301 -p1 -b .niagara
@@ -415,6 +423,12 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Sep 21 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.1-6
+- use relative paths within db environment (related to #507309, #507309...)
+- remove db environment on close in chrooted operation (related to above)
+- initialize rpmlib earlier in rpm2cpio (#523260)
+- fix file dependency tag extension formatting (#523282)
+
 * Tue Sep 15 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.1-5
 - fix duplicate dependency filtering on build (#490378)
 - permit absolute paths in file lists again (#521760)

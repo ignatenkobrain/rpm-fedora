@@ -1,0 +1,20 @@
+commit d846e6b0f829791e6ffce4fd496c9378bff19c43
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Tue Sep 15 08:45:14 2009 +0300
+
+    Don't add dependency type into file requires and provides (RhBug:523282)
+    - unintended change in commit 3d8656f040d2c780c88d0cd63594898f0605a6fa
+
+diff --git a/lib/tagexts.c b/lib/tagexts.c
+index ec0b001..4588365 100644
+--- a/lib/tagexts.c
++++ b/lib/tagexts.c
+@@ -137,7 +137,7 @@ static int filedepTag(Header h, rpmTag tagN, rpmtd td, headerGetFlags hgflags)
+ 		    continue;
+ 		DNEVR = rpmdsDNEVR(ds);
+ 		if (DNEVR != NULL) {
+-		    argvAdd(&deps, DNEVR);
++		    argvAdd(&deps, DNEVR + 2);
+ 		}
+ 	    }
+ 	}

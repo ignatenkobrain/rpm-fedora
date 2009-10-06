@@ -1,0 +1,33 @@
+commit 007218488a33678c66b19b34ab1ef9fd2ffaec9e
+Author: Ville Skyttä <ville.skytta@iki.fi>
+Date:   Tue Sep 22 21:11:20 2009 +0300
+
+    Improve perl.req here-doc skipping.
+    
+    This version is stricter in finding the end identifier by using equality test
+    instead of a regex (as a side effect, fixes rhbz#524929) as well as parsing
+    quoted identifiers, and adds support for identifiers in backticks.
+    (cherry picked from commit dab575b24498e2362845e7da6dc76015fa88b4a9)
+
+diff --git a/scripts/perl.req b/scripts/perl.req
+index 0d26346..4c08dcd 100755
+--- a/scripts/perl.req
++++ b/scripts/perl.req
+@@ -82,12 +82,14 @@ sub process_file {
+     
+     # skip the "= <<" block
+ 
+-    if ( ( m/^\s*\$(.*)\s*=\s*<<\s*["'](.*)['"]/) ||
+-         ( m/^\s*\$(.*)\s*=\s*<<\s*(.*);/) ) {
++    if ( ( m/^\s*\$(?:.*)\s*=\s*<<\s*(["'`])(.*)\1/) ||
++         ( m/^\s*\$(.*)\s*=\s*<<(\w*)\s*;/) ) {
+       $tag = $2;
+       while (<FILE>) {
+-        ( $_ =~ /^$tag/) && last;
++        chomp;
++        ( $_ eq $tag ) && last;
+       }
++      $_ = <FILE>;
+     }
+ 
+     # skip q{} quoted sections - just hope we don't have curly brackets

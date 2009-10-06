@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 6%{?dist}
+Release: 7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.7.x/%{name}-%{srcver}.tar.bz2
@@ -47,9 +47,11 @@ Patch204: rpm-4.7.1-chroot-env-paths.patch
 Patch205: rpm-4.7.1-rpm2cpio-init.patch
 Patch206: rpm-4.7.1-filedep-dnevr.patch
 Patch207: rpm-4.7.1-chroot-remove-env.patch
+Patch208: rpm-4.7.1-remove-db4-xa.patch
+Patch209: rpm-4.7.1-perl-heredoc.patch
+Patch210: rpm-4.7.0-extra-provides.patch
 
 # These are not yet upstream
-Patch300: rpm-4.7.0-extra-provides.patch
 Patch301: rpm-4.6.0-niagara.patch
 Patch302: rpm-4.7.1-geode-i686.patch
 
@@ -208,8 +210,10 @@ packages on a system.
 %patch205 -p1 -b .rpm2cpio.init
 %patch206 -p1 -b .filedep-dnevr
 %patch207 -p1 -b .chroot-remove-env
+%patch208 -p1 -b .remove-db4-xa
+%patch209 -p1 -b .perl-heredoc
+%patch210 -p1 -b .extra-prov
 
-%patch300 -p1 -b .extra-prov
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
 
@@ -423,6 +427,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Oct 06 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.1-7
+- fix build with BDB 4.8.x by removing XA "support" from BDB backend 
+- perl dep extractor heredoc parsing improvements (#524929)
+
 * Mon Sep 21 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.1-6
 - use relative paths within db environment (related to #507309, #507309...)
 - remove db environment on close in chrooted operation (related to above)

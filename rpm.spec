@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 7%{?dist}
+Release: 8%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.7.x/%{name}-%{srcver}.tar.bz2
@@ -50,6 +50,8 @@ Patch207: rpm-4.7.1-chroot-remove-env.patch
 Patch208: rpm-4.7.1-remove-db4-xa.patch
 Patch209: rpm-4.7.1-perl-heredoc.patch
 Patch210: rpm-4.7.0-extra-provides.patch
+Patch211: rpm-4.7.1-python-bytecompile.patch
+Patch212: rpm-4.7.1-diskspace.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -213,6 +215,8 @@ packages on a system.
 %patch208 -p1 -b .remove-db4-xa
 %patch209 -p1 -b .perl-heredoc
 %patch210 -p1 -b .extra-prov
+%patch211 -p1 -b .python-bytecompile
+%patch212 -p1 -b .diskspace
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -427,6 +431,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Oct 28 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.1-8
+- support multiple python implementations in brp-python-bytecompile (#531117)
+- make disk space problem reporting a bit saner (#517418)
+
 * Tue Oct 06 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.1-7
 - fix build with BDB 4.8.x by removing XA "support" from BDB backend 
 - perl dep extractor heredoc parsing improvements (#524929)

@@ -15,7 +15,7 @@
 %define snapver {nil}
 %define srcver %{rpmver}
 
-%define bdbver 4.8.24
+%define bdbver 4.7.25
 %define dbprefix db
 
 Summary: The RPM package management system
@@ -64,13 +64,13 @@ License: GPLv2+
 Requires: coreutils
 %if %{without int_bdb}
 # db recovery tools, rpmdb_util symlinks
-Requires: db4-utils = %{bdbver}
+Requires: db4-utils
 %endif
 Requires: popt >= 1.10.2.1
 Requires: curl
 
 %if %{without int_bdb}
-BuildRequires: db4-devel = %{bdbver}
+BuildRequires: db4-devel
 %endif
 
 %if %{with check}
@@ -432,7 +432,7 @@ exit 0
 
 %changelog
 * Wed Nov 18 2009 Jindrich Novy <jnovy@redhat.com> - 4.7.1-9
-- rebuild against new BDB
+- drop versioned dependency to BDB
 
 * Wed Oct 28 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.1-8
 - support multiple python implementations in brp-python-bytecompile (#531117)

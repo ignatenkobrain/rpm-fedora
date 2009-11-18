@@ -15,13 +15,13 @@
 %define snapver {nil}
 %define srcver %{rpmver}
 
-%define bdbver 4.7.25
+%define bdbver 4.8.24
 %define dbprefix db
 
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 8%{?dist}
+Release: 9%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.7.x/%{name}-%{srcver}.tar.bz2
@@ -431,6 +431,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Nov 18 2009 Jindrich Novy <jnovy@redhat.com> - 4.7.1-9
+- rebuild against new BDB
+
 * Wed Oct 28 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.1-8
 - support multiple python implementations in brp-python-bytecompile (#531117)
 - make disk space problem reporting a bit saner (#517418)

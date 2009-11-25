@@ -11,7 +11,7 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.7.1
+%define rpmver 4.7.2
 %define snapver {nil}
 %define srcver %{rpmver}
 
@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 10%{?dist}
+Release: 1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.7.x/%{name}-%{srcver}.tar.bz2
@@ -38,20 +38,10 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 # this as Fedora-specific patch for now
 Patch3: rpm-4.6.0-fedora-specspo.patch
 
-# Patches already in upstream
+# Patches already in upstream (but not in 4.7.x)
 Patch200: rpm-4.7.1-bugurl.patch
-Patch201: rpm-4.7.1-abs-filelist.patch
-Patch202: rpm-4.7.1-debug-perms.patch
-Patch203: rpm-4.7.1-duplicate-deps.patch
-Patch204: rpm-4.7.1-chroot-env-paths.patch
-Patch205: rpm-4.7.1-rpm2cpio-init.patch
-Patch206: rpm-4.7.1-filedep-dnevr.patch
-Patch207: rpm-4.7.1-chroot-remove-env.patch
-Patch208: rpm-4.7.1-remove-db4-xa.patch
-Patch209: rpm-4.7.1-perl-heredoc.patch
-Patch210: rpm-4.7.0-extra-provides.patch
-Patch211: rpm-4.7.1-python-bytecompile.patch
-Patch212: rpm-4.7.1-diskspace.patch
+Patch201: rpm-4.7.0-extra-provides.patch
+Patch202: rpm-4.7.1-python-bytecompile.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -205,18 +195,8 @@ packages on a system.
 %patch3 -p1 -b .fedora-specspo
 
 %patch200 -p1 -b .bugurl
-%patch201 -p1 -b .abs-filelist
-%patch202 -p1 -b .debug-perms
-%patch203 -p1 -b .duplicate-deps
-%patch204 -p1 -b .chroot-env-paths
-%patch205 -p1 -b .rpm2cpio.init
-%patch206 -p1 -b .filedep-dnevr
-%patch207 -p1 -b .chroot-remove-env
-%patch208 -p1 -b .remove-db4-xa
-%patch209 -p1 -b .perl-heredoc
-%patch210 -p1 -b .extra-prov
-%patch211 -p1 -b .python-bytecompile
-%patch212 -p1 -b .diskspace
+%patch201 -p1 -b .extra-prov
+%patch202 -p1 -b .python-bytecompile
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -431,6 +411,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Nov 25 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.2-1
+- update to 4.7.2 (http://rpm.org/wiki/Releases/4.7.2)
+- fixes #464750, #529214
+
 * Wed Nov 18 2009 Jindrich Novy <jnovy@redhat.com> - 4.7.1-10
 - rebuild against BDB-4.8.24
 

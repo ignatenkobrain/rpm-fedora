@@ -97,6 +97,9 @@ BuildRequires: xz-devel >= 4.999.8
 BuildRequires: sqlite-devel
 %endif
 
+# XXX temporarily for chmod-test patch
+BuildRequires: autoconf
+
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description

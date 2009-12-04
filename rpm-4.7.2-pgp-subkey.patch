@@ -1,0 +1,37 @@
+commit 6eeb0bb06466d9eb75eb55efd514d3ecfe089042
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Wed Nov 25 15:07:17 2009 +0200
+
+    We can't handle OpenPGP subkeys or secret keys, so dont even try
+    - parsing subkeys ends up overwriting data in the main key, causing
+      bogus signature checking failures
+    - this is the final missing piece of RhBug:436812, short of adding
+      proper support for subkeys (maybe someday...)
+    (cherry picked from commit 98213fc4192c7af07037a0f3e9cce9e3b8509c02)
+
+diff --git a/rpmio/rpmpgp.c b/rpmio/rpmpgp.c
+index d7bbb5e..f76fc2b 100644
+--- a/rpmio/rpmpgp.c
++++ b/rpmio/rpmpgp.c
+@@ -1190,11 +1190,6 @@ static int pgpPrtPkt(const uint8_t *pkt, size_t pleft,
+ 	    else
+ 		memset(_digp->signid, 0, sizeof(_digp->signid));
+ 	}
+-    case PGPTAG_PUBLIC_SUBKEY:
+-	rc = pgpPrtKey(tag, h, hlen, _dig, _digp);
+-	break;
+-    case PGPTAG_SECRET_KEY:
+-    case PGPTAG_SECRET_SUBKEY:
+ 	rc = pgpPrtKey(tag, h, hlen, _dig, _digp);
+ 	break;
+     case PGPTAG_USER_ID:
+@@ -1205,6 +1200,9 @@ static int pgpPrtPkt(const uint8_t *pkt, size_t pleft,
+ 	rc = pgpPrtComment(tag, h, hlen);
+ 	break;
+ 
++    case PGPTAG_PUBLIC_SUBKEY:
++    case PGPTAG_SECRET_KEY:
++    case PGPTAG_SECRET_SUBKEY:
+     case PGPTAG_RESERVED:
+     case PGPTAG_PUBLIC_SESSION_KEY:
+     case PGPTAG_SYMMETRIC_SESSION_KEY:

@@ -1,0 +1,34 @@
+commit 31c5e0f9b7b09661611b50d84d26ba47ce97fffe
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Wed Nov 25 16:42:43 2009 +0200
+
+    Fix signature password checking result on abnormal conditions (RhBug:496754)
+    - Execve() failure wasn't returning an error code, causing rpm to
+      think the password was ok when we couldn't even try verifying
+    - Stricter return code checking from the password checking child:
+      the password can only be ok if the child exits with WIFEXITED() *and*
+      WIFEXITCODE() of 0. Also WIFEXITCODE() should only be called if
+      WIFEXITED() returns true.
+    (cherry picked from commit 2b41860984f0c4ebba5ebce93a18c9c0ca5e1065)
+
+diff --git a/lib/signature.c b/lib/signature.c
+index a501f3e..a2eaf9b 100644
+--- a/lib/signature.c
++++ b/lib/signature.c
+@@ -883,6 +883,7 @@ static int checkPassPhrase(const char * passPhrase, const rpmSigTag sigTag)
+ 
+ 	    rpmlog(RPMLOG_ERR, _("Could not exec %s: %s\n"), "gpg",
+ 			strerror(errno));
++	    _exit(EXIT_FAILURE);
+ 	}   break;
+ 	case RPMSIGTAG_RSA:
+ 	case RPMSIGTAG_PGP5:	/* XXX legacy */
+@@ -932,7 +933,7 @@ static int checkPassPhrase(const char * passPhrase, const rpmSigTag sigTag)
+ 
+     (void) waitpid(pid, &status, 0);
+ 
+-    return ((!WIFEXITED(status) || WEXITSTATUS(status)) ? 1 : 0);
++    return ((WIFEXITED(status) && WEXITSTATUS(status) == 0)) ? 0 : 1;
+ }
+ 
+ char * rpmGetPassPhrase(const char * prompt, const rpmSigTag sigTag)

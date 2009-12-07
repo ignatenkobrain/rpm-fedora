@@ -11,9 +11,9 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.7.2
-%define snapver {nil}
-%define srcver %{rpmver}
+%define rpmver 4.8.0
+%define snapver beta1
+%define srcver %{rpmver}-%{snapver}
 
 %define bdbver 4.8.24
 %define dbprefix db
@@ -21,31 +21,22 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 2%{?dist}
+Release: 0.%{snapver}.1
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source0: http://rpm.org/releases/rpm-4.7.x/%{name}-%{srcver}.tar.bz2
+Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %endif
-Source10: desktop-file.prov
-Source11: fontconfig.prov
 
-Patch0: rpm-4.7.0-devel-autodep.patch
+Patch0: rpm-4.7.90-devel-autodep.patch
 Patch1: rpm-4.5.90-pkgconfig-path.patch
 Patch2: rpm-4.5.90-gstreamer-provides.patch
 # Fedora specspo is setup differently than what rpm expects, considering
 # this as Fedora-specific patch for now
-Patch3: rpm-4.6.0-fedora-specspo.patch
+Patch3: rpm-4.7.90-fedora-specspo.patch
 
-# Patches already in upstream (but not in 4.7.x)
-Patch200: rpm-4.7.1-bugurl.patch
-Patch201: rpm-4.7.0-extra-provides.patch
-Patch202: rpm-4.7.1-python-bytecompile.patch
-Patch203: rpm-4.7.2-sign-passcheck.patch
-Patch204: rpm-4.7.2-rpmfc-unknown.patch
-Patch205: rpm-4.7.2-pgp-subkey.patch
-Patch206: rpm-4.7.2-chmod-selinux.patch
+# Patches already in upstream
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -96,9 +87,6 @@ BuildRequires: xz-devel >= 4.999.8
 %if %{with sqlite}
 BuildRequires: sqlite-devel
 %endif
-
-# XXX temporarily for chmod-test patch
-BuildRequires: autoconf
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -157,6 +145,7 @@ Requires: elfutils >= 0.128 binutils
 Requires: findutils sed grep gawk diffutils file patch >= 2.5
 Requires: unzip gzip bzip2 cpio lzma xz
 Requires: pkgconfig
+Conflicts: ocaml-runtime < 3.11.1-7
 
 %description build
 The rpm-build package contains the scripts and executable programs
@@ -200,14 +189,6 @@ packages on a system.
 %patch1 -p1 -b .pkgconfig-path
 %patch2 -p1 -b .gstreamer-prov
 %patch3 -p1 -b .fedora-specspo
-
-%patch200 -p1 -b .bugurl
-%patch201 -p1 -b .extra-prov
-%patch202 -p1 -b .python-bytecompile
-%patch203 -p1 -b .sign-passcheck
-%patch204 -p1 -b .rpmfc-unknown
-%patch205 -p1 -b .pgp-subkey
-%patch206 -p1 -b .chmod-test
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -255,15 +236,13 @@ install -m 755 scripts/rpm.daily ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.daily/rpm
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/logrotate.d
 install -m 644 scripts/rpm.log ${RPM_BUILD_ROOT}%{_sysconfdir}/logrotate.d/rpm
 
-install -p -m 755 %{SOURCE10} %{SOURCE11} ${RPM_BUILD_ROOT}%{rpmhome}/
-
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm
 
 mkdir -p $RPM_BUILD_ROOT/var/lib/rpm
 for dbi in \
     Basenames Conflictname Dirnames Group Installtid Name Packages \
     Providename Provideversion Requirename Requireversion Triggername \
-    Filedigests Pubkeys Sha1header Sigmd5 \
+    Filedigests Pubkeys Sha1header Sigmd5 Obsoletename \
     __db.001 __db.002 __db.003 __db.004 __db.005 __db.006 __db.007 \
     __db.008 __db.009
 do
@@ -377,6 +356,8 @@ exit 0
 %{rpmhome}/javadeps
 %{rpmhome}/mono-find-provides
 %{rpmhome}/mono-find-requires
+%{rpmhome}/ocaml-find-provides.sh
+%{rpmhome}/ocaml-find-requires.sh
 %{rpmhome}/osgideps.pl
 %{rpmhome}/perldeps.pl
 %{rpmhome}/libtooldeps.sh
@@ -422,6 +403,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Dec 07 2009 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-0.beta1.1
+- update to 4.8.0-beta1 (http://rpm.org/wiki/Releases/4.8.0)
+- rpm-build conflicts with current ocaml-runtime
+
 * Fri Dec 04 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.2-2
 - missing error exit code from signing password checking (#496754)
 - dont fail build on unrecognized data files (#532489)

@@ -1,8 +1,7 @@
-diff --git a/lib/tagexts.c b/lib/tagexts.c
-index 501d8ac..cf71639 100644
---- a/lib/tagexts.c
-+++ b/lib/tagexts.c
-@@ -460,12 +460,6 @@ static int filerequireTag(Header h, rpmtd td)
+diff -up rpm-4.7.90.git9301/lib/tagexts.c.fedora-specspo rpm-4.7.90.git9301/lib/tagexts.c
+--- rpm-4.7.90.git9301/lib/tagexts.c.fedora-specspo	2009-09-02 13:59:38.000000000 +0300
++++ rpm-4.7.90.git9301/lib/tagexts.c	2009-09-02 14:51:10.000000000 +0300
+@@ -460,12 +460,6 @@ static int filerequireTag(Header h, rpmt
  }
  
  /* I18N look aside diversions */
@@ -15,17 +14,13 @@ index 501d8ac..cf71639 100644
  static const char * const _macro_i18ndomains = "%{?_i18ndomains}";
  
  /**
-@@ -477,63 +471,27 @@ static const char * const _macro_i18ndomains = "%{?_i18ndomains}";
+@@ -477,61 +471,27 @@ static const char * const _macro_i18ndom
   */
- static int i18nTag(Header h, rpmTag tag, rpmtd td)
+ static int i18nTag(Header h, rpmTag tag, rpmtd td, headerGetFlags hgflags)
  {
 -    char * dstring = rpmExpand(_macro_i18ndomains, NULL);
 -    int rc;
-+    int rc = headerGet(h, tag, td, HEADERGET_ALLOC);
-+    if (rc) {
-+    	char *de, *dstring = rpmExpand(_macro_i18ndomains, NULL);
-+	const char *domain;
- 
+-
 -    td->type = RPM_STRING_TYPE;
 -    td->data = NULL;
 -    td->count = 0;
@@ -35,11 +30,9 @@ index 501d8ac..cf71639 100644
 -	const char * langval;
 -	char * msgkey;
 -	const char * msgid;
--	const char * n;
--	int xx;
 -
--	xx = headerNVR(h, &n, NULL, NULL);
--	rasprintf(&msgkey, "%s(%s)", n, rpmTagGetName(tag));
+-	rasprintf(&msgkey, "%s(%s)", headerGetString(h, RPMTAG_NAME), 
+-		  rpmTagGetName(tag));
 -
 -	/* change to en_US for msgkey -> msgid resolution */
 -	langval = getenv(language);
@@ -47,7 +40,11 @@ index 501d8ac..cf71639 100644
 -#if defined(ENABLE_NLS)
 -        ++_nl_msg_cat_cntr;
 -#endif
--
++    int rc = headerGet(h, tag, td, HEADERGET_ALLOC);
++    if (rc) {
++	char *de, *dstring = rpmExpand(_macro_i18ndomains, NULL);
++	const char *domain;
+ 
 -	msgid = NULL;
  	for (domain = dstring; domain != NULL; domain = de) {
 +	    const char *msgid = td->data;
@@ -86,11 +83,10 @@ index 501d8ac..cf71639 100644
 -	    return 1;
 +	free(dstring);
      }
--
+ 
 -    dstring = _free(dstring);
 -
--    rc = headerGet(h, tag, td, HEADERGET_DEFAULT);
-+	
+-    rc = headerGet(h, tag, td, HEADERGET_ALLOC);
      return rc;
  }
  

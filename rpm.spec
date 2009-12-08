@@ -56,7 +56,7 @@ Requires: popt >= 1.10.2.1
 Requires: curl
 
 %if %{without int_bdb}
-BuildRequires: db4-devel
+BuildRequires: db4-devel%{_isa}
 %endif
 
 %if %{with check}
@@ -67,26 +67,26 @@ BuildRequires: fakechroot
 # is a bit special...
 BuildRequires: redhat-rpm-config
 BuildRequires: gawk
-BuildRequires: elfutils-devel >= 0.112
-BuildRequires: elfutils-libelf-devel
-BuildRequires: readline-devel zlib-devel
-BuildRequires: nss-devel
+BuildRequires: elfutils-devel%{_isa} >= 0.112
+BuildRequires: elfutils-libelf-devel%{_isa}
+BuildRequires: readline-devel%{_isa} zlib-devel%{_isa}
+BuildRequires: nss-devel%{_isa}
 # The popt version here just documents an older known-good version
-BuildRequires: popt-devel >= 1.10.2
-BuildRequires: file-devel
-BuildRequires: gettext-devel
-BuildRequires: libselinux-devel
-BuildRequires: ncurses-devel
-BuildRequires: bzip2-devel >= 0.9.0c-2
-BuildRequires: python-devel >= 2.2
-BuildRequires: lua-devel >= 5.1
-BuildRequires: libcap-devel
-BuildRequires: libacl-devel
+BuildRequires: popt-devel%{_isa} >= 1.10.2
+BuildRequires: file-devel%{_isa}
+BuildRequires: gettext-devel%{_isa}
+BuildRequires: libselinux-devel%{_isa}
+BuildRequires: ncurses-devel%{_isa}
+BuildRequires: bzip2-devel%{_isa} >= 0.9.0c-2
+BuildRequires: python-devel%{_isa} >= 2.6
+BuildRequires: lua-devel%{_isa} >= 5.1
+BuildRequires: libcap-devel%{_isa}
+BuildRequires: libacl-devel%{_isa}
 %if ! %{without xz}
-BuildRequires: xz-devel >= 4.999.8
+BuildRequires: xz-devel%{_isa} >= 4.999.8
 %endif
 %if %{with sqlite}
-BuildRequires: sqlite-devel
+BuildRequires: sqlite-devel%{_isa}
 %endif
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -105,7 +105,7 @@ License: GPLv2+ and LGPLv2+ with exceptions
 Requires: rpm = %{version}-%{release}
 # librpm uses cap_compare, introduced sometimes between libcap 2.10 and 2.16.
 # A manual require is needed, see #505596
-Requires: libcap >= 2.16
+Requires: libcap%{_isa} >= 2.16
 
 %description libs
 This package contains the RPM shared libraries.
@@ -115,17 +115,8 @@ Summary:  Development files for manipulating RPM packages
 Group: Development/Libraries
 License: GPLv2+ and LGPLv2+ with exceptions
 Requires: rpm = %{version}-%{release}
-Requires: pkgconfig
-Requires: nss-devel 
-Requires: libselinux-devel
-Requires: elfutils-libelf-devel
-Requires: popt-devel
-%if ! %{without xz}
-Requires: xz-devel >= 4.999.8
-%endif
-%if %{with sqlite}
-Requires: sqlite-devel
-%endif
+Requires: popt-devel%{_isa}
+Requires: file-devel%{_isa}
 
 %description devel
 This package contains the RPM C library and header files. These
@@ -408,6 +399,8 @@ exit 0
 %changelog
 * Mon Dec 07 2009 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-0.beta1.2
 - fix noise from python bytecompile on non-python packages (#539635)
+- make all our -devel [build]requires isa-specific
+- trim out superfluous -devel dependencies from rpm-devel
 
 * Mon Dec 07 2009 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-0.beta1.1
 - update to 4.8.0-beta1 (http://rpm.org/wiki/Releases/4.8.0)

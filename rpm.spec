@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.1
+Release: 0.%{snapver}.2
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -37,6 +37,7 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 Patch3: rpm-4.7.90-fedora-specspo.patch
 
 # Patches already in upstream
+Patch200: rpm-4.7.90-python-bytecompile.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -189,6 +190,8 @@ packages on a system.
 %patch1 -p1 -b .pkgconfig-path
 %patch2 -p1 -b .gstreamer-prov
 %patch3 -p1 -b .fedora-specspo
+
+%patch200 -p1 -b .python-bytecompile
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -403,6 +406,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Dec 07 2009 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-0.beta1.2
+- fix noise from python bytecompile on non-python packages (#539635)
+
 * Mon Dec 07 2009 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-0.beta1.1
 - update to 4.8.0-beta1 (http://rpm.org/wiki/Releases/4.8.0)
 - rpm-build conflicts with current ocaml-runtime

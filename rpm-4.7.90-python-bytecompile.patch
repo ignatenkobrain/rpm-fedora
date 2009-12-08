@@ -1,0 +1,30 @@
+commit 3ffc0373c4db9824a72a6356d04d862e51f42be0
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Tue Dec 8 15:58:51 2009 +0200
+
+    Avoid noise from python bytecompile on non-python pkgs (RhBug:539635)
+    - If a pattern doesn't match, we'd prefer an empty list instead of
+      unexpanded garbage thank you... nullglob shell option is just what the
+      doctor ordered but unfortunately its a bash-specific thing. Otoh there
+      are number of other bash-specific scripts in rpm so probably not
+      much of an issue...
+    (cherry picked from commit d6bda5a1665d8d04526aea299781570ee7486b2e)
+
+diff --git a/scripts/brp-python-bytecompile b/scripts/brp-python-bytecompile
+index 1faa6db..9fac5a7 100644
+--- a/scripts/brp-python-bytecompile
++++ b/scripts/brp-python-bytecompile
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # If using normal root, avoid changing anything.
+ if [ -z "$RPM_BUILD_ROOT" -o "$RPM_BUILD_ROOT" = "/" ]; then
+@@ -32,6 +32,7 @@ fi
+ # For example, below /usr/lib/python2.6/, we're targetting /usr/bin/python2.6
+ # and below /usr/lib/python3.1/, we're targetting /usr/bin/python3.1
+ 
++shopt -s nullglob
+ for python_libdir in $RPM_BUILD_ROOT/usr/lib*/python*/ ;
+ do
+ 	python_binary=/usr/bin/$(basename $python_libdir)

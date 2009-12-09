@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.2
+Release: 0.%{snapver}.3
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -38,6 +38,7 @@ Patch3: rpm-4.7.90-fedora-specspo.patch
 
 # Patches already in upstream
 Patch200: rpm-4.7.90-python-bytecompile.patch
+Patch201: rpm-4.7.90-python-refcounts.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -183,6 +184,7 @@ packages on a system.
 %patch3 -p1 -b .fedora-specspo
 
 %patch200 -p1 -b .python-bytecompile
+%patch201 -p1 -b .python-refcounts
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -397,6 +399,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Dec 09 2009 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-0.beta1.3
+- fix a bunch of python refcount-errors causing major memory leaks
+
 * Mon Dec 07 2009 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-0.beta1.2
 - fix noise from python bytecompile on non-python packages (#539635)
 - make all our -devel [build]requires isa-specific

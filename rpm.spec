@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 0.%{snapver}.5
+Release: 0.%{snapver}.6
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -40,7 +40,6 @@ Patch3: rpm-4.7.90-fedora-specspo.patch
 Patch200: rpm-4.7.90-python-bytecompile.patch
 Patch201: rpm-4.7.90-python-refcounts.patch
 Patch202: rpm-4.7.90-spec-allow-unexpanded-macros.patch
-Patch203: rpm-4.7.90-macro-scope.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -188,7 +187,6 @@ packages on a system.
 %patch200 -p1 -b .python-bytecompile
 %patch201 -p1 -b .python-refcounts
 %patch202 -p1 -b .spec-unexpanded-macros
-%patch203 -p1 -b .macro-scope
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -403,6 +401,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Jan 07 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-0.beta1.6
+- pull out macro scoping "fix" for now, it breaks font package macros
+
 * Mon Jan 04 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-0.beta1.5
 - always clear locally defined macros when they go out of scope
 

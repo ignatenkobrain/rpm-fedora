@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 1
+Release: 2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -394,6 +394,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Jan 08 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-2
+- put disttag back, accidentally nuked in 4.8.0 final update
+
 * Fri Jan 08 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-1
 - update to 4.8.0 final (http://rpm.org/wiki/Releases/4.8.0)
 

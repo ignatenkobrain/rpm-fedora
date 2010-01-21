@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 2%{?dist}
+Release: 3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -37,6 +37,8 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 Patch3: rpm-4.7.90-fedora-specspo.patch
 
 # Patches already in upstream
+Patch200: rpm-4.8.0-url-segfault.patch
+Patch201: rpm-4.8.0-verify-exitcode.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -181,6 +183,9 @@ packages on a system.
 %patch2 -p1 -b .gstreamer-prov
 %patch3 -p1 -b .fedora-specspo
 
+%patch200 -p1 -b .url-segfault
+%patch201 -p1 -b .verify-exitcode
+
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
 
@@ -267,6 +272,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with check}
 %check
 make check
+[ "$(ls -A tests/rpmtests.dir)" ] && cat tests/rpmtests.log
 %endif
 
 %post libs -p /sbin/ldconfig
@@ -394,6 +400,11 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Jan 21 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-3
+- fix segfault on failed url retrieval
+- fix verification error code depending on verbosity level
+- if anything in testsuite fails, dump out the log
+
 * Fri Jan 08 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-2
 - put disttag back, accidentally nuked in 4.8.0 final update
 

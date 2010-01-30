@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 3%{?dist}
+Release: 4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -39,6 +39,7 @@ Patch3: rpm-4.7.90-fedora-specspo.patch
 # Patches already in upstream
 Patch200: rpm-4.8.0-url-segfault.patch
 Patch201: rpm-4.8.0-verify-exitcode.patch
+Patch202: rpm-4.8.0-pythondeps-parallel.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -185,6 +186,7 @@ packages on a system.
 
 %patch200 -p1 -b .url-segfault
 %patch201 -p1 -b .verify-exitcode
+%patch202 -p1 -b .pythondeps-parallel
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -400,6 +402,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sat Jan 30 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-4
+- support parallel python versions in python dependency extractor (#532118)
+
 * Thu Jan 21 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-3
 - fix segfault on failed url retrieval
 - fix verification error code depending on verbosity level

@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 5%{?dist}
+Release: 6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -35,6 +35,8 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 # Fedora specspo is setup differently than what rpm expects, considering
 # this as Fedora-specific patch for now
 Patch3: rpm-4.7.90-fedora-specspo.patch
+# Postscript driver provides extraction is Fedora specific for now
+Patch4: rpm-4.8.0-psdriver.patch
 
 # Patches already in upstream
 Patch200: rpm-4.8.0-url-segfault.patch
@@ -184,6 +186,7 @@ packages on a system.
 %patch1 -p1 -b .pkgconfig-path
 %patch2 -p1 -b .gstreamer-prov
 %patch3 -p1 -b .fedora-specspo
+%patch4 -p1 -b .psdriver
 
 %patch200 -p1 -b .url-segfault
 %patch201 -p1 -b .verify-exitcode
@@ -374,6 +377,7 @@ exit 0
 %{rpmhome}/rpmdiff*
 %{rpmhome}/desktop-file.prov
 %{rpmhome}/fontconfig.prov
+%{rpmhome}/postscriptdriver.prov
 
 %{rpmhome}/macros.perl
 %{rpmhome}/macros.python
@@ -404,6 +408,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Feb 04 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-6
+- extract provides for postscript printer drivers (#538101)
+
 * Wed Feb 03 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-5
 - python byte-compilation fixes + improvements (#558997)
 

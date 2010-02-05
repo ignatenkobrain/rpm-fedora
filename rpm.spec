@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 6%{?dist}
+Release: 7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -36,7 +36,9 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 # this as Fedora-specific patch for now
 Patch3: rpm-4.7.90-fedora-specspo.patch
 # Postscript driver provides extraction is Fedora specific for now
+# TODO: merge these when things stabilize
 Patch4: rpm-4.8.0-psdriver.patch
+Patch5: rpm-4.8.0-psdriver-fixes.patch
 
 # Patches already in upstream
 Patch200: rpm-4.8.0-url-segfault.patch
@@ -187,6 +189,7 @@ packages on a system.
 %patch2 -p1 -b .gstreamer-prov
 %patch3 -p1 -b .fedora-specspo
 %patch4 -p1 -b .psdriver
+%patch5 -p1 -b .psdriver-fixes
 
 %patch200 -p1 -b .url-segfault
 %patch201 -p1 -b .verify-exitcode
@@ -408,6 +411,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Feb 05 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-7
+- couple of fixes to the postscript provides extractor (#538101)
+
 * Thu Feb 04 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-6
 - extract provides for postscript printer drivers (#538101)
 

@@ -47,6 +47,7 @@ Patch201: rpm-4.8.0-verify-exitcode.patch
 Patch202: rpm-4.8.0-pythondeps-parallel.patch
 Patch203: rpm-4.8.0-python-bytecompile.patch
 Patch204: rpm-4.8.0-lazy-statfs.patch
+Patch205: rpm-4.8.0-erasure-dsi.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -199,6 +200,7 @@ packages on a system.
 %patch202 -p1 -b .pythondeps-parallel
 %patch203 -p1 -b .python-bytecompile
 %patch204 -p1 -b .lazy-statfs
+%patch205 -p1 -b .erasure-dsi
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -418,6 +420,7 @@ exit 0
 * Fri Feb 05 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-8
 - more fixes to postscript provides extractor (#562228)
 - avoid accessing unrelated mount points in disk space checking (#547548)
+- fix disk space checking with erasures present in transaction (#561160)
 
 * Fri Feb 05 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-7
 - couple of fixes to the postscript provides extractor (#538101)

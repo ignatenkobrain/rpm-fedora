@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 8%{?dist}
+Release: 9%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -417,6 +417,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Feb 05 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-9
+- unbreak python(abi) requires generation (#562906)
+
 * Fri Feb 05 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-8
 - more fixes to postscript provides extractor (#562228)
 - avoid accessing unrelated mount points in disk space checking (#547548)

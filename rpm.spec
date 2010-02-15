@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 9%{?dist}
+Release: 10%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -145,7 +145,7 @@ Group: Development/Tools
 Requires: rpm = %{version}-%{release}
 Requires: elfutils >= 0.128 binutils
 Requires: findutils sed grep gawk diffutils file patch >= 2.5
-Requires: unzip gzip bzip2 cpio lzma xz
+Requires: unzip gzip bzip2 cpio xz
 Requires: pkgconfig
 Conflicts: ocaml-runtime < 3.11.1-7
 
@@ -417,6 +417,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Feb 15 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-10
+- drop bogus dependency on lzma, xz is used to handle the lzma format too
+
 * Fri Feb 05 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-9
 - unbreak python(abi) requires generation (#562906)
 

@@ -45,6 +45,7 @@ Patch202: rpm-4.8.0-pythondeps-parallel.patch
 Patch203: rpm-4.8.0-python-bytecompile.patch
 Patch204: rpm-4.8.0-lazy-statfs.patch
 Patch205: rpm-4.8.0-erasure-dsi.patch
+Patch206: rpm-4.8.0-prep-keep-empty.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -196,6 +197,7 @@ packages on a system.
 %patch203 -p1 -b .python-bytecompile
 %patch204 -p1 -b .lazy-statfs
 %patch205 -p1 -b .erasure-dsi
+%patch206 -p1 -b .prep-keep-empty
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -415,6 +417,7 @@ exit 0
 * Tue Mar 16 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-11
 - support single PPD providing driver for devices (#568351)
 - merge the psdriver patch pile into one
+- preserve empty lines in spec prep section (#573339)
 
 * Mon Feb 15 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-10
 - drop bogus dependency on lzma, xz is used to handle the lzma format too

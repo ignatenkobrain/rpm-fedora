@@ -37,6 +37,8 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 Patch3: rpm-4.7.90-fedora-specspo.patch
 # Postscript driver provides extraction is Fedora specific for now
 Patch4: rpm-4.8.0-psdriver-deps.patch
+# In current Fedora, man-pages pkg owns all the localized man directories
+Patch5: rpm-4.8.0-no-man-dirs.patch
 
 # Patches already in upstream
 Patch200: rpm-4.8.0-url-segfault.patch
@@ -191,6 +193,7 @@ packages on a system.
 %patch2 -p1 -b .gstreamer-prov
 %patch3 -p1 -b .fedora-specspo
 %patch4 -p1 -b .psdriver-deps
+%patch5 -p1 -b .no-man-dirs
 
 %patch200 -p1 -b .url-segfault
 %patch201 -p1 -b .verify-exitcode
@@ -421,6 +424,7 @@ exit 0
 - merge the psdriver patch pile into one
 - preserve empty lines in spec prep section (#573339)
 - teach python bindings about RPMTRANS_FLAG_NOCONTEXTS (related to #573111)
+- dont own localized man directories through find_lang (#569536)
 
 * Mon Feb 15 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-10
 - drop bogus dependency on lzma, xz is used to handle the lzma format too

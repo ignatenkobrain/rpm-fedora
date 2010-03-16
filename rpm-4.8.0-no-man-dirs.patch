@@ -1,0 +1,12 @@
+diff --git a/scripts/find-lang.sh b/scripts/find-lang.sh
+index bb25b31..df6b576 100755
+--- a/scripts/find-lang.sh
++++ b/scripts/find-lang.sh
+@@ -173,7 +173,6 @@ s:%lang(C) ::
+ find $TOP_DIR -type d|sed '
+ s:'"$TOP_DIR"'::
+ '"$ALL_NAME$MAN"'s:\(.*/man/\([^/_]\+\).*/man[a-z0-9]\+/\)::
+-'"$ALL_NAME$MAN"'s:\(.*/man/\([^/_]\+\).*/man[a-z0-9]\+$\):%lang(\2) \1*:
+ s:^\([^%].*\)::
+ s:%lang(C) ::
+ /^$/d' >> $MO_NAME

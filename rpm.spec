@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 10%{?dist}
+Release: 11%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -36,10 +36,7 @@ Patch2: rpm-4.5.90-gstreamer-provides.patch
 # this as Fedora-specific patch for now
 Patch3: rpm-4.7.90-fedora-specspo.patch
 # Postscript driver provides extraction is Fedora specific for now
-# TODO: merge these when things stabilize
-Patch4: rpm-4.8.0-psdriver.patch
-Patch5: rpm-4.8.0-psdriver-fixes.patch
-Patch6: rpm-4.8.0-psdriver-more-fixes.patch
+Patch4: rpm-4.8.0-psdriver-deps.patch
 
 # Patches already in upstream
 Patch200: rpm-4.8.0-url-segfault.patch
@@ -191,9 +188,7 @@ packages on a system.
 %patch1 -p1 -b .pkgconfig-path
 %patch2 -p1 -b .gstreamer-prov
 %patch3 -p1 -b .fedora-specspo
-%patch4 -p1 -b .psdriver
-%patch5 -p1 -b .psdriver-fixes
-%patch6 -p1 -b .psdriver-more-fixes
+%patch4 -p1 -b .psdriver-deps
 
 %patch200 -p1 -b .url-segfault
 %patch201 -p1 -b .verify-exitcode
@@ -417,6 +412,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Mar 16 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-11
+- support single PPD providing driver for devices (#568351)
+- merge the psdriver patch pile into one
+
 * Mon Feb 15 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-10
 - drop bogus dependency on lzma, xz is used to handle the lzma format too
 

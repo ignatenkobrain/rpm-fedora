@@ -1,6 +1,6 @@
-diff -up rpm-4.8.0/build/rpmfc.c.postscriptdriver rpm-4.8.0/build/rpmfc.c
---- rpm-4.8.0/build/rpmfc.c.postscriptdriver	2010-02-04 12:00:09.802558577 +0000
-+++ rpm-4.8.0/build/rpmfc.c	2010-02-04 12:00:09.894684178 +0000
+diff -up rpm-4.8.0/build/rpmfc.c.psdriver rpm-4.8.0/build/rpmfc.c
+--- rpm-4.8.0/build/rpmfc.c.psdriver	2010-03-16 10:54:04.000000000 +0200
++++ rpm-4.8.0/build/rpmfc.c	2010-03-16 10:54:04.000000000 +0200
 @@ -489,6 +489,7 @@ static const struct rpmfcTokens_s const 
    { " font metrics",		RPMFC_WHITE|RPMFC_INCLUDE },
    { " font",			RPMFC_FONT|RPMFC_INCLUDE },
@@ -52,9 +52,9 @@ diff -up rpm-4.8.0/build/rpmfc.c.postscriptdriver rpm-4.8.0/build/rpmfc.c
  	    /* XXX skip all files in /dev/ which are (or should be) %dev dummies. */
  	    else if (slen >= fc->brlen+sizeof("/dev/") && rstreqn(s+fc->brlen, "/dev/", sizeof("/dev/")-1))
  		ftype = "";
-diff -up rpm-4.8.0/build/rpmfc.h.postscriptdriver rpm-4.8.0/build/rpmfc.h
---- rpm-4.8.0/build/rpmfc.h.postscriptdriver	2009-12-09 13:37:25.000000000 +0000
-+++ rpm-4.8.0/build/rpmfc.h	2010-02-04 12:00:09.894684178 +0000
+diff -up rpm-4.8.0/build/rpmfc.h.psdriver rpm-4.8.0/build/rpmfc.h
+--- rpm-4.8.0/build/rpmfc.h.psdriver	2009-12-09 15:37:25.000000000 +0200
++++ rpm-4.8.0/build/rpmfc.h	2010-03-16 10:54:04.000000000 +0200
 @@ -31,7 +31,8 @@ enum FCOLOR_e {
  #define	RPMFC_ELF	(RPMFC_ELF32|RPMFC_ELF64|RPMFC_ELFMIPSN32)
  	/* (1 << 3) leaks into package headers, reserved */
@@ -73,20 +73,20 @@ diff -up rpm-4.8.0/build/rpmfc.h.postscriptdriver rpm-4.8.0/build/rpmfc.h
  
      RPMFC_ARCHIVE		= (1 << 20),
      RPMFC_COMPRESSED		= (1 << 21),
-diff -up rpm-4.8.0/macros.in.postscriptdriver rpm-4.8.0/macros.in
---- rpm-4.8.0/macros.in.postscriptdriver	2010-02-04 12:00:09.776559914 +0000
-+++ rpm-4.8.0/macros.in	2010-02-04 12:00:09.904559096 +0000
+diff -up rpm-4.8.0/macros.in.psdriver rpm-4.8.0/macros.in
+--- rpm-4.8.0/macros.in.psdriver	2010-03-16 10:54:04.000000000 +0200
++++ rpm-4.8.0/macros.in	2010-03-16 10:54:04.000000000 +0200
 @@ -504,6 +504,7 @@ print (t)\
  
  %__fontconfig_provides	%{_rpmconfigdir}/fontconfig.prov
  %__desktop_provides	%{_rpmconfigdir}/desktop-file.prov
-+%__psdriver_provides	%{_rpmconfigdir}/postscriptdriver.prov
++%__psdriver_provides	%{_rpmconfigdir}/postscriptdriver.prov %{buildroot}
  
  #==============================================================================
  # ---- Database configuration macros.
-diff -up rpm-4.8.0/scripts/Makefile.am.postscriptdriver rpm-4.8.0/scripts/Makefile.am
---- rpm-4.8.0/scripts/Makefile.am.postscriptdriver	2009-12-07 14:36:49.000000000 +0000
-+++ rpm-4.8.0/scripts/Makefile.am	2010-02-04 12:00:09.905560182 +0000
+diff -up rpm-4.8.0/scripts/Makefile.am.psdriver rpm-4.8.0/scripts/Makefile.am
+--- rpm-4.8.0/scripts/Makefile.am.psdriver	2009-12-07 16:36:49.000000000 +0200
++++ rpm-4.8.0/scripts/Makefile.am	2010-03-16 10:54:04.000000000 +0200
 @@ -20,7 +20,8 @@ EXTRA_DIST = \
  	mono-find-requires mono-find-provides \
  	ocaml-find-requires.sh ocaml-find-provides.sh \
@@ -105,9 +105,9 @@ diff -up rpm-4.8.0/scripts/Makefile.am.postscriptdriver rpm-4.8.0/scripts/Makefi
  	rpmdb_loadcvt rpmdiff rpm2cpio.sh tcl.req tgpg 
  
  rpmconfig_DATA = \
-diff -up rpm-4.8.0/scripts/Makefile.in.postscriptdriver rpm-4.8.0/scripts/Makefile.in
---- rpm-4.8.0/scripts/Makefile.in.postscriptdriver	2010-01-08 08:35:16.000000000 +0000
-+++ rpm-4.8.0/scripts/Makefile.in	2010-02-04 12:00:09.906559262 +0000
+diff -up rpm-4.8.0/scripts/Makefile.in.psdriver rpm-4.8.0/scripts/Makefile.in
+--- rpm-4.8.0/scripts/Makefile.in.psdriver	2010-01-08 10:35:16.000000000 +0200
++++ rpm-4.8.0/scripts/Makefile.in	2010-03-16 10:54:04.000000000 +0200
 @@ -317,7 +317,8 @@ EXTRA_DIST = brp-compress brp-python-byt
  	find-php-provides find-php-requires mono-find-requires \
  	mono-find-provides ocaml-find-requires.sh \
@@ -126,13 +126,13 @@ diff -up rpm-4.8.0/scripts/Makefile.in.postscriptdriver rpm-4.8.0/scripts/Makefi
  	rpmdb_loadcvt rpmdiff rpm2cpio.sh tcl.req tgpg 
  
  rpmconfig_DATA = rpmdiff.cgi rpm.daily rpm.log rpm.xinetd macros.perl \
-diff -up rpm-4.8.0/scripts/postscriptdriver.prov.postscriptdriver rpm-4.8.0/scripts/postscriptdriver.prov
---- rpm-4.8.0/scripts/postscriptdriver.prov.postscriptdriver	2010-02-04 12:00:09.907559566 +0000
-+++ rpm-4.8.0/scripts/postscriptdriver.prov	2010-02-04 12:03:57.312559754 +0000
-@@ -0,0 +1,232 @@
+diff -up rpm-4.8.0/scripts/postscriptdriver.prov.psdriver rpm-4.8.0/scripts/postscriptdriver.prov
+--- rpm-4.8.0/scripts/postscriptdriver.prov.psdriver	2010-03-16 10:54:04.000000000 +0200
++++ rpm-4.8.0/scripts/postscriptdriver.prov	2010-03-16 10:54:04.000000000 +0200
+@@ -0,0 +1,261 @@
 +#!/bin/bash
 +shopt -s execfail
-+exec -a "$0" python -- "$@" <(tail -n +4 -- "$0") || exit 0 # -*- python -*-
++exec -a "$0" python -- <(tail -n +4 -- "$0") "$@" || exit 0 # -*- python -*-
 +
 +## Copyright (C) 2009, 2010 Red Hat, Inc.
 +## Author: Tim Waugh <twaugh@redhat.com>
@@ -155,20 +155,25 @@ diff -up rpm-4.8.0/scripts/postscriptdriver.prov.postscriptdriver rpm-4.8.0/scri
 +
 +try:
 +    import cups
-+    CAN_EXAMINE_PPDS=True
++    CAN_EXAMINE_PPDS = True
 +except:
-+    CAN_EXAMINE_PPDS=False
++    CAN_EXAMINE_PPDS = False
 +
 +from getopt import getopt
++import errno
 +import os
 +import posix
 +import re
 +import shlex
 +import signal
-+import stat
 +import subprocess
 +import sys
 +import tempfile
++
++if len (sys.argv) > 1:
++    RPM_BUILD_ROOT = sys.argv[1]
++else:
++    RPM_BUILD_ROOT = None
 +
 +class TimedOut(Exception):
 +    def __init__ (self):
@@ -257,8 +262,9 @@ diff -up rpm-4.8.0/scripts/postscriptdriver.prov.postscriptdriver rpm-4.8.0/scri
 +            return
 +
 +        attr = ppd.findAttr ('1284DeviceID')
-+        if attr:
++        while attr:
 +            self.ids += attr.value
++            attr = ppd.findNextAttr ('1284DeviceID')
 +
 +class DynamicDriver(Driver):
 +    def __init__ (self, driver):
@@ -271,9 +277,20 @@ diff -up rpm-4.8.0/scripts/postscriptdriver.prov.postscriptdriver rpm-4.8.0/scri
 +
 +    def list (self):
 +        signal.alarm (60)
++        env = os.environ.copy ()
++        if RPM_BUILD_ROOT:
++            buildroot = RPM_BUILD_ROOT
++            if not buildroot.endswith (os.path.sep):
++                buildroot += os.path.sep
++
++            env["DESTDIR"] = RPM_BUILD_ROOT
++            env["LD_LIBRARY_PATH"] = "%susr/lib64:%susr/lib" % (buildroot,
++                                                                buildroot)
++
 +        p = subprocess.Popen ([self.driver, "list"],
 +                              stdout=subprocess.PIPE,
-+                              stderr=subprocess.PIPE)
++                              stderr=subprocess.PIPE,
++                              env=env)
 +        try:
 +            (stdout, stderr) = p.communicate ()
 +            signal.alarm (0)
@@ -312,9 +329,15 @@ diff -up rpm-4.8.0/scripts/postscriptdriver.prov.postscriptdriver rpm-4.8.0/scri
 +                 self.drv ]
 +
 +        signal.alarm (60)
-+        p = subprocess.Popen (argv,
-+                              stdout=subprocess.PIPE,
-+                              stderr=subprocess.PIPE)
++        try:
++            p = subprocess.Popen (argv,
++                                  stdout=subprocess.PIPE,
++                                  stderr=subprocess.PIPE)
++        except OSError:
++            # ppdc not available.
++            os.rmdir (outputdir)
++            return Driver.list (self)
++
 +        try:
 +            (stdout, stderr) = p.communicate ()
 +            signal.alarm (0)
@@ -346,6 +369,12 @@ diff -up rpm-4.8.0/scripts/postscriptdriver.prov.postscriptdriver rpm-4.8.0/scri
 +                    self.ids += DynamicDriver (path).list ()
 +                except TimedOut:
 +                    pass
++                except OSError, (e, s):
++                    if e == errno.EACCES or e == errno.ENOENT:
++                        # Not executable
++                        pass
++                    else:
++                        raise
 +
 +        if CAN_EXAMINE_PPDS:
 +            for path in paths:

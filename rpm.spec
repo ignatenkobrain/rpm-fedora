@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 11%{?dist}
+Release: 12%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -419,6 +419,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Mar 17 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-12
+- unbreak find-lang --with-man from yesterdays braindamage
+
 * Tue Mar 16 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-11
 - support single PPD providing driver for devices (#568351)
 - merge the psdriver patch pile into one

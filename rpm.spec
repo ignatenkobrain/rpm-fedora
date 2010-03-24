@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 12%{?dist}
+Release: 13%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -49,6 +49,7 @@ Patch204: rpm-4.8.0-lazy-statfs.patch
 Patch205: rpm-4.8.0-erasure-dsi.patch
 Patch206: rpm-4.8.0-prep-keep-empty.patch
 Patch207: rpm-4.8.0-python-nocontexts.patch
+Patch208: rpm-4.8.0-python-mibool.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -203,6 +204,7 @@ packages on a system.
 %patch205 -p1 -b .erasure-dsi
 %patch206 -p1 -b .prep-keep-empty
 %patch207 -p1 -b .python-nocontexts
+%patch208 -p1 -b .python-mibool
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -419,6 +421,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Mar 24 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-13
+- fix python match iterator regression wrt boolean representation
+
 * Wed Mar 17 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-12
 - unbreak find-lang --with-man from yesterdays braindamage
 

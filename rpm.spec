@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 13%{?dist}
+Release: 14%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -273,7 +273,6 @@ for dbutil in \
 do
     ln -s ../../bin/%{dbprefix}_${dbutil} $RPM_BUILD_ROOT/%{rpmhome}/rpmdb_${dbutil}
 done
-ln -s ../../bin/berkeley_%{dbprefix}_svc $RPM_BUILD_ROOT/%{rpmhome}/rpmdb_svc
 %endif
 
 %find_lang %{name}
@@ -421,6 +420,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Apr 23 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-14
+- lose dangling symlink to extinct (and useless) berkeley_db_svc (#585174)
+
 * Wed Mar 24 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-13
 - fix python match iterator regression wrt boolean representation
 

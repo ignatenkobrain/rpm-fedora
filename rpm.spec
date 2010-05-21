@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 14%{?dist}
+Release: 15%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -50,6 +50,8 @@ Patch205: rpm-4.8.0-erasure-dsi.patch
 Patch206: rpm-4.8.0-prep-keep-empty.patch
 Patch207: rpm-4.8.0-python-nocontexts.patch
 Patch208: rpm-4.8.0-python-mibool.patch
+Patch209: rpm-4.8.0-python-emptyds.patch
+Patch210: rpm-4.8.0-findlang-localedirs.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -205,6 +207,8 @@ packages on a system.
 %patch206 -p1 -b .prep-keep-empty
 %patch207 -p1 -b .python-nocontexts
 %patch208 -p1 -b .python-mibool
+%patch209 -p1 -b .python-emptyds
+%patch210 -p1 -b .findlang-localedirs
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -420,6 +424,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri May 21 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-15
+- handle non-existent dependency sets correctly in python (#593553)
+- make find-lang look in all locale dirs (#584866)
+
 * Fri Apr 23 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-14
 - lose dangling symlink to extinct (and useless) berkeley_db_svc (#585174)
 

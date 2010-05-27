@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 15%{?dist}
+Release: 16%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -56,6 +56,7 @@ Patch210: rpm-4.8.0-findlang-localedirs.patch
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
 Patch302: rpm-4.7.1-geode-i686.patch
+Patch303: rpm-4.8.0-pkgconfig-private.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -150,7 +151,7 @@ Requires: rpm = %{version}-%{release}
 Requires: elfutils >= 0.128 binutils
 Requires: findutils sed grep gawk diffutils file patch >= 2.5
 Requires: unzip gzip bzip2 cpio xz
-Requires: pkgconfig
+Requires: pkgconfig >= 1:0.24
 Conflicts: ocaml-runtime < 3.11.1-7
 
 %description build
@@ -212,6 +213,7 @@ packages on a system.
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
+%patch303 -p1 -b .pkgconfig-private
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -424,6 +426,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu May 27 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-16
+- adjust to new pkg-config behavior wrt private dependencies (#596433)
+- rpm-build now requires pkgconfig >= 0.24
+
 * Fri May 21 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-15
 - handle non-existent dependency sets correctly in python (#593553)
 - make find-lang look in all locale dirs (#584866)

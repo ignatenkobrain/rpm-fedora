@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 16%{?dist}
+Release: 17%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -52,6 +52,7 @@ Patch207: rpm-4.8.0-python-nocontexts.patch
 Patch208: rpm-4.8.0-python-mibool.patch
 Patch209: rpm-4.8.0-python-emptyds.patch
 Patch210: rpm-4.8.0-findlang-localedirs.patch
+Patch211: rpm-4.8.0-spec-readline.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -210,6 +211,7 @@ packages on a system.
 %patch208 -p1 -b .python-mibool
 %patch209 -p1 -b .python-emptyds
 %patch210 -p1 -b .findlang-localedirs
+%patch211 -p1 -b .spec-readline
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -426,6 +428,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu May 27 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-17
+- fix segfault in spec parser (#597835)
+
 * Thu May 27 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-16
 - adjust to new pkg-config behavior wrt private dependencies (#596433)
 - rpm-build now requires pkgconfig >= 0.24

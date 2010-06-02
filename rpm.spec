@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 17%{?dist}
+Release: 18%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -53,6 +53,7 @@ Patch208: rpm-4.8.0-python-mibool.patch
 Patch209: rpm-4.8.0-python-emptyds.patch
 Patch210: rpm-4.8.0-findlang-localedirs.patch
 Patch211: rpm-4.8.0-spec-readline.patch
+Patch212: rpm-4.8.0-fsm-sbits.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -212,6 +213,7 @@ packages on a system.
 %patch209 -p1 -b .python-emptyds
 %patch210 -p1 -b .findlang-localedirs
 %patch211 -p1 -b .spec-readline
+%patch212 -p1 -b .fsm-sbits
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -428,6 +430,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Jun 02 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-18
+- remove s-bits on upgrade too (#598775)
+
 * Thu May 27 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-17
 - fix segfault in spec parser (#597835)
 

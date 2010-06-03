@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 18%{?dist}
+Release: 19%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -430,6 +430,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Jun 03 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-19
+- also strip POSIX file capabilities from hardlinks on upgrade/erase (#598775)
+
 * Wed Jun 02 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-18
 - remove s-bits on upgrade too (#598775)
 

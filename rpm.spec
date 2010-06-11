@@ -11,7 +11,7 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.8.0
+%define rpmver 4.8.1
 %define snapver %{nil}
 %define srcver %{rpmver}
 
@@ -21,10 +21,10 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 19%{?dist}
+Release: 1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
+Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %endif
@@ -41,19 +41,9 @@ Patch4: rpm-4.8.0-psdriver-deps.patch
 Patch5: rpm-4.8.0-no-man-dirs.patch
 
 # Patches already in upstream
-Patch200: rpm-4.8.0-url-segfault.patch
-Patch201: rpm-4.8.0-verify-exitcode.patch
-Patch202: rpm-4.8.0-pythondeps-parallel.patch
-Patch203: rpm-4.8.0-python-bytecompile.patch
-Patch204: rpm-4.8.0-lazy-statfs.patch
-Patch205: rpm-4.8.0-erasure-dsi.patch
-Patch206: rpm-4.8.0-prep-keep-empty.patch
-Patch207: rpm-4.8.0-python-nocontexts.patch
-Patch208: rpm-4.8.0-python-mibool.patch
-Patch209: rpm-4.8.0-python-emptyds.patch
-Patch210: rpm-4.8.0-findlang-localedirs.patch
-Patch211: rpm-4.8.0-spec-readline.patch
-Patch212: rpm-4.8.0-fsm-sbits.patch
+Patch200: rpm-4.8.0-pythondeps-parallel.patch
+Patch201: rpm-4.8.0-python-bytecompile.patch
+Patch202: rpm-4.8.0-findlang-localedirs.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -201,19 +191,9 @@ packages on a system.
 %patch4 -p1 -b .psdriver-deps
 %patch5 -p1 -b .no-man-dirs
 
-%patch200 -p1 -b .url-segfault
-%patch201 -p1 -b .verify-exitcode
-%patch202 -p1 -b .pythondeps-parallel
-%patch203 -p1 -b .python-bytecompile
-%patch204 -p1 -b .lazy-statfs
-%patch205 -p1 -b .erasure-dsi
-%patch206 -p1 -b .prep-keep-empty
-%patch207 -p1 -b .python-nocontexts
-%patch208 -p1 -b .python-mibool
-%patch209 -p1 -b .python-emptyds
-%patch210 -p1 -b .findlang-localedirs
-%patch211 -p1 -b .spec-readline
-%patch212 -p1 -b .fsm-sbits
+%patch200 -p1 -b .pythondeps-parallel
+%patch201 -p1 -b .python-bytecompile
+%patch202 -p1 -b .findlang-localedirs
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -430,6 +410,11 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Jun 11 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.1-1
+- update to 4.8.1 (http://rpm.org/wiki/Releases/4.8.1)
+- drop no longer needed patches
+- fix source url pointing to testing directory
+
 * Thu Jun 03 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.0-19
 - also strip POSIX file capabilities from hardlinks on upgrade/erase (#598775)
 

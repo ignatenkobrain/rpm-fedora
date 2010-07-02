@@ -19,7 +19,7 @@ index 8638680..594851d 100755
  fcquery=/usr/bin/fc-query
  
 -[ -x $fcquery ] || exit 0
-+if [ -x $fcquery ]; then
++if [ ! -x $fcquery ]; then
 +    cat > /dev/null
 +    exit 0
 +fi

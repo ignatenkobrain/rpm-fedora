@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 2%{?dist}
+Release: 3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -414,6 +414,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Jul 02 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.1-3
+- ugh, reversed condition braindamage in the font provide extractor "fix"
+
 * Wed Jun 30 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.1-2
 - fix a potential getOutputFrom() error from font provide extraction
 - debug-friendlier message to aid finding other similar cases (#565223)

@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 4%{?dist}
+Release: 5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -46,6 +46,7 @@ Patch201: rpm-4.8.0-python-bytecompile.patch
 Patch202: rpm-4.8.0-findlang-localedirs.patch
 Patch203: rpm-4.8.1-eat-stdin.patch
 Patch204: rpm-4.8.1-getoutput-emsg.patch
+Patch205: rpm-4.8.1-find-debuginfo-gdb-index.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -146,6 +147,7 @@ Requires: elfutils >= 0.128 binutils
 Requires: findutils sed grep gawk diffutils file patch >= 2.5
 Requires: unzip gzip bzip2 cpio xz
 Requires: pkgconfig >= 1:0.24
+Requires: /usr/bin/gdb-add-index
 Conflicts: ocaml-runtime < 3.11.1-7
 
 %description build
@@ -198,6 +200,7 @@ packages on a system.
 %patch202 -p1 -b .findlang-localedirs
 %patch203 -p1 -b .eat-stdin
 %patch204 -p1 -b .getoutput-emsg
+%patch205 -p1 -b .find-debuginfo-gdb-index
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -414,6 +417,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Aug 10 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.1-5
+- create gdb index on debuginfo generation (#617166)
+- rpm-build now requires /usr/bin/gdb-add-index for consistent index creation
+
 * Thu Jul 22 2010 David Malcolm <dmalcolm@redhat.com> - 4.8.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
 

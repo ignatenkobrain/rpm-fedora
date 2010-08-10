@@ -414,12 +414,13 @@ exit 0
 
 %files apidocs
 %defattr(-,root,root)
-%doc doc/librpm/html/*
+%doc COPYING doc/librpm/html/*
 
 %changelog
 * Tue Aug 10 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.1-5
 - create gdb index on debuginfo generation (#617166)
 - rpm-build now requires /usr/bin/gdb-add-index for consistent index creation
+- include COPYING in -apidocs for licensing guidelines compliance
 
 * Thu Jul 22 2010 David Malcolm <dmalcolm@redhat.com> - 4.8.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild

@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 5%{?dist}
+Release: 6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -417,6 +417,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Oct 25 2010 Jindrich Novy <jnovy@redhat.com> - 4.8.1-6
+- rebuild with new xz-5.0.0
+
 * Tue Aug 10 2010 Panu Matilainen <pmatilai@redhat.com> - 4.8.1-5
 - create gdb index on debuginfo generation (#617166)
 - rpm-build now requires /usr/bin/gdb-add-index for consistent index creation

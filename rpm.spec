@@ -389,7 +389,7 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
-* Thu Jan 13 2011 Panu Matilainen <pmatilai@redhat.com> - 4.8.1-7
+* Tue Jan 18 2011 Panu Matilainen <pmatilai@redhat.com> - 4.8.1-7
 - bunch of spec tweaks, cleanups + corrections:
   - shorten rpm-build filelist a bit with glob use, reorder for saner grouping
   - missing isa in popt version dependency

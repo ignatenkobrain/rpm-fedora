@@ -1,7 +1,5 @@
 # build against xz?
 %bcond_without xz
-# sqlite backend is pretty useless
-%bcond_with sqlite
 # just for giggles, option to build with internal Berkeley DB
 %bcond_with int_bdb
 # run internal testsuite?
@@ -15,13 +13,14 @@
 %define snapver %{nil}
 %define srcver %{rpmver}
 
-%define bdbver 4.8.24
+%define bdbname db4
+%define bdbver 4.8.30
 %define dbprefix db
 
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 6%{?dist}
+Release: 7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -39,6 +38,8 @@ Patch3: rpm-4.7.90-fedora-specspo.patch
 Patch4: rpm-4.8.0-psdriver-deps.patch
 # In current Fedora, man-pages pkg owns all the localized man directories
 Patch5: rpm-4.8.0-no-man-dirs.patch
+# gnupg2 comes installed by default, avoid need to drag in gnupg too
+Patch6: rpm-4.8.1-use-gpg2.patch
 
 # Patches already in upstream
 Patch200: rpm-4.8.0-pythondeps-parallel.patch
@@ -60,13 +61,13 @@ License: GPLv2+
 Requires: coreutils
 %if %{without int_bdb}
 # db recovery tools, rpmdb_util symlinks
-Requires: db4-utils
+Requires: %{bdbname}-utils
 %endif
-Requires: popt >= 1.10.2.1
+Requires: popt%{_isa} >= 1.10.2.1
 Requires: curl
 
 %if %{without int_bdb}
-BuildRequires: db4-devel%{_isa}
+BuildRequires: %{bdbname}-devel%{_isa}
 %endif
 
 %if %{with check}
@@ -94,9 +95,6 @@ BuildRequires: libcap-devel%{_isa}
 BuildRequires: libacl-devel%{_isa}
 %if ! %{without xz}
 BuildRequires: xz-devel%{_isa} >= 4.999.8
-%endif
-%if %{with sqlite}
-BuildRequires: sqlite-devel%{_isa}
 %endif
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -126,7 +124,6 @@ Group: Development/Libraries
 License: GPLv2+ and LGPLv2+ with exceptions
 Requires: rpm = %{version}-%{release}
 Requires: popt-devel%{_isa}
-Requires: file-devel%{_isa}
 
 %description devel
 This package contains the RPM C library and header files. These
@@ -194,6 +191,7 @@ packages on a system.
 %patch3 -p1 -b .fedora-specspo
 %patch4 -p1 -b .psdriver-deps
 %patch5 -p1 -b .no-man-dirs
+%patch6 -p1 -b .use-gpg2
 
 %patch200 -p1 -b .pythondeps-parallel
 %patch201 -p1 -b .python-bytecompile
@@ -228,7 +226,6 @@ export CPPFLAGS CFLAGS LDFLAGS
     --sharedstatedir=%{_var}/lib \
     --libdir=%{_libdir} \
     %{!?with_int_bdb: --with-external-db} \
-    %{?with_sqlite: --enable-sqlite3} \
     --with-lua \
     --with-selinux \
     --with-cap \
@@ -262,11 +259,9 @@ do
     touch $RPM_BUILD_ROOT/var/lib/rpm/$dbi
 done
 
-# plant links to db utils as rpmdb_foo so existing documantion is usable
+# plant links to relevant db utils as rpmdb_foo for documention compatibility
 %if %{without int_bdb}
-for dbutil in \
-    archive deadlock dump load printlog \
-    recover stat upgrade verify
+for dbutil in dump load recover stat upgrade verify
 do
     ln -s ../../bin/%{dbprefix}_${dbutil} $RPM_BUILD_ROOT/%{rpmhome}/rpmdb_${dbutil}
 done
@@ -353,47 +348,24 @@ exit 0
 %defattr(-,root,root)
 %{_bindir}/rpmbuild
 %{_bindir}/gendiff
-
 %{_mandir}/man1/gendiff.1*
+%{_mandir}/man8/rpmbuild.8*
+%{_mandir}/man8/rpmdeps.8*
 
 %{rpmhome}/brp-*
-%{rpmhome}/check-buildroot
-%{rpmhome}/check-files
-%{rpmhome}/check-prereqs
-%{rpmhome}/check-rpaths*
+%{rpmhome}/check-*
 %{rpmhome}/debugedit
 %{rpmhome}/find-debuginfo.sh
 %{rpmhome}/find-lang.sh
-%{rpmhome}/find-provides
-%{rpmhome}/find-requires
-%{rpmhome}/javadeps
-%{rpmhome}/mono-find-provides
-%{rpmhome}/mono-find-requires
-%{rpmhome}/ocaml-find-provides.sh
-%{rpmhome}/ocaml-find-requires.sh
-%{rpmhome}/osgideps.pl
-%{rpmhome}/perldeps.pl
-%{rpmhome}/libtooldeps.sh
-%{rpmhome}/pkgconfigdeps.sh
-%{rpmhome}/perl.prov
-%{rpmhome}/perl.req
-%{rpmhome}/tcl.req
-%{rpmhome}/pythondeps.sh
-%{rpmhome}/rpmdeps
-%{rpmhome}/config.guess
-%{rpmhome}/config.sub
+%{rpmhome}/*provides*
+%{rpmhome}/*requires*
+%{rpmhome}/*deps*
+%{rpmhome}/*.prov
+%{rpmhome}/*.req
+%{rpmhome}/config.*
 %{rpmhome}/mkinstalldirs
 %{rpmhome}/rpmdiff*
-%{rpmhome}/desktop-file.prov
-%{rpmhome}/fontconfig.prov
-%{rpmhome}/postscriptdriver.prov
-
-%{rpmhome}/macros.perl
-%{rpmhome}/macros.python
-%{rpmhome}/macros.php
-
-%{_mandir}/man8/rpmbuild.8*
-%{_mandir}/man8/rpmdeps.8*
+%{rpmhome}/macros.*
 
 %files python
 %defattr(-,root,root)
@@ -401,11 +373,11 @@ exit 0
 
 %files devel
 %defattr(-,root,root)
-%{_includedir}/rpm
-%{_libdir}/librp*[a-z].so
 %{_mandir}/man8/rpmgraph.8*
 %{_bindir}/rpmgraph
+%{_libdir}/librp*[a-z].so
 %{_libdir}/pkgconfig/rpm.pc
+%{_includedir}/rpm
 
 %files cron
 %defattr(-,root,root)
@@ -417,6 +389,16 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Jan 13 2011 Panu Matilainen <pmatilai@redhat.com> - 4.8.1-7
+- bunch of spec tweaks, cleanups + corrections:
+  - shorten rpm-build filelist a bit with glob use, reorder for saner grouping
+  - missing isa in popt version dependency
+  - only add rpmdb_foo symlinks for actually relevant db_* utils
+  - drop no longer necessary file-devel dependency from rpm-devel
+  - drop sqlite backend build-conditional
+  - preliminaries for moving from db4 to libdb
+- use gnupg2 for signing as that's more likely to be installed by default
+
 * Mon Oct 25 2010 Jindrich Novy <jnovy@redhat.com> - 4.8.1-6
 - rebuild with new xz-5.0.0
 

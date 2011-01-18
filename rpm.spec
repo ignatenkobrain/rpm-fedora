@@ -4,14 +4,16 @@
 %bcond_with int_bdb
 # run internal testsuite?
 %bcond_without check
+# disable plugins initially
+%bcond_with plugins
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.8.1
-%define snapver %{nil}
-%define srcver %{rpmver}
+%define rpmver 4.9.0
+%define snapver beta1
+%define srcver %{rpmver}%{?snapver:-%{snapver}}
 
 %define bdbname db4
 %define bdbver 4.8.30
@@ -20,39 +22,29 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: 7%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %endif
+Source10: libsymlink.attr
 
-Patch0: rpm-4.7.90-devel-autodep.patch
 Patch1: rpm-4.5.90-pkgconfig-path.patch
-Patch2: rpm-4.5.90-gstreamer-provides.patch
 # Fedora specspo is setup differently than what rpm expects, considering
 # this as Fedora-specific patch for now
-Patch3: rpm-4.7.90-fedora-specspo.patch
-# Postscript driver provides extraction is Fedora specific for now
-Patch4: rpm-4.8.0-psdriver-deps.patch
+Patch2: rpm-4.8.90-fedora-specspo.patch
 # In current Fedora, man-pages pkg owns all the localized man directories
-Patch5: rpm-4.8.0-no-man-dirs.patch
+Patch3: rpm-4.8.0-no-man-dirs.patch
 # gnupg2 comes installed by default, avoid need to drag in gnupg too
-Patch6: rpm-4.8.1-use-gpg2.patch
+Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already in upstream
-Patch200: rpm-4.8.0-pythondeps-parallel.patch
-Patch201: rpm-4.8.0-python-bytecompile.patch
-Patch202: rpm-4.8.0-findlang-localedirs.patch
-Patch203: rpm-4.8.1-eat-stdin.patch
-Patch204: rpm-4.8.1-getoutput-emsg.patch
-Patch205: rpm-4.8.1-find-debuginfo-gdb-index.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
 Patch302: rpm-4.7.1-geode-i686.patch
-Patch303: rpm-4.8.0-pkgconfig-private.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -87,6 +79,8 @@ BuildRequires: popt-devel%{_isa} >= 1.10.2
 BuildRequires: file-devel%{_isa}
 BuildRequires: gettext-devel%{_isa}
 BuildRequires: libselinux-devel%{_isa}
+# XXX semanage is only used by sepolicy plugin but configure requires it...
+BuildRequires: libsemanage-devel%{_isa}
 BuildRequires: ncurses-devel%{_isa}
 BuildRequires: bzip2-devel%{_isa} >= 0.9.0c-2
 BuildRequires: python-devel%{_isa} >= 2.6
@@ -118,11 +112,24 @@ Requires: libcap%{_isa} >= 2.16
 %description libs
 This package contains the RPM shared libraries.
 
+%package build-libs
+Summary:  Libraries for building and signing RPM packages
+Group: Development/Libraries
+License: GPLv2+ and LGPLv2+ with exceptions
+Requires: rpm-libs%{_isa} = %{version}-%{release}
+Requires: %{_bindir}/gpg2
+
+%description build-libs
+This package contains the RPM shared libraries for building and signing
+packages.
+
 %package devel
 Summary:  Development files for manipulating RPM packages
 Group: Development/Libraries
 License: GPLv2+ and LGPLv2+ with exceptions
 Requires: rpm = %{version}-%{release}
+Requires: rpm-libs%{_isa} = %{version}-%{release}
+Requires: rpm-build-libs%{_isa} = %{version}-%{release}
 Requires: popt-devel%{_isa}
 
 %description devel
@@ -150,6 +157,14 @@ Conflicts: ocaml-runtime < 3.11.1-7
 %description build
 The rpm-build package contains the scripts and executable programs
 that are used to build packages using the RPM Package Manager.
+
+%package sign
+Summary: Package signing support
+Group: System Environment/Base
+Requires: rpm-build-libs%{_isa} = %{version}-%{release}
+
+%description sign
+This package contains support for digitally signing RPM packages.
 
 %package python
 Summary: Python bindings for apps which will manipulate RPM packages
@@ -185,24 +200,13 @@ packages on a system.
 
 %prep
 %setup -q -n %{name}-%{srcver} %{?with_int_bdb:-a 1}
-%patch0 -p1 -b .devel-autodep
 %patch1 -p1 -b .pkgconfig-path
-%patch2 -p1 -b .gstreamer-prov
-%patch3 -p1 -b .fedora-specspo
-%patch4 -p1 -b .psdriver-deps
-%patch5 -p1 -b .no-man-dirs
-%patch6 -p1 -b .use-gpg2
-
-%patch200 -p1 -b .pythondeps-parallel
-%patch201 -p1 -b .python-bytecompile
-%patch202 -p1 -b .findlang-localedirs
-%patch203 -p1 -b .eat-stdin
-%patch204 -p1 -b .getoutput-emsg
-%patch205 -p1 -b .find-debuginfo-gdb-index
+%patch2 -p1 -b .fedora-specspo
+%patch3 -p1 -b .no-man-dirs
+%patch4 -p1 -b .use-gpg2
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
-%patch303 -p1 -b .pkgconfig-private
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -226,6 +230,7 @@ export CPPFLAGS CFLAGS LDFLAGS
     --sharedstatedir=%{_var}/lib \
     --libdir=%{_libdir} \
     %{!?with_int_bdb: --with-external-db} \
+    %{!?with_plugins: --disable-plugins} \
     --with-lua \
     --with-selinux \
     --with-cap \
@@ -248,11 +253,12 @@ install -m 644 scripts/rpm.log ${RPM_BUILD_ROOT}%{_sysconfdir}/logrotate.d/rpm
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm
 
+install -m 644 %{SOURCE10} ${RPM_BUILD_ROOT}%{rpmhome}/fileattrs/libsymlink.attr
+
 mkdir -p $RPM_BUILD_ROOT/var/lib/rpm
 for dbi in \
-    Basenames Conflictname Dirnames Group Installtid Name Packages \
-    Providename Provideversion Requirename Requireversion Triggername \
-    Filedigests Pubkeys Sha1header Sigmd5 Obsoletename \
+    Basenames Conflictname Dirnames Group Installtid Name Obsoletename \
+    Packages Providename Requirename Triggername Sha1header Sigmd5 \
     __db.001 __db.002 __db.003 __db.004 __db.005 __db.006 __db.007 \
     __db.008 __db.009
 do
@@ -312,11 +318,14 @@ exit 0
 /bin/rpm
 %{_bindir}/rpm2cpio
 %{_bindir}/rpmdb
+%{_bindir}/rpmkeys
 %{_bindir}/rpmsign
 %{_bindir}/rpmquery
 %{_bindir}/rpmverify
 
 %{_mandir}/man8/rpm.8*
+%{_mandir}/man8/rpmdb.8*
+%{_mandir}/man8/rpmkeys.8*
 %{_mandir}/man8/rpm2cpio.8*
 
 # XXX this places translated manuals to wrong package wrt eg rpmbuild
@@ -334,7 +343,6 @@ exit 0
 %{rpmhome}/rpmdb_*
 %{rpmhome}/rpm.daily
 %{rpmhome}/rpm.log
-%{rpmhome}/rpm.xinetd
 %{rpmhome}/rpm2cpio.sh
 %{rpmhome}/tgpg
 
@@ -342,15 +350,27 @@ exit 0
 
 %files libs
 %defattr(-,root,root)
-%{_libdir}/librpm*.so.*
+%{_libdir}/librpmio.so.*
+%{_libdir}/librpm.so.*
+%if %{with plugins}
+%{_libdir}/rpm-plugins
+%endif
+
+%files build-libs
+%defattr(-,root,root)
+%{_libdir}/librpmbuild.so.*
+%{_libdir}/librpmsign.so.*
 
 %files build
 %defattr(-,root,root)
 %{_bindir}/rpmbuild
 %{_bindir}/gendiff
+%{_bindir}/rpmspec
+
 %{_mandir}/man1/gendiff.1*
 %{_mandir}/man8/rpmbuild.8*
 %{_mandir}/man8/rpmdeps.8*
+%{_mandir}/man8/rpmspec.8*
 
 %{rpmhome}/brp-*
 %{rpmhome}/check-*
@@ -364,8 +384,13 @@ exit 0
 %{rpmhome}/*.req
 %{rpmhome}/config.*
 %{rpmhome}/mkinstalldirs
-%{rpmhome}/rpmdiff*
 %{rpmhome}/macros.*
+%{rpmhome}/fileattrs
+
+%files sign
+%defattr(-,root,root)
+%{_bindir}/rpmsign
+%{_mandir}/man8/rpmsign.8*
 
 %files python
 %defattr(-,root,root)
@@ -389,6 +414,18 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Jan 18 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.beta1.1
+- rpm 4.9.0-beta1 (http://rpm.org/wiki/Releases/4.9.0)
+  - drop no longer needed patches
+  - adjust requires + buildrequires to match current needs
+  - adjust rpmdb index ghosts to match the new release
+  - split librpmbuild and librpmsign to a separate rpm-build-libs package
+  - split rpmsign to its own package to allow signing without all the build goo
+  - build-conditionalize plugins, disabled for now
+  - gstreamer and printer dependency generation moving out
+  - handle .so symlink dependencies with fileattrs
+  - use gnupg2 for signing as that's what typically installed by default
+
 * Tue Jan 18 2011 Panu Matilainen <pmatilai@redhat.com> - 4.8.1-7
 - bunch of spec tweaks, cleanups + corrections:
   - shorten rpm-build filelist a bit with glob use, reorder for saner grouping

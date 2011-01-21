@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -41,6 +41,7 @@ Patch3: rpm-4.8.0-no-man-dirs.patch
 Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already in upstream
+Patch100: rpm-4.9.0-beta1-rofs-rpmdb.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -204,6 +205,8 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
+
+%patch100 -p1 -b .rofs-rpmdb
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -414,6 +417,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri Jan 21 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.beta1.2
+- permit queries from rpmdb on read-only media (#671200)
+
 * Tue Jan 18 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.beta1.1
 - rpm 4.9.0-beta1 (http://rpm.org/wiki/Releases/4.9.0)
   - drop no longer needed patches

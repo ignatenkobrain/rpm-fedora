@@ -1,0 +1,20 @@
+commit f1f7b59dab0c09402790daa04441fac435f52e26
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Fri Jan 21 09:32:58 2011 +0200
+
+    Permit queries from rpmdb on read-only media (RhBug:671200)
+    (cherry picked from commit a429c99e13fbe9926243f29b78df8d64222c4469)
+
+diff --git a/lib/backend/db3.c b/lib/backend/db3.c
+index 45b5363..365cd13 100644
+--- a/lib/backend/db3.c
++++ b/lib/backend/db3.c
+@@ -171,7 +171,7 @@ static int db_init(rpmdb rdb, const char * dbhome)
+ 	free(fstr);
+ 
+ 	rc = (dbenv->open)(dbenv, dbhome, eflags, rdb->db_perms);
+-	if (rc == EACCES) {
++	if (rc == EACCES || rc == EROFS) {
+ 	    eflags |= DB_PRIVATE;
+ 	    retry_open--;
+ 	} else {

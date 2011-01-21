@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -42,6 +42,9 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already in upstream
 Patch100: rpm-4.9.0-beta1-rofs-rpmdb.patch
+Patch101: rpm-4.9.0-beta1-index-rebuild.patch
+Patch102: rpm-4.9.0-beta1-index-iteration.patch
+Patch103: rpm-4.9.0-beta1-rpmdb-dsi.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -207,6 +210,9 @@ packages on a system.
 %patch4 -p1 -b .use-gpg2
 
 %patch100 -p1 -b .rofs-rpmdb
+%patch101 -p1 -b .index-rebuild
+%patch102 -p1 -b .index-iteration
+%patch103 -p1 -b .rpmdb-dsi
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -417,6 +423,11 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri Jan 21 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.beta1.3
+- avoid division by zero in rpmdb size calculation (#671056)
+- fix secondary index iteration returing duplicate at end (#671149)
+- fix rebuilddb creating duplicate indexes for first header
+
 * Fri Jan 21 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.beta1.2
 - permit queries from rpmdb on read-only media (#671200)
 

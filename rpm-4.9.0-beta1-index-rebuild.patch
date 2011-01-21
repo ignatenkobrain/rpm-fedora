@@ -1,0 +1,30 @@
+commit 5ddb36d2739653ebe50dc39176a9ca43d0555676
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Fri Jan 21 13:43:12 2011 +0200
+
+    Avoid automatic index generation on db rebuild
+    - The rebuild walks through it all anyway, calling buildIndexes()
+      while in middle of db rebuild ends up in first header added
+      twice to indexes
+
+diff --git a/lib/rpmdb.c b/lib/rpmdb.c
+index 02aef4a..e58de35 100644
+--- a/lib/rpmdb.c
++++ b/lib/rpmdb.c
+@@ -157,6 +157,7 @@ static dbiIndex rpmdbOpenIndex(rpmdb db, rpmDbiTagVal rpmtag, int flags)
+     } else {
+ 	db->_dbi[dbix] = dbi;
+ 	int verifyonly = (flags & RPMDB_FLAG_VERIFYONLY);
++	int rebuild = (db->db_flags & RPMDB_FLAG_REBUILD);
+ 	if (dbiType(dbi) == DBI_PRIMARY) {
+ 	    /* Allocate based on max header instance number + some reserve */
+ 	    if (!verifyonly && (db->db_checked == NULL)) {
+@@ -170,7 +171,7 @@ static dbiIndex rpmdbOpenIndex(rpmdb db, rpmDbiTagVal rpmtag, int flags)
+ 		dbSetFSync(db->db_dbenv, 0);
+ 	    }
+ 	} else { /* secondary index */
+-	    if (!verifyonly && (dbiFlags(dbi) & DBI_CREATED)) {
++	    if (!rebuild && !verifyonly && (dbiFlags(dbi) & DBI_CREATED)) {
+ 		rpmlog(RPMLOG_DEBUG, "index %s needs creating\n", dbiName(dbi));
+ 		db->db_buildindex++;
+                 if (db->db_buildindex == 1) {

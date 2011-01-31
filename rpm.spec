@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -46,6 +46,9 @@ Patch101: rpm-4.9.0-beta1-index-rebuild.patch
 Patch102: rpm-4.9.0-beta1-index-iteration.patch
 Patch103: rpm-4.9.0-beta1-rpmdb-dsi.patch
 Patch104: rpm-4.9.0-beta1-posttrans-deps.patch
+Patch105: rpm-4.9.0-beta1-env-noremove.patch
+Patch106: rpm-4.9.0-beta1-open-cwd.patch
+Patch107: rpm-4.9.0-beta1-monodeps.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -215,6 +218,9 @@ packages on a system.
 %patch102 -p1 -b .index-iteration
 %patch103 -p1 -b .rpmdb-dsi
 %patch104 -p1 -b .posttrans-deps
+%patch105 -p1 -b .env-noremove
+%patch106 -p1 -b .open-cwd
+%patch107 -p1 -b .monodeps
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -425,6 +431,11 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Jan 31 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.beta1.5
+- dont try to remove environment files if private env used (related to #671200)
+- unbreak mono dependency extraction (#673663)
+- complain instead of silent abort if cwd is not readable (#672576)
+
 * Tue Jan 25 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.beta1.4
 - add support for Requires(posttrans) dependencies
 

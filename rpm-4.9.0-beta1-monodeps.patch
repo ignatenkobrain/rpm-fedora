@@ -1,0 +1,30 @@
+diff -up rpm-4.9.0-beta1/fileattrs/Makefile.am.monodeps rpm-4.9.0-beta1/fileattrs/Makefile.am
+--- rpm-4.9.0-beta1/fileattrs/Makefile.am.monodeps	2010-12-03 14:11:57.000000000 +0200
++++ rpm-4.9.0-beta1/fileattrs/Makefile.am	2011-01-31 09:46:05.000000000 +0200
+@@ -6,6 +6,6 @@ fattrsdir = $(rpmconfigdir)/fileattrs
+ 
+ fattrs_DATA = \
+ 	desktop.attr elf.attr font.attr libtool.attr perl.attr perllib.attr \
+-	pkgconfig.attr python.attr ocaml.attr script.attr
++	pkgconfig.attr python.attr ocaml.attr script.attr mono.attr
+ 
+ EXTRA_DIST = $(fattrs_DATA)
+diff -up rpm-4.9.0-beta1/fileattrs/Makefile.in.monodeps rpm-4.9.0-beta1/fileattrs/Makefile.in
+--- rpm-4.9.0-beta1/fileattrs/Makefile.in.monodeps	2011-01-31 09:56:15.000000000 +0200
++++ rpm-4.9.0-beta1/fileattrs/Makefile.in	2011-01-31 09:56:24.000000000 +0200
+@@ -301,7 +301,7 @@ rpmconfigdir = $(prefix)/lib/rpm
+ fattrsdir = $(rpmconfigdir)/fileattrs
+ fattrs_DATA = \
+ 	desktop.attr elf.attr font.attr libtool.attr perl.attr perllib.attr \
+-	pkgconfig.attr python.attr ocaml.attr script.attr
++	pkgconfig.attr python.attr ocaml.attr script.attr mono.attr
+ 
+ EXTRA_DIST = $(fattrs_DATA)
+ all: all-am
+diff -up rpm-4.9.0-beta1/fileattrs/mono.attr.monodeps rpm-4.9.0-beta1/fileattrs/mono.attr
+--- rpm-4.9.0-beta1/fileattrs/mono.attr.monodeps	2011-01-31 09:46:05.000000000 +0200
++++ rpm-4.9.0-beta1/fileattrs/mono.attr	2011-01-31 09:46:05.000000000 +0200
+@@ -0,0 +1,3 @@
++%__mono_provides	%{_rpmconfigdir}/mono-find-provides %{_builddir}/%{?buildsubdir} %{buildroot} %{_libdir}
++%__mono_requires	%{_rpmconfigdir}/mono-find-requires %{_builddir}/%{?buildsubdir} %{buildroot} %{_libdir}
++%__mono_magic		^.*Mono/.Net assembly.*$

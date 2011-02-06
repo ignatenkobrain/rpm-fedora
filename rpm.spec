@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}5%{?dist}
+Release: %{?snapver:0.%{snapver}.}6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -49,6 +49,7 @@ Patch104: rpm-4.9.0-beta1-posttrans-deps.patch
 Patch105: rpm-4.9.0-beta1-env-noremove.patch
 Patch106: rpm-4.9.0-beta1-open-cwd.patch
 Patch107: rpm-4.9.0-beta1-monodeps.patch
+Patch108: rpm-4.9.0-beta1-ocaml-magic.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -221,6 +222,7 @@ packages on a system.
 %patch105 -p1 -b .env-noremove
 %patch106 -p1 -b .open-cwd
 %patch107 -p1 -b .monodeps
+%patch108 -p1 -b .ocaml-magic
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -431,6 +433,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Sun Feb 06 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.beta1.6
+- adjust ocaml rule for libmagic string change
+
 * Mon Jan 31 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.beta1.5
 - dont try to remove environment files if private env used (related to #671200)
 - unbreak mono dependency extraction (#673663)

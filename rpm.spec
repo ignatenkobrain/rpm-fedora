@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}6%{?dist}
+Release: %{?snapver:0.%{snapver}.}7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -50,6 +50,7 @@ Patch105: rpm-4.9.0-beta1-env-noremove.patch
 Patch106: rpm-4.9.0-beta1-open-cwd.patch
 Patch107: rpm-4.9.0-beta1-monodeps.patch
 Patch108: rpm-4.9.0-beta1-ocaml-magic.patch
+Patch109: rpm-4.9.0-beta1-rpmugfree.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -223,6 +224,7 @@ packages on a system.
 %patch106 -p1 -b .open-cwd
 %patch107 -p1 -b .monodeps
 %patch108 -p1 -b .ocaml-magic
+%patch109 -p1 -b .rpmugfree
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -433,6 +435,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Feb 07 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.beta1.7
+- fix segfault when building more than one package at a time (#675565)
+
 * Sun Feb 06 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.beta1.6
 - adjust ocaml rule for libmagic string change
 

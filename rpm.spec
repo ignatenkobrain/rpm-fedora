@@ -74,7 +74,7 @@ BuildRequires: elfutils-devel%{_isa} >= 0.112
 BuildRequires: elfutils-libelf-devel%{_isa}
 BuildRequires: readline-devel%{_isa} zlib-devel%{_isa}
 BuildRequires: nss-devel%{_isa}
-BuildRequires: nss-softokn-devel%{_isa}
+BuildRequires: nss-softokn-freebl-devel%{_isa}
 # The popt version here just documents an older known-good version
 BuildRequires: popt-devel%{_isa} >= 1.10.2
 BuildRequires: file-devel%{_isa}
@@ -418,7 +418,7 @@ exit 0
 * Tue Feb 15 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.rc1.1
 - update to 4.9.0-rc1
 - drop upstream patches
-- nss packaging has changed, buildrequire nss-softokn-devel 
+- nss packaging has changed, buildrequire nss-softokn-freebl-devel 
 
 * Wed Feb 09 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.9.0-0.beta1.7.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild

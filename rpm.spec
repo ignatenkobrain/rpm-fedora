@@ -12,7 +12,7 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.9.0
-%define snapver beta1
+%define snapver rc1
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
 
 %define bdbname db4
@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}7%{?dist}.1
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -41,16 +41,6 @@ Patch3: rpm-4.8.0-no-man-dirs.patch
 Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already in upstream
-Patch100: rpm-4.9.0-beta1-rofs-rpmdb.patch
-Patch101: rpm-4.9.0-beta1-index-rebuild.patch
-Patch102: rpm-4.9.0-beta1-index-iteration.patch
-Patch103: rpm-4.9.0-beta1-rpmdb-dsi.patch
-Patch104: rpm-4.9.0-beta1-posttrans-deps.patch
-Patch105: rpm-4.9.0-beta1-env-noremove.patch
-Patch106: rpm-4.9.0-beta1-open-cwd.patch
-Patch107: rpm-4.9.0-beta1-monodeps.patch
-Patch108: rpm-4.9.0-beta1-ocaml-magic.patch
-Patch109: rpm-4.9.0-beta1-rpmugfree.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -214,17 +204,6 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
-
-%patch100 -p1 -b .rofs-rpmdb
-%patch101 -p1 -b .index-rebuild
-%patch102 -p1 -b .index-iteration
-%patch103 -p1 -b .rpmdb-dsi
-%patch104 -p1 -b .posttrans-deps
-%patch105 -p1 -b .env-noremove
-%patch106 -p1 -b .open-cwd
-%patch107 -p1 -b .monodeps
-%patch108 -p1 -b .ocaml-magic
-%patch109 -p1 -b .rpmugfree
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -435,6 +414,10 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Feb 15 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.rc1.1
+- update to 4.9.0-rc1
+- drop upstream patches
+
 * Wed Feb 09 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.9.0-0.beta1.7.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 

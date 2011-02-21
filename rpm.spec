@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -41,6 +41,7 @@ Patch3: rpm-4.8.0-no-man-dirs.patch
 Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already in upstream
+Patch100: rpm-4.9.0-rc1-getoutput.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -205,6 +206,8 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
+
+%patch100 -p1 -b .getoutput
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -415,6 +418,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Feb 21 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.rc1.2
+- fix broken logic in depgen collector, hopefully curing #675002
+
 * Tue Feb 15 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.rc1.1
 - update to 4.9.0-rc1
 - drop upstream patches

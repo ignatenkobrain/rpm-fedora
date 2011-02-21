@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -42,6 +42,7 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already in upstream
 Patch100: rpm-4.9.0-rc1-getoutput.patch
+Patch101 : rpm-4.9.0-rc1-double-cursor.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -208,6 +209,7 @@ packages on a system.
 %patch4 -p1 -b .use-gpg2
 
 %patch100 -p1 -b .getoutput
+%patch101 -p1 -b .double-cursor
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -418,6 +420,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Feb 21 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.rc1.3
+- fix erronous double cursor open, causing yum reinstall hang (#678644)
+
 * Mon Feb 21 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.rc1.2
 - fix broken logic in depgen collector, hopefully curing #675002
 

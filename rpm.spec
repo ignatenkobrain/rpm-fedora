@@ -257,6 +257,9 @@ install -m 755 scripts/rpm.daily ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.daily/rpm
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/logrotate.d
 install -m 644 scripts/rpm.log ${RPM_BUILD_ROOT}%{_sysconfdir}/logrotate.d/rpm
 
+mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/tmpfiles.d
+echo "r /var/lib/rpm/__db.*" > ${RPM_BUILD_ROOT}%{_sysconfdir}/tmpfiles.d/rpm.conf
+
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm
 
 install -m 644 %{SOURCE10} ${RPM_BUILD_ROOT}%{rpmhome}/fileattrs/libsymlink.attr
@@ -315,6 +318,7 @@ exit 0
 %defattr(-,root,root,-)
 %doc GROUPS COPYING CREDITS ChangeLog.bz2 doc/manual/[a-z]*
 
+%{_sysconfdir}/tmpfiles.d/rpm.conf
 %dir %{_sysconfdir}/rpm
 
 %attr(0755, root, root) %dir /var/lib/rpm
@@ -422,6 +426,7 @@ exit 0
 %changelog
 * Tue Mar 01 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.rc1.4
 - spec cosmetics clean up extra whitespace + group more logically
+- wipe out BDB environment at boot via tmpfiles.d
 
 * Mon Feb 21 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.rc1.3
 - fix erronous double cursor open, causing yum reinstall hang (#678644)

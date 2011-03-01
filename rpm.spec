@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -315,11 +315,10 @@ exit 0
 %defattr(-,root,root,-)
 %doc GROUPS COPYING CREDITS ChangeLog.bz2 doc/manual/[a-z]*
 
-%dir                            %{_sysconfdir}/rpm
+%dir %{_sysconfdir}/rpm
 
-%attr(0755, root, root)   %dir /var/lib/rpm
+%attr(0755, root, root) %dir /var/lib/rpm
 %attr(0644, root, root) %verify(not md5 size mtime) %ghost %config(missingok,noreplace) /var/lib/rpm/*
-%attr(0755, root, root) %dir %{rpmhome}
 
 /bin/rpm
 %{_bindir}/rpm2cpio
@@ -342,6 +341,7 @@ exit 0
 %lang(ru) %{_mandir}/ru/man[18]/*.[18]*
 %lang(sk) %{_mandir}/sk/man[18]/*.[18]*
 
+%attr(0755, root, root) %dir %{rpmhome}
 %{rpmhome}/macros
 %{rpmhome}/rpmpopt*
 %{rpmhome}/rpmrc
@@ -420,6 +420,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Mar 01 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.rc1.4
+- spec cosmetics clean up extra whitespace + group more logically
+
 * Mon Feb 21 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.rc1.3
 - fix erronous double cursor open, causing yum reinstall hang (#678644)
 

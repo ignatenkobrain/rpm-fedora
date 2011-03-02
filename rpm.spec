@@ -12,7 +12,6 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.9.0
-%define snapver rc1
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
 
 %define bdbname db4
@@ -22,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -41,8 +40,6 @@ Patch3: rpm-4.8.0-no-man-dirs.patch
 Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already in upstream
-Patch100: rpm-4.9.0-rc1-getoutput.patch
-Patch101 : rpm-4.9.0-rc1-double-cursor.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -207,9 +204,6 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
-
-%patch100 -p1 -b .getoutput
-%patch101 -p1 -b .double-cursor
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -424,6 +418,10 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Wed Mar 02 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-1
+- update to 4.9.0 final
+- drop upstreamed patches
+
 * Tue Mar 01 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-0.rc1.4
 - spec cosmetics clean up extra whitespace + group more logically
 - wipe out BDB environment at boot via tmpfiles.d

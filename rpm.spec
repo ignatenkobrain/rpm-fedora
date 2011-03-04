@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -322,7 +322,6 @@ exit 0
 %{_bindir}/rpm2cpio
 %{_bindir}/rpmdb
 %{_bindir}/rpmkeys
-%{_bindir}/rpmsign
 %{_bindir}/rpmquery
 %{_bindir}/rpmverify
 
@@ -418,6 +417,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri Mar 04 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-2
+- fix duplicate rpmsign binary in rpm main package dragging in build-libs
+
 * Wed Mar 02 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-1
 - update to 4.9.0 final
 - drop upstreamed patches

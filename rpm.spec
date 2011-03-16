@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -38,6 +38,8 @@ Patch2: rpm-4.8.90-fedora-specspo.patch
 Patch3: rpm-4.8.0-no-man-dirs.patch
 # gnupg2 comes installed by default, avoid need to drag in gnupg too
 Patch4: rpm-4.8.1-use-gpg2.patch
+# do not try to free and unallocated variable (#688091)
+Patch5: rpm-4.9.0-manifest-fix.patch
 
 # Patches already in upstream
 
@@ -204,6 +206,7 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
+%patch5 -p1 -b .manifest-fix
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -418,6 +421,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Wed Mar 16 2011 Jindirch Novy <jnovy@redhat.com> - 4.9.0-2
+- fix crash in package manifest check (#688091)
+
 * Wed Mar 02 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-1
 - update to 4.9.0 final
 - drop upstreamed patches

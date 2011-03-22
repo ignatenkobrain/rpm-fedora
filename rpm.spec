@@ -38,8 +38,6 @@ Patch2: rpm-4.8.90-fedora-specspo.patch
 Patch3: rpm-4.8.0-no-man-dirs.patch
 # gnupg2 comes installed by default, avoid need to drag in gnupg too
 Patch4: rpm-4.8.1-use-gpg2.patch
-# do not try to free and unallocated variable (#688091)
-Patch5: rpm-4.9.0-manifest-fix.patch
 
 # Patches already in upstream
 # Do not try to free and unallocated variable (#688091)
@@ -210,7 +208,6 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
-%patch5 -p1 -b .manifest-fix
 
 %patch100 -p1 -b .manifest-fix
 %patch101 -p1 -b .sticky-elf

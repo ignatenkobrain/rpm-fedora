@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -38,10 +38,12 @@ Patch2: rpm-4.8.90-fedora-specspo.patch
 Patch3: rpm-4.8.0-no-man-dirs.patch
 # gnupg2 comes installed by default, avoid need to drag in gnupg too
 Patch4: rpm-4.8.1-use-gpg2.patch
-# Do not try to free and unallocated variable (#688091)
-Patch5: rpm-4.9.0-manifest-fix.patch
 
 # Patches already in upstream
+# Do not try to free and unallocated variable (#688091)
+Patch100: rpm-4.9.0-manifest-fix.patch
+# Recognize elf executables with sticky bit as elf
+Patch101: rpm-4.9.0-sticky-elf.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -206,7 +208,9 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
-%patch5 -p1 -b .manifest-fix
+
+%patch100 -p1 -b .manifest-fix
+%patch101 -p1 -b .sticky-elf
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -420,6 +424,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Mar 22 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-4
+- fix classification of elf executables with sticky bit set (#689182)
+
 * Wed Mar 16 2011 Jindirch Novy <jnovy@redhat.com> - 4.9.0-3
 - fix crash in package manifest check (#688091)
 

@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -42,6 +42,10 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 Patch5: rpm-4.9.0-manifest-fix.patch
 
 # Patches already in upstream
+# Do not try to free and unallocated variable (#688091)
+Patch100: rpm-4.9.0-manifest-fix.patch
+# Recognize elf executables with sticky bit as elf
+Patch101: rpm-4.9.0-sticky-elf.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -208,6 +212,9 @@ packages on a system.
 %patch4 -p1 -b .use-gpg2
 %patch5 -p1 -b .manifest-fix
 
+%patch100 -p1 -b .manifest-fix
+%patch101 -p1 -b .sticky-elf
+
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
 
@@ -325,7 +332,6 @@ exit 0
 %{_bindir}/rpm2cpio
 %{_bindir}/rpmdb
 %{_bindir}/rpmkeys
-%{_bindir}/rpmsign
 %{_bindir}/rpmquery
 %{_bindir}/rpmverify
 
@@ -421,8 +427,14 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
-* Wed Mar 16 2011 Jindirch Novy <jnovy@redhat.com> - 4.9.0-2
+* Tue Mar 22 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-4
+- fix classification of elf executables with sticky bit set (#689182)
+
+* Wed Mar 16 2011 Jindirch Novy <jnovy@redhat.com> - 4.9.0-3
 - fix crash in package manifest check (#688091)
+
+* Fri Mar 04 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-2
+- fix duplicate rpmsign binary in rpm main package dragging in build-libs
 
 * Wed Mar 02 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-1
 - update to 4.9.0 final

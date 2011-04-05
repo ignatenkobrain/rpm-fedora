@@ -1,0 +1,23 @@
+commit 94fb6eed6a7a8957152035c3156974fc00bc4b42
+Author: Jindrich Novy <jnovy@redhat.com>
+Date:   Mon Apr 4 16:03:11 2011 +0200
+
+    Don't list packages which will not be created in spec query (RhBug:693338)
+    - particularly, while doing "rpm -q --specfile <a spec file>"
+
+diff --git a/build/spec.c b/build/spec.c
+index 6861753..353ae47 100644
+--- a/build/spec.c
++++ b/build/spec.c
+@@ -412,8 +412,10 @@ int rpmspecQuery(rpmts ts, QVA_t qva, const char * arg)
+ 
+     res = 0;
+     if (qva->qva_source == RPMQV_SPECRPMS) {
+-	for (Package pkg = spec->packages; pkg != NULL; pkg = pkg->next)
++	for (Package pkg = spec->packages; pkg != NULL; pkg = pkg->next) {
++	    if (pkg->fileList == NULL) continue;
+ 	    xx = qva->qva_showPackage(qva, ts, pkg->header);
++	}
+     } else {
+ 	xx = qva->qva_showPackage(qva, ts, spec->sourceHeader);
+     }

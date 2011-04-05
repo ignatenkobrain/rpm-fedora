@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -44,6 +44,16 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 Patch100: rpm-4.9.0-manifest-fix.patch
 # Recognize elf executables with sticky bit as elf
 Patch101: rpm-4.9.0-sticky-elf.patch
+# Fix leaks on freeing a populated transaction set
+Patch102: rpm-4.9.0-rpmts-noref.patch
+# Only list packages that will be built on spec query (#693338)
+Patch103: rpm-4.9.0-specquery-pkgs.patch
+# Verify some properties of replaced and wrong-colored files (#528383)
+Patch104: rpm-4.9.0-fstate-verify.patch
+# Take file state into account for file dependencies
+Patch105: rpm-4.9.0-fstate-deps.patch
+# Preferred color pkgs should be erased last
+Patch106: rpm-4.9.0-prefcolor-erase.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -211,6 +221,11 @@ packages on a system.
 
 %patch100 -p1 -b .manifest-fix
 %patch101 -p1 -b .sticky-elf
+%patch102 -p1 -b .rpmts-noref
+%patch103 -p1 -b .specquery-pkgs
+%patch104 -p1 -b .fstate-verify
+%patch105 -p1 -b .fstate-deps
+%patch106 -p1 -b .prefcolor-erase
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -424,6 +439,13 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Apr 05 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-5
+- verify some properties of replaced and wrong-colored files (#528383)
+- only list packages that would be generated on spec query (#693338)
+- preferred color packages should be erased last (#680261)
+- fix leaks when freeing a populated transaction set
+- take file state into account for file dependencies
+
 * Tue Mar 22 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-4
 - fix classification of elf executables with sticky bit set (#689182)
 

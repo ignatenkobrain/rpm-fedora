@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}5%{?dist}
+Release: %{?snapver:0.%{snapver}.}6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
@@ -47,7 +47,7 @@ Patch101: rpm-4.9.0-sticky-elf.patch
 # Fix leaks on freeing a populated transaction set
 Patch102: rpm-4.9.0-rpmts-noref.patch
 # Only list packages that will be built on spec query (#693338)
-Patch103: rpm-4.9.0-specquery-pkgs.patch
+# Patch103: rpm-4.9.0-specquery-pkgs.patch
 # Verify some properties of replaced and wrong-colored files (#528383)
 Patch104: rpm-4.9.0-fstate-verify.patch
 # Take file state into account for file dependencies
@@ -222,7 +222,8 @@ packages on a system.
 %patch100 -p1 -b .manifest-fix
 %patch101 -p1 -b .sticky-elf
 %patch102 -p1 -b .rpmts-noref
-%patch103 -p1 -b .specquery-pkgs
+# this breaks fedpkg
+# %patch103 -p1 -b .specquery-pkgs
 %patch104 -p1 -b .fstate-verify
 %patch105 -p1 -b .fstate-deps
 %patch106 -p1 -b .prefcolor-erase
@@ -439,6 +440,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Apr 07 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-6
+- revert the spec query change (#693338) for now, it breaks fedpkg
+
 * Tue Apr 05 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-5
 - verify some properties of replaced and wrong-colored files (#528383)
 - only list packages that would be generated on spec query (#693338)

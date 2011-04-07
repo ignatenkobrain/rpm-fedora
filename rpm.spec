@@ -21,10 +21,10 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}6%{?dist}
+Release: %{?snapver:0.%{snapver}.}7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
+Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %endif
@@ -321,6 +321,9 @@ make check
 %post libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig
 
+%post build-libs -p /sbin/ldconfig
+%postun build-libs -p /sbin/ldconfig
+
 %posttrans
 # XXX this is klunky and ugly, rpm itself should handle this
 dbstat=/usr/lib/rpm/rpmdb_stat
@@ -440,6 +443,10 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Apr 07 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-7
+- add missing ldconfig calls to build-libs sub-package
+- fix source url
+
 * Thu Apr 07 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-6
 - revert the spec query change (#693338) for now, it breaks fedpkg
 

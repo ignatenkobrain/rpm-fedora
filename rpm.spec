@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}7%{?dist}
+Release: %{?snapver:0.%{snapver}.}8%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -58,6 +58,9 @@ Patch106: rpm-4.9.0-prefcolor-erase.patch
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
 Patch302: rpm-4.7.1-geode-i686.patch
+# To be upstreamed after rawhide-testdrive (#641377, #707677)
+Patch303: rpm-4.9.0-debugedit-dwarf4.patch
+Patch304: rpm-4.9.0-debuginfo-allnames.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -230,6 +233,8 @@ packages on a system.
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
+%patch303 -p1 -b .dwarf-4
+%patch304 -p1 -b .debuginfo-allnames
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -443,6 +448,10 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu May 26 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-8
+- add dwarf-4 support to debugedit (#707677)
+- generate build-id symlinks for all filenames sharing a build-id (#641377)
+
 * Thu Apr 07 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-7
 - add missing ldconfig calls to build-libs sub-package
 - fix source url

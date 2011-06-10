@@ -1,0 +1,21 @@
+commit 78a6cf6fbf047c5bf0066df21792e4c9925d04a0
+Author: Michael Schroeder <mls@suse.de>
+Date:   Tue May 24 08:51:56 2011 +0300
+
+    Do not die on empty changelog section
+    
+    Signed-off-by: Panu Matilainen <pmatilai@redhat.com>
+
+diff --git a/build/parseChangelog.c b/build/parseChangelog.c
+index 36a19c3..d4681cb 100644
+--- a/build/parseChangelog.c
++++ b/build/parseChangelog.c
+@@ -233,7 +233,7 @@ int parseChangelog(rpmSpec spec)
+ 	}
+     }
+ 
+-    if (addChangelog(spec->packages->header, sb)) {
++    if (sb && addChangelog(spec->packages->header, sb)) {
+ 	goto exit;
+     }
+     res = nextPart;

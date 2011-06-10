@@ -21,10 +21,10 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}6%{?dist}
+Release: %{?snapver:0.%{snapver}.}9%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source0: http://rpm.org/releases/rpm-4.8.x/%{name}-%{srcver}.tar.bz2
+Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %endif
@@ -54,10 +54,21 @@ Patch104: rpm-4.9.0-fstate-verify.patch
 Patch105: rpm-4.9.0-fstate-deps.patch
 # Preferred color pkgs should be erased last
 Patch106: rpm-4.9.0-prefcolor-erase.patch
+# Fix crash on empty prep-section
+Patch107: rpm-4.9.0-empty-prep-crash.patch
+# Fix crash on empty changelog-section
+Patch108: rpm-4.9.0-empty-changelog-crash.patch
+# Fix crash on macro undefining itself
+Patch109: rpm-4.9.0-macro-self-undefine.patch
+# Fix breakage caused by file 5.07 string changes
+Patch110: rpm-4.9.0-file-compat.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
 Patch302: rpm-4.7.1-geode-i686.patch
+# To be upstreamed after rawhide-testdrive (#641377, #707677)
+Patch303: rpm-4.9.0-debugedit-dwarf4.patch
+Patch304: rpm-4.9.0-debuginfo-allnames.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -227,9 +238,15 @@ packages on a system.
 %patch104 -p1 -b .fstate-verify
 %patch105 -p1 -b .fstate-deps
 %patch106 -p1 -b .prefcolor-erase
+%patch107 -p1 -b .empty-prep-crash
+%patch108 -p1 -b .empty-changelog-crash
+%patch109 -p1 -b .macro-self-undefine
+%patch110 -p1 -b .file-compat
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
+%patch303 -p1 -b .dwarf-4
+%patch304 -p1 -b .debuginfo-allnames
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -320,6 +337,9 @@ make check
 
 %post libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig
+
+%post build-libs -p /sbin/ldconfig
+%postun build-libs -p /sbin/ldconfig
 
 %posttrans
 # XXX this is klunky and ugly, rpm itself should handle this
@@ -440,6 +460,19 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri Jun 10 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-9
+- fix crash if prep or changelog section in spec is empty (#706959)
+- fix crash on macro which undefines itself
+- fix script dependency generation with file 5.07 string changes (#712251)
+
+* Thu May 26 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-8
+- add dwarf-4 support to debugedit (#707677)
+- generate build-id symlinks for all filenames sharing a build-id (#641377)
+
+* Thu Apr 07 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-7
+- add missing ldconfig calls to build-libs sub-package
+- fix source url
+
 * Thu Apr 07 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-6
 - revert the spec query change (#693338) for now, it breaks fedpkg
 

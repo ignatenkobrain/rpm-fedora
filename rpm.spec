@@ -11,7 +11,7 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.9.0
+%define rpmver 4.9.1
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
 
 %define bdbname db4
@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}9%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -40,35 +40,12 @@ Patch3: rpm-4.8.0-no-man-dirs.patch
 Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already in upstream
-# Do not try to free and unallocated variable (#688091)
-Patch100: rpm-4.9.0-manifest-fix.patch
-# Recognize elf executables with sticky bit as elf
-Patch101: rpm-4.9.0-sticky-elf.patch
-# Fix leaks on freeing a populated transaction set
-Patch102: rpm-4.9.0-rpmts-noref.patch
-# Only list packages that will be built on spec query (#693338)
-# Patch103: rpm-4.9.0-specquery-pkgs.patch
-# Verify some properties of replaced and wrong-colored files (#528383)
-Patch104: rpm-4.9.0-fstate-verify.patch
-# Take file state into account for file dependencies
-Patch105: rpm-4.9.0-fstate-deps.patch
-# Preferred color pkgs should be erased last
-Patch106: rpm-4.9.0-prefcolor-erase.patch
-# Fix crash on empty prep-section
-Patch107: rpm-4.9.0-empty-prep-crash.patch
-# Fix crash on empty changelog-section
-Patch108: rpm-4.9.0-empty-changelog-crash.patch
-# Fix crash on macro undefining itself
-Patch109: rpm-4.9.0-macro-self-undefine.patch
-# Fix breakage caused by file 5.07 string changes
-Patch110: rpm-4.9.0-file-compat.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
 Patch302: rpm-4.7.1-geode-i686.patch
-# To be upstreamed after rawhide-testdrive (#641377, #707677)
-Patch303: rpm-4.9.0-debugedit-dwarf4.patch
-Patch304: rpm-4.9.0-debuginfo-allnames.patch
+# To be upstreamed after rawhide-testdrive (#641377)
+Patch303: rpm-4.9.0-debuginfo-allnames.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -230,23 +207,9 @@ packages on a system.
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
 
-%patch100 -p1 -b .manifest-fix
-%patch101 -p1 -b .sticky-elf
-%patch102 -p1 -b .rpmts-noref
-# this breaks fedpkg
-# %patch103 -p1 -b .specquery-pkgs
-%patch104 -p1 -b .fstate-verify
-%patch105 -p1 -b .fstate-deps
-%patch106 -p1 -b .prefcolor-erase
-%patch107 -p1 -b .empty-prep-crash
-%patch108 -p1 -b .empty-changelog-crash
-%patch109 -p1 -b .macro-self-undefine
-%patch110 -p1 -b .file-compat
-
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
-%patch303 -p1 -b .dwarf-4
-%patch304 -p1 -b .debuginfo-allnames
+%patch303 -p1 -b .debuginfo-allnames
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -460,6 +423,10 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri Jul 15 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1-1
+- update to 4.9.1 (http://rpm.org/wiki/Releases/4.9.1)
+- drop no longer needed patches
+
 * Fri Jun 10 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.0-9
 - fix crash if prep or changelog section in spec is empty (#706959)
 - fix crash on macro which undefines itself

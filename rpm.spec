@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -40,6 +40,7 @@ Patch3: rpm-4.8.0-no-man-dirs.patch
 Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already in upstream
+Patch200: rpm-4.9.1-recurse-dir.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -206,6 +207,8 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
+
+%patch200 -p1 -b .recurse-dir
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -423,6 +426,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Jul 19 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1-2
+- fix recursion of directories with trailing slash in file list (#722474)
+
 * Fri Jul 15 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1-1
 - update to 4.9.1 (http://rpm.org/wiki/Releases/4.9.1)
 - drop no longer needed patches

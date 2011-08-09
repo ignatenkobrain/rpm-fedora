@@ -155,7 +155,9 @@ Requires: elfutils >= 0.128 binutils
 Requires: findutils sed grep gawk diffutils file patch >= 2.5
 Requires: unzip gzip bzip2 cpio xz
 Requires: pkgconfig >= 1:0.24
+%ifnarch %{arm}
 Requires: /usr/bin/gdb-add-index
+%endif
 Conflicts: ocaml-runtime < 3.11.1-7
 
 %description build
@@ -426,6 +428,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Aug  9 2011 Peter Robinson <pbrobinson@gmail.com> - 4.9.1.1-3
+- add arm conditional for gdb-add-index
+
 * Mon Aug 08 2011 Adam Jackson <ajax@redhat.com> 4.9.1.1-2
 - Add RPM_LD_FLAGS to build environment (#728974)
 

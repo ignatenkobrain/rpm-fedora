@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -40,6 +40,7 @@ Patch3: rpm-4.8.0-no-man-dirs.patch
 Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already in upstream
+Patch100: rpm-4.9.1-rpmdb-signals.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -208,6 +209,8 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
+
+%patch100 -p1 -b .rpmdb-signals
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -426,6 +429,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Sep 19 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.1-3
+- fix signal blocking/unblocking regression on rpmdb open/close (#739492)
+
 * Mon Aug 08 2011 Adam Jackson <ajax@redhat.com> 4.9.1.1-2
 - Add RPM_LD_FLAGS to build environment (#728974)
 

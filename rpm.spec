@@ -11,7 +11,7 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.9.1.1
+%define rpmver 4.9.1.2
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
 
 %define bdbname db4
@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -40,7 +40,6 @@ Patch3: rpm-4.8.0-no-man-dirs.patch
 Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already in upstream
-Patch100: rpm-4.9.1-rpmdb-signals.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -209,8 +208,6 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
-
-%patch100 -p1 -b .rpmdb-signals
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -429,6 +426,10 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Sep 29 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-1
+- update to 4.9.1.2 (CVE-2011-3378)
+- drop upstreamed rpmdb signal patch
+
 * Mon Sep 19 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.1-3
 - fix signal blocking/unblocking regression on rpmdb open/close (#739492)
 

@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -48,6 +48,8 @@ Patch302: rpm-4.7.1-geode-i686.patch
 Patch303: rpm-4.9.0-debuginfo-allnames.patch
 # Probably to be upstreamed in slightly different form
 Patch304: rpm-4.9.1.1-ld-flags.patch
+# Based on patch from OpenSUSE, without the C-lang related enhancements
+Patch305: rpm-4.9.x-gnome-help.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -213,6 +215,7 @@ packages on a system.
 %patch302 -p1 -b .geode
 %patch303 -p1 -b .debuginfo-allnames
 %patch304 -p1 -b .ldflags
+%patch305 -p1 -b .gnome-help
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -426,6 +429,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Wed Oct 12 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-2
+- try teaching find-lang about the new gnome help layout (#736523)
+
 * Thu Sep 29 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-1
 - update to 4.9.1.2 (CVE-2011-3378)
 - drop upstreamed rpmdb signal patch

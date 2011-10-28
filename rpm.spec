@@ -16,12 +16,12 @@
 
 %define bdbname db4
 %define bdbver 4.8.30
-%define dbprefix db
+%define dbprefix db4
 
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -50,6 +50,8 @@ Patch303: rpm-4.9.0-debuginfo-allnames.patch
 Patch304: rpm-4.9.1.1-ld-flags.patch
 # Based on patch from OpenSUSE, without the C-lang related enhancements
 Patch305: rpm-4.9.x-gnome-help.patch
+# Just warn on STABS instead of failing for now
+Patch306: rpm-4.9.x-debugedit-stabs-warn.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -58,7 +60,7 @@ License: GPLv2+
 Requires: coreutils
 %if %{without int_bdb}
 # db recovery tools, rpmdb_util symlinks
-Requires: %{bdbname}-utils
+Requires: %{_bindir}/%{dbprefix}_stat
 %endif
 Requires: popt%{_isa} >= 1.10.2.1
 Requires: curl
@@ -216,6 +218,7 @@ packages on a system.
 %patch303 -p1 -b .debuginfo-allnames
 %patch304 -p1 -b .ldflags
 %patch305 -p1 -b .gnome-help
+%patch306 -p1 -b .debugedit-stabs-warn
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -429,6 +432,10 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri Oct 28 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-3
+- adjust db util prefix & dependency due to #749293
+- warn but dont fail the build if STABS encountered by debugedit (#725378)
+
 * Wed Oct 12 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-2
 - try teaching find-lang about the new gnome help layout (#736523)
 

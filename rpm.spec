@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -38,6 +38,8 @@ Patch2: rpm-4.8.90-fedora-specspo.patch
 Patch3: rpm-4.8.0-no-man-dirs.patch
 # gnupg2 comes installed by default, avoid need to drag in gnupg too
 Patch4: rpm-4.8.1-use-gpg2.patch
+#conditionally applied patch for arm hardware floating point
+Patch5: rpm-4.9.0-armhfp.patch
 
 # Patches already in upstream
 
@@ -219,6 +221,11 @@ packages on a system.
 %patch304 -p1 -b .ldflags
 %patch305 -p1 -b .gnome-help
 %patch306 -p1 -b .debugedit-stabs-warn
+
+# this patch cant be applied on softfp builds
+%ifnarch armv3l armv4b armv4l armv4tl armv5tel armv5tejl armv6l armv7l
+%patch5 -p1 -b .armhfp
+%endif
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -432,6 +439,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Wed Nov 09 2011 Dennis Gilmore <dennis@ausil.us> - 4.9.1.2-4
+- conditionally apply arm patch for hardfp on all arches but arm softfp ones
+
 * Fri Oct 28 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-3
 - adjust db util prefix & dependency due to #749293
 - warn but dont fail the build if STABS encountered by debugedit (#725378)

@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -42,6 +42,7 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 Patch5: rpm-4.9.0-armhfp.patch
 
 # Patches already in upstream
+Patch100: rpm-4.9.x-fontattr.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -214,6 +215,8 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
+
+%patch100 -p1 -b .fontattr
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -439,6 +442,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri Nov 25 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-5
+- adjust font detection rules for libmagic change (#757105)
+
 * Wed Nov 09 2011 Dennis Gilmore <dennis@ausil.us> - 4.9.1.2-4
 - conditionally apply arm patch for hardfp on all arches but arm softfp ones
 

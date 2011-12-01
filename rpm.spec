@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}5%{?dist}
+Release: %{?snapver:0.%{snapver}.}6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -43,6 +43,7 @@ Patch5: rpm-4.9.0-armhfp.patch
 
 # Patches already in upstream
 Patch100: rpm-4.9.x-fontattr.patch
+Patch101: rpm-4.9.x-elfattr.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -217,6 +218,7 @@ packages on a system.
 %patch4 -p1 -b .use-gpg2
 
 %patch100 -p1 -b .fontattr
+%patch101 -p1 -b .elfattr
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -442,6 +444,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Dec 01 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-6
+- fix classification of ELF binaries with setuid/setgid bit (#758251)
+
 * Fri Nov 25 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-5
 - adjust font detection rules for libmagic change (#757105)
 

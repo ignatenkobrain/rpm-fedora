@@ -14,14 +14,14 @@
 %define rpmver 4.9.1.2
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
 
-%define bdbname db4
-%define bdbver 4.8.30
-%define dbprefix db4
+%define bdbname libdb
+%define bdbver 5.2.36
+%define dbprefix db
 
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}6%{?dist}
+Release: %{?snapver:0.%{snapver}.}7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -444,6 +444,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri Dec 02 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-7
+- switch over to libdb, aka Berkeley DB 5.x
+
 * Thu Dec 01 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-6
 - fix classification of ELF binaries with setuid/setgid bit (#758251)
 

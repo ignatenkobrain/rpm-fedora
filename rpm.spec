@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}7%{?dist}
+Release: %{?snapver:0.%{snapver}.}8%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -56,6 +56,8 @@ Patch304: rpm-4.9.1.1-ld-flags.patch
 Patch305: rpm-4.9.x-gnome-help.patch
 # Just warn on STABS instead of failing for now
 Patch306: rpm-4.9.x-debugedit-stabs-warn.patch
+# Temporary Patch to provide support for updates
+Patch400: rpm-4.9.1.2-rpmlib-filesystem-check.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -226,6 +228,8 @@ packages on a system.
 %patch304 -p1 -b .ldflags
 %patch305 -p1 -b .gnome-help
 %patch306 -p1 -b .debugedit-stabs-warn
+
+%patch400 -p1 -b .rpmlib-filesystem-check
 
 # this patch cant be applied on softfp builds
 %ifnarch armv3l armv4b armv4l armv4tl armv5tel armv5tejl armv6l armv7l
@@ -444,6 +448,10 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Dec 20 2011 Kay Sievers <kay@redhat.com> - 4.9.1.2-8
+- add temporary rpmlib patch to support filesystem transition
+  https://fedoraproject.org/wiki/Features/UsrMove
+
 * Fri Dec 02 2011 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-7
 - switch over to libdb, aka Berkeley DB 5.x
 

@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}8%{?dist}
+Release: %{?snapver:0.%{snapver}.}9%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -58,6 +58,8 @@ Patch305: rpm-4.9.x-gnome-help.patch
 Patch306: rpm-4.9.x-debugedit-stabs-warn.patch
 # Temporary Patch to provide support for updates
 Patch400: rpm-4.9.1.2-rpmlib-filesystem-check.patch
+# Recognize Perl script as Perl code
+Patch401: rpm-4.9.1.2-perl-script.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -230,6 +232,7 @@ packages on a system.
 %patch306 -p1 -b .debugedit-stabs-warn
 
 %patch400 -p1 -b .rpmlib-filesystem-check
+%patch401 -p1 -b .perl-script
 
 # this patch cant be applied on softfp builds
 %ifnarch armv3l armv4b armv4l armv4tl armv5tel armv5tejl armv6l armv7l
@@ -448,6 +451,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Jan 09 2012 Jindrich Novy <jnovy@redhat.com> - 4.9.1.2-9
+- recognize perl script as perl code (#772632)
+
 * Tue Dec 20 2011 Kay Sievers <kay@redhat.com> - 4.9.1.2-8
 - add temporary rpmlib patch to support filesystem transition
   https://fedoraproject.org/wiki/Features/UsrMove

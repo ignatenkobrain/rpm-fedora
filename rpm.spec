@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}9%{?dist}
+Release: %{?snapver:0.%{snapver}.}10%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -44,6 +44,7 @@ Patch5: rpm-4.9.0-armhfp.patch
 # Patches already in upstream
 Patch100: rpm-4.9.x-fontattr.patch
 Patch101: rpm-4.9.x-elfattr.patch
+Patch102: rpm-4.9.1.2-perl-python-attr.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -223,6 +224,7 @@ packages on a system.
 
 %patch100 -p1 -b .fontattr
 %patch101 -p1 -b .elfattr
+%patch102 -p1 -b .perl-python-attr
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -451,6 +453,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Jan 10 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-10
+- adjust perl and python detection rules for libmagic change (#772699)
+
 * Mon Jan 09 2012 Jindrich Novy <jnovy@redhat.com> - 4.9.1.2-9
 - recognize perl script as perl code (#772632)
 

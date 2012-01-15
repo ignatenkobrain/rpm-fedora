@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}10%{?dist}
+Release: %{?snapver:0.%{snapver}.}11%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -38,8 +38,9 @@ Patch2: rpm-4.8.90-fedora-specspo.patch
 Patch3: rpm-4.8.0-no-man-dirs.patch
 # gnupg2 comes installed by default, avoid need to drag in gnupg too
 Patch4: rpm-4.8.1-use-gpg2.patch
-#conditionally applied patch for arm hardware floating point
 Patch5: rpm-4.9.0-armhfp.patch
+#conditionally applied patch for arm hardware floating point
+Patch6: rpm-4.9.0-armhfp-logic.patch
 
 # Patches already in upstream
 Patch100: rpm-4.9.x-fontattr.patch
@@ -236,9 +237,10 @@ packages on a system.
 %patch400 -p1 -b .rpmlib-filesystem-check
 %patch401 -p1 -b .perl-script
 
+%patch5 -p1 -b .armhfp
 # this patch cant be applied on softfp builds
 %ifnarch armv3l armv4b armv4l armv4tl armv5tel armv5tejl armv6l armv7l
-%patch5 -p1 -b .armhfp
+%patch6 -p1 -b .armhfp-logic
 %endif
 
 %if %{with int_bdb}
@@ -453,6 +455,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Sun Jan 15 2012 Dennis Gilmore <dennis@ausil.us> - 4.9.1.2-11
+- always apply arm hfp macros, conditionally apply the logic to detect hfp
+
 * Tue Jan 10 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-10
 - adjust perl and python detection rules for libmagic change (#772699)
 

@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}11%{?dist}
+Release: %{?snapver:0.%{snapver}.}12%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -46,6 +46,7 @@ Patch6: rpm-4.9.0-armhfp-logic.patch
 Patch100: rpm-4.9.x-fontattr.patch
 Patch101: rpm-4.9.x-elfattr.patch
 Patch102: rpm-4.9.1.2-perl-python-attr.patch
+Patch103: rpm-4.9.x-mpsize.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -226,6 +227,7 @@ packages on a system.
 %patch100 -p1 -b .fontattr
 %patch101 -p1 -b .elfattr
 %patch102 -p1 -b .perl-python-attr
+%patch103 -p1 -b .mpsize
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -455,6 +457,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Feb 09 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-12
+- switch back to smaller BDB cache default (#752897)
+
 * Sun Jan 15 2012 Dennis Gilmore <dennis@ausil.us> - 4.9.1.2-11
 - always apply arm hfp macros, conditionally apply the logic to detect hfp
 

@@ -48,3 +48,15 @@ index dd23a4a..77d6bfe 100644
  missing   d /usr/share/doc/hello-1.0/FAQ
  ],
  [])
+diff -up rpm-4.9.1.2/tests/rpmtests.verify-output rpm-4.9.1.2/tests/rpmtests
+--- rpm-4.9.1.2/tests/rpmtests.verify-output	2012-03-07 12:20:31.889830559 +0200
++++ rpm-4.9.1.2/tests/rpmtests	2012-03-07 12:21:01.651753987 +0200
+@@ -3619,7 +3619,7 @@ runroot rpm -Va --nodeps --nouser --nogr
+ at_status=$? at_failed=false
+ $at_check_filter
+ at_fn_diff_devnull "$at_stderr" || at_failed=:
+-echo >>"$at_stdout"; $as_echo "5..T...M.    /usr/local/bin/hello
++echo >>"$at_stdout"; $as_echo ".M5....T.    /usr/local/bin/hello
+ missing   d /usr/share/doc/hello-1.0/FAQ
+ " | \
+   $at_diff - "$at_stdout" || at_failed=:

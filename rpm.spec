@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}13%{?dist}
+Release: %{?snapver:0.%{snapver}.}14%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -469,6 +469,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Wed Mar 07 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-14
+- fix backport thinko in the exclude patch
+
 * Wed Mar 07 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-13
 - fix memory corruption on rpmdb size estimation (#766260)
 - fix couple of memleaks in python bindings (#782147)

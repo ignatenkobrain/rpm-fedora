@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}12%{?dist}
+Release: %{?snapver:0.%{snapver}.}13%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
@@ -47,6 +47,12 @@ Patch100: rpm-4.9.x-fontattr.patch
 Patch101: rpm-4.9.x-elfattr.patch
 Patch102: rpm-4.9.1.2-perl-python-attr.patch
 Patch103: rpm-4.9.x-mpsize.patch
+Patch104: rpm-4.9.x-rpmdb-dsi.patch
+Patch105: rpm-4.9.x-python-memleaks.patch
+Patch106: rpm-4.9.x-verify-output.patch
+Patch107: rpm-4.9.x-include-cond.patch
+Patch108: rpm-4.9.x-exclude-warn.patch
+Patch109: rpm-4.9.x-tstest-fileinfo.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -228,6 +234,12 @@ packages on a system.
 %patch101 -p1 -b .elfattr
 %patch102 -p1 -b .perl-python-attr
 %patch103 -p1 -b .mpsize
+%patch104 -p1 -b .rpmdb-dsi
+%patch105 -p1 -b .python-memleaks
+%patch106 -p1 -b .verify-output
+%patch107 -p1 -b .include-cond
+%patch108 -p1 -b .exclude-warn
+%patch109 -p1 -b .tstest-fileinfo
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -457,6 +469,14 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Wed Mar 07 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-13
+- fix memory corruption on rpmdb size estimation (#766260)
+- fix couple of memleaks in python bindings (#782147)
+- fix regression in verify output formatting (#797964)
+- dont process spec include in false branch of if (#782970)
+- only warn on missing excluded files on build (#745629)
+- dont free up file info sets on test transactions
+
 * Thu Feb 09 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-12
 - switch back to smaller BDB cache default (#752897)
 

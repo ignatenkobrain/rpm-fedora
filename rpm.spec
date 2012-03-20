@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -438,6 +438,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Mar 20 2012 Jindrich Novy <jnovy@redhat.com> - 4.9.90-0.git11505.2
+- rebuild
+
 * Tue Mar 20 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11505.1
 - update to 4.10.0 alpha (http://rpm.org/wiki/Releases/4.10.0)
 - drop/adjust patches as necessary

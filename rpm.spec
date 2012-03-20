@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -44,6 +44,7 @@ Patch5: rpm-4.9.90-armhfp.patch
 Patch6: rpm-4.9.0-armhfp-logic.patch
 
 # Patches already in upstream
+Patch200: rpm-4.9.90-rpmte-fileinfo.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -212,6 +213,8 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
+
+%patch200 -p1 -b .rpmte-fileinfo
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -438,6 +441,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Mar 20 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11505.3
+- fix bad interaction with yum's test-transaction and pretrans scripts
+
 * Tue Mar 20 2012 Jindrich Novy <jnovy@redhat.com> - 4.9.90-0.git11505.2
 - rebuild
 

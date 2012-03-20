@@ -1,0 +1,28 @@
+commit 274dbf557d1cac90f7c278f9b6d6af05997d92df
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Tue Mar 20 16:32:54 2012 +0200
+
+    Don't free up file info sets on transaction test-runs, take II
+    
+    - Despite commit cef18c94807af0935b7796c462aab8ed39f0f376, we'd still
+      end up freeing the file info sets via rpmteClose() while going
+      through the test-transaction packages. This together with commit
+      06a2f1269b035a3a76464149834f2a5a8c4e89f2 caused install failures
+      on packages which have %pretrans scriptlets, if a test-transaction
+      was first performed on the same transaction set that gets used
+      for the "real" transaction as well. How wonderfully obscure...
+
+diff --git a/lib/rpmte.c b/lib/rpmte.c
+index d1e4f87..65e1e76 100644
+--- a/lib/rpmte.c
++++ b/lib/rpmte.c
+@@ -917,7 +917,8 @@ int rpmteProcess(rpmte te, pkgGoal goal)
+ {
+     /* Only install/erase resets pkg file info */
+     int scriptstage = (goal != PKG_INSTALL && goal != PKG_ERASE);
+-    int reset_fi = (scriptstage == 0);
++    int test = (rpmtsFlags(te->ts) & RPMTRANS_FLAG_TEST);
++    int reset_fi = (scriptstage == 0 && test == 0);
+     int failed = 1;
+ 
+     /* Dont bother opening for elements without pre/posttrans scripts */

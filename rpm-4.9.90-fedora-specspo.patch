@@ -69,7 +69,7 @@ index dc0e0fb..e0a5d1f 100644
 +	free(dstring);
      }
 -
--    dstring = _free(dstring);
+-    free(dstring);
  #endif
  
 -    rc = headerGet(h, tag, td, HEADERGET_ALLOC);

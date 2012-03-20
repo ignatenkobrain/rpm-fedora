@@ -11,8 +11,9 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.9.1.2
-%define srcver %{rpmver}%{?snapver:-%{snapver}}
+%define rpmver 4.9.90
+%define snapver git11505
+%define srcver %{rpmver}%{?snapver:.%{snapver}}
 
 %define bdbname libdb
 %define bdbver 5.2.36
@@ -21,10 +22,10 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}14%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source0: http://rpm.org/releases/rpm-4.9.x/%{name}-%{srcver}.tar.bz2
+Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %endif
@@ -33,42 +34,24 @@ Source10: libsymlink.attr
 Patch1: rpm-4.5.90-pkgconfig-path.patch
 # Fedora specspo is setup differently than what rpm expects, considering
 # this as Fedora-specific patch for now
-Patch2: rpm-4.8.90-fedora-specspo.patch
+Patch2: rpm-4.9.90-fedora-specspo.patch
 # In current Fedora, man-pages pkg owns all the localized man directories
-Patch3: rpm-4.8.0-no-man-dirs.patch
+Patch3: rpm-4.9.90-no-man-dirs.patch
 # gnupg2 comes installed by default, avoid need to drag in gnupg too
 Patch4: rpm-4.8.1-use-gpg2.patch
-Patch5: rpm-4.9.0-armhfp.patch
+Patch5: rpm-4.9.90-armhfp.patch
 #conditionally applied patch for arm hardware floating point
 Patch6: rpm-4.9.0-armhfp-logic.patch
 
 # Patches already in upstream
-Patch100: rpm-4.9.x-fontattr.patch
-Patch101: rpm-4.9.x-elfattr.patch
-Patch102: rpm-4.9.1.2-perl-python-attr.patch
-Patch103: rpm-4.9.x-mpsize.patch
-Patch104: rpm-4.9.x-rpmdb-dsi.patch
-Patch105: rpm-4.9.x-python-memleaks.patch
-Patch106: rpm-4.9.x-verify-output.patch
-Patch107: rpm-4.9.x-include-cond.patch
-Patch108: rpm-4.9.x-exclude-warn.patch
-Patch109: rpm-4.9.x-tstest-fileinfo.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
 Patch302: rpm-4.7.1-geode-i686.patch
-# To be upstreamed after rawhide-testdrive (#641377)
-Patch303: rpm-4.9.0-debuginfo-allnames.patch
 # Probably to be upstreamed in slightly different form
 Patch304: rpm-4.9.1.1-ld-flags.patch
-# Based on patch from OpenSUSE, without the C-lang related enhancements
-Patch305: rpm-4.9.x-gnome-help.patch
-# Just warn on STABS instead of failing for now
-Patch306: rpm-4.9.x-debugedit-stabs-warn.patch
 # Temporary Patch to provide support for updates
 Patch400: rpm-4.9.1.2-rpmlib-filesystem-check.patch
-# Recognize Perl script as Perl code
-Patch401: rpm-4.9.1.2-perl-script.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -230,26 +213,11 @@ packages on a system.
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
 
-%patch100 -p1 -b .fontattr
-%patch101 -p1 -b .elfattr
-%patch102 -p1 -b .perl-python-attr
-%patch103 -p1 -b .mpsize
-%patch104 -p1 -b .rpmdb-dsi
-%patch105 -p1 -b .python-memleaks
-%patch106 -p1 -b .verify-output
-%patch107 -p1 -b .include-cond
-%patch108 -p1 -b .exclude-warn
-%patch109 -p1 -b .tstest-fileinfo
-
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
-%patch303 -p1 -b .debuginfo-allnames
 %patch304 -p1 -b .ldflags
-%patch305 -p1 -b .gnome-help
-%patch306 -p1 -b .debugedit-stabs-warn
 
 %patch400 -p1 -b .rpmlib-filesystem-check
-%patch401 -p1 -b .perl-script
 
 %patch5 -p1 -b .armhfp
 # this patch cant be applied on softfp builds
@@ -278,6 +246,7 @@ export CPPFLAGS CFLAGS LDFLAGS
     --localstatedir=%{_var} \
     --sharedstatedir=%{_var}/lib \
     --libdir=%{_libdir} \
+    --with-vendor=redhat \
     %{!?with_int_bdb: --with-external-db} \
     %{!?with_plugins: --disable-plugins} \
     --with-lua \
@@ -469,6 +438,10 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Mar 20 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11505.1
+- update to 4.10.0 alpha (http://rpm.org/wiki/Releases/4.10.0)
+- drop/adjust patches as necessary
+
 * Wed Mar 07 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.1.2-14
 - fix backport thinko in the exclude patch
 

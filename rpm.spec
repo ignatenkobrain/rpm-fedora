@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -118,6 +118,16 @@ Requires: rpm = %{version}-%{release}
 # librpm uses cap_compare, introduced sometimes between libcap 2.10 and 2.16.
 # A manual require is needed, see #505596
 Requires: libcap%{_isa} >= 2.16
+
+# XXX dirty temporary hack to get past "bootstrap" deltarpm dependency issue
+# XXX isa bits isn't quite right for multilib but suffices for this purpose
+%if %{__isa_bits} == 64
+Provides: librpm.so.2()(64bit)
+Provides: librpmio.so.2()(64bit)
+%else
+Provides: librpm.so.2
+Provides: librpmio.so.2
+%endif
 
 %description libs
 This package contains the RPM shared libraries.
@@ -443,6 +453,10 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Wed Mar 21 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11505.5
+- add temporary fake library provides to get around deltarpm "bootstrap"
+  dependency (yes its dirty)
+
 * Wed Mar 21 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11505.4
 - fix overzealous sanity check breaking posttrans scripts
 

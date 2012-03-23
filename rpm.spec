@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}5%{?dist}
+Release: %{?snapver:0.%{snapver}.}7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -46,6 +46,8 @@ Patch6: rpm-4.9.0-armhfp-logic.patch
 # Patches already in upstream
 Patch200: rpm-4.9.90-rpmte-fileinfo.patch
 Patch201: rpm-4.9.90-rpmte-fileinfo-2.patch
+Patch202: rpm-4.9.90-keyid-size.patch
+Patch203: rpm-4.9.90-header-datalength.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -227,6 +229,8 @@ packages on a system.
 
 %patch200 -p1 -b .rpmte-fileinfo
 %patch201 -p1 -b .rpmte-fileinfo-2
+%patch202 -p1 -b .keyid-size
+%patch203 -p1 -b .header-datalength
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -453,6 +457,12 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri Mar 23 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11505.7
+- fix header data length calculation breakage
+
+* Thu Mar 22 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11505.6
+- fix keyid size bogosity causing breakage on 32bit systems
+
 * Wed Mar 21 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11505.5
 - add temporary fake library provides to get around deltarpm "bootstrap"
   dependency (yes its dirty)

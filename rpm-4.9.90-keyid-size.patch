@@ -1,0 +1,37 @@
+commit c5a140133505dbe3cf59c97bbf40c2f5526e5f5b
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Thu Mar 22 12:24:55 2012 +0200
+
+    Oops, "magic eight" is necessary here afterall
+    
+    - Fix regression from commit 807b402d95702f3f91e9e2bfbd2b5ca8c9964ed9,
+      the array gets passed as a pointer (how else would it work at all),
+      so despite having seemingly correct type, sizeof(keyid) depends
+      on the pointer size. This happens to be 8 on x86_64 and friends
+      but breaks on eg i386.
+    - Also return the explicit size from pgpExtractPubkeyFingerprint(),
+      this has been "broken" for much longer but then all callers should
+      really care about is -1 for error.
+
+diff --git a/rpmio/rpmpgp.c b/rpmio/rpmpgp.c
+index 4aac23d..e70cf70 100644
+--- a/rpmio/rpmpgp.c
++++ b/rpmio/rpmpgp.c
+@@ -757,7 +757,7 @@ static int getFingerprint(const uint8_t *h, size_t hlen, pgpKeyID_t keyid)
+ 	    (void) rpmDigestFinal(ctx, (void **)&d, &dlen, 0);
+ 
+ 	    if (d) {
+-		memcpy(keyid, (d + (dlen-sizeof(keyid))), sizeof(keyid));
++		memcpy(keyid, (d + (dlen-8)), 8);
+ 		free(d);
+ 		rc = 0;
+ 	    }
+@@ -787,7 +787,7 @@ int pgpExtractPubkeyFingerprint(const char * b64pkt, pgpKeyID_t keyid)
+     if (rpmBase64Decode(b64pkt, (void **)&pkt, &pktlen) == 0) {
+ 	if (pgpPubkeyFingerprint(pkt, pktlen, keyid) == 0) {
+ 	    /* if there ever was a bizarre return code for success... */
+-	    rc = sizeof(keyid);
++	    rc = 8;
+ 	}
+ 	free(pkt);
+     }

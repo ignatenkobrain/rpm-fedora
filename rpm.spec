@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}8%{?dist}
+Release: %{?snapver:0.%{snapver}.}9%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -48,6 +48,7 @@ Patch200: rpm-4.9.90-rpmte-fileinfo.patch
 Patch201: rpm-4.9.90-rpmte-fileinfo-2.patch
 Patch202: rpm-4.9.90-keyid-size.patch
 Patch203: rpm-4.9.90-header-datalength.patch
+Patch204: rpm-4.9.90-rpmdeps-args.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -221,6 +222,7 @@ packages on a system.
 %patch201 -p1 -b .rpmte-fileinfo-2
 %patch202 -p1 -b .keyid-size
 %patch203 -p1 -b .header-datalength
+%patch204 -p1 -b .rpmdeps-args
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -447,6 +449,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Mar 29 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11505.9
+- accept files as command line arguments to rpmdeps again (#807767)
+ 
 * Mon Mar 26 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11505.8
 - remove fake library provide hacks now that deltarpm got rebuilt
 

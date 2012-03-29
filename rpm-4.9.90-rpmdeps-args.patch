@@ -1,0 +1,44 @@
+commit 9a2547ff49ae2fa9a4c9118e5472bba045379f3d
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Thu Mar 29 11:26:57 2012 +0300
+
+    Accept files as command line arguments again in rpmdeps (RhBug:807767)
+    
+    - Commit a25c3c7bac95ab7eb55f0ecf0b8793d8da341611 removed what was
+      supposedly a non-supported method of passing files as arguments
+      (instead of the normal stdin method) to rpmdeps. Turns out
+      rpmdeps is even documented to take files as cli args, and that's
+      how Fedora's %filter_setup macros are calling it...
+    - Allow files as arguments again, but in a way that doesn't cause
+      argvFoo() vs popt crash-n-burn.
+    (cherry picked from commit fe252f21b370331016a952b085465cd97837aaef)
+
+diff --git a/tools/rpmdeps.c b/tools/rpmdeps.c
+index 6b0b527..c3112eb 100644
+--- a/tools/rpmdeps.c
++++ b/tools/rpmdeps.c
+@@ -60,11 +60,19 @@ main(int argc, char *argv[])
+     if (optCon == NULL)
+ 	goto exit;
+ 
+-    while (fgets(buf, sizeof(buf), stdin) != NULL) {
+-	char *be = buf + strlen(buf) - 1;
+-	while (strchr("\r\n", *be) != NULL)
+-	    *be-- = '\0';
+-	argvAdd(&av, buf);
++    /* normally files get passed through stdin but also accept files as args */
++    if (poptPeekArg(optCon)) {
++	const char *arg;
++	while ((arg = poptGetArg(optCon)) != NULL) {
++	    argvAdd(&av, arg);
++	}
++    } else {
++	while (fgets(buf, sizeof(buf), stdin) != NULL) {
++	    char *be = buf + strlen(buf) - 1;
++	    while (strchr("\r\n", *be) != NULL)
++		*be-- = '\0';
++	    argvAdd(&av, buf);
++	}
+     }
+     /* Make sure file names are sorted. */
+     argvSort(av, NULL);

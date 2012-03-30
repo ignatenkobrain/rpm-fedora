@@ -1,0 +1,24 @@
+commit 2e5d83e3d1a27044ee59f13f66b06e9011d1ac9f
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Fri Mar 30 09:56:43 2012 +0300
+
+    Axe leftover CANONARCH assignment messing up our "base" archs (RhBug:808250)
+    
+    - This should've been in commit 2a8d03669732f68f02fa7b21ec87ee3f65d11e5b,
+      the leftover CANONARCH resets the "base arch" we just set to a wrong
+      value.
+    (cherry picked from commit 7c39c65da4b1b012061ffbac179a650643d00ba9)
+
+diff --git a/installplatform b/installplatform
+index c56d5665..f7ae241 100755
+--- a/installplatform
++++ b/installplatform
+@@ -111,8 +111,6 @@ for ARCH in noarch `grep ^arch_canon $RPMRC | cut -d: -f2`; do
+   # skip architectures for which we dont have full config parameters
+   [ -z "$CANONARCH" ] && continue
+ 
+-  CANONARCH="`echo $ARCH|sed -e "$canonarch_sed"`"
+-
+   if [ "$OS" = "linux" ] && [ "$CANONCOLOR" = 3 ]; then
+       LIB=${LIB}64
+   fi

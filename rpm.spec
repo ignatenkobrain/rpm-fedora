@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}9%{?dist}
+Release: %{?snapver:0.%{snapver}.}10%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -49,6 +49,7 @@ Patch201: rpm-4.9.90-rpmte-fileinfo-2.patch
 Patch202: rpm-4.9.90-keyid-size.patch
 Patch203: rpm-4.9.90-header-datalength.patch
 Patch204: rpm-4.9.90-rpmdeps-args.patch
+Patch205: rpm-4.9.90-canonarch.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -223,6 +224,7 @@ packages on a system.
 %patch202 -p1 -b .keyid-size
 %patch203 -p1 -b .header-datalength
 %patch204 -p1 -b .rpmdeps-args
+%patch205 -p1 -b .canonarch
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -449,6 +451,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri Mar 30 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11505.10
+- fix base arch macro generation (#808250)
+
 * Thu Mar 29 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11505.9
 - accept files as command line arguments to rpmdeps again (#807767)
  

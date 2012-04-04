@@ -1,7 +1,7 @@
 # build against xz?
 %bcond_without xz
 # just for giggles, option to build with internal Berkeley DB
-%bcond_without int_bdb
+%bcond_with int_bdb
 # run internal testsuite?
 %bcond_without check
 # disable plugins initially
@@ -22,12 +22,14 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}11%{?dist}
+Release: %{?snapver:0.%{snapver}.}12%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
+%else
+BuildRequires: libdb-devel
 %endif
 Source10: libsymlink.attr
 
@@ -89,9 +91,6 @@ BuildRequires: elfutils-libelf-devel%{_isa}
 BuildRequires: readline-devel%{_isa} zlib-devel%{_isa}
 BuildRequires: nss-devel%{_isa}
 BuildRequires: nss-softokn-freebl-devel%{_isa}
-BuildRequires: libtool%{_isa}
-BuildRequires: autoconf
-BuildRequires: automake
 # The popt version here just documents an older known-good version
 BuildRequires: popt-devel%{_isa} >= 1.10.2
 BuildRequires: file-devel%{_isa}
@@ -255,11 +254,6 @@ ln -s db-%{bdbver} db
 CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss`"
 CFLAGS="$RPM_OPT_FLAGS"
 export CPPFLAGS CFLAGS LDFLAGS
-
-libtoolize
-aclocal
-autoconf
-automake
 
 # Using configure macro has some unwanted side-effects on rpm platform
 # setup, use the old-fashioned way for now only defining minimal paths.
@@ -461,6 +455,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Wed Apr 04 2012 Jindrich Novy <jnovy@redhat.com> - 4.9.90-0.git11505.12
+- rebuild against new libdb
+
 * Tue Apr 03 2012 Jindrich Novy <jnovy@redhat.com> - 4.9.90-0.git11505.11
 - build with internal libdb to allow libdb build with higher soname
 

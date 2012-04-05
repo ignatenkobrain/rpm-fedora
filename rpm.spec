@@ -12,7 +12,7 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.9.90
-%define snapver git11505
+%define snapver git11519
 %define srcver %{rpmver}%{?snapver:.%{snapver}}
 
 %define bdbname libdb
@@ -46,13 +46,6 @@ Patch5: rpm-4.9.90-armhfp.patch
 Patch6: rpm-4.9.0-armhfp-logic.patch
 
 # Patches already in upstream
-Patch200: rpm-4.9.90-rpmte-fileinfo.patch
-Patch201: rpm-4.9.90-rpmte-fileinfo-2.patch
-Patch202: rpm-4.9.90-keyid-size.patch
-Patch203: rpm-4.9.90-header-datalength.patch
-Patch204: rpm-4.9.90-rpmdeps-args.patch
-Patch205: rpm-4.9.90-canonarch.patch
-Patch206: rpm-4.9.90-int-libdb.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -221,14 +214,6 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
-
-%patch200 -p1 -b .rpmte-fileinfo
-%patch201 -p1 -b .rpmte-fileinfo-2
-%patch202 -p1 -b .keyid-size
-%patch203 -p1 -b .header-datalength
-%patch204 -p1 -b .rpmdeps-args
-%patch205 -p1 -b .canonarch
-%patch206 -p1 -b .int-libdb
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -455,6 +440,11 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Apr 05 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11519.1
+- newer git snapshot to keep patch-count down
+- fixes CVE-2012-0060, CVE-2012-0061 and CVE-2012-0815
+- fix obsoletes in installing set getting matched on provides (#810077)
+
 * Wed Apr 04 2012 Jindrich Novy <jnovy@redhat.com> - 4.9.90-0.git11505.12
 - rebuild against new libdb
 

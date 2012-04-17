@@ -12,7 +12,7 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.9.90
-%define snapver git11519
+%define snapver git11536
 %define srcver %{rpmver}%{?snapver:.%{snapver}}
 
 %define bdbname libdb
@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}12%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -325,7 +325,7 @@ make check
 # XXX this is klunky and ugly, rpm itself should handle this
 dbstat=/usr/lib/rpm/rpmdb_stat
 if [ -x "$dbstat" ]; then
-    if "$dbstat" -e -h /var/lib/rpm 2>&1 | grep -q "doesn't match environment version \| Invalid argument"; then
+    if "$dbstat" -e -h /var/lib/rpm 2>&1 | grep -q "doesn't match library version \| Invalid argument"; then
         rm -f /var/lib/rpm/__db.* 
     fi
 fi
@@ -440,6 +440,10 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Apr 16 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11536.1
+- newer git snapshot (#809402, #808750)
+- adjust posttrans script wrt bdb string change (#803866, #805613)
+
 * Thu Apr 05 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11519.1
 - newer git snapshot to keep patch-count down
 - fixes CVE-2012-0060, CVE-2012-0061 and CVE-2012-0815

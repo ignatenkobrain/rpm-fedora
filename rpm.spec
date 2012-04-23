@@ -13,7 +13,7 @@
 
 %define rpmver 4.10.0
 %define snapver beta1
-%define srcver %{rpmver}%{?snapver:.%{snapver}}
+%define srcver %{rpmver}%{?snapver:-%{snapver}}
 
 %define bdbname libdb
 %define bdbver 5.3.15

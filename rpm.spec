@@ -11,8 +11,8 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.9.90
-%define snapver git11536
+%define rpmver 4.10.0
+%define snapver beta1
 %define srcver %{rpmver}%{?snapver:.%{snapver}}
 
 %define bdbname libdb
@@ -440,6 +440,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Apr 23 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.0-0.beta1.1
+- update to 4.10.0-beta1
+
 * Mon Apr 16 2012 Panu Matilainen <pmatilai@redhat.com> - 4.9.90-0.git11536.1
 - newer git snapshot (#809402, #808750)
 - adjust posttrans script wrt bdb string change (#803866, #805613)

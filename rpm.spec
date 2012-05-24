@@ -12,7 +12,6 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.10.0
-%define snapver beta1
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
 
 %define bdbname libdb
@@ -25,7 +24,7 @@ Version: %{rpmver}
 Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
+Source0: http://rpm.org/releases/rpm-4.10.x/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %else
@@ -440,6 +439,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu May 24 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.0-1
+- update to 4.10.0 final
+
 * Mon Apr 23 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.0-0.beta1.1
 - update to 4.10.0-beta1
 

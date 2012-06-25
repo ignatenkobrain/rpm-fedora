@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.10.x/%{name}-%{srcver}.tar.bz2
@@ -51,6 +51,8 @@ Patch301: rpm-4.6.0-niagara.patch
 Patch302: rpm-4.7.1-geode-i686.patch
 # Probably to be upstreamed in slightly different form
 Patch304: rpm-4.9.1.1-ld-flags.patch
+# Compressed debuginfo support (#833311)
+Patch305: rpm-4.10.0-dwz-debuginfo.patch
 # Temporary Patch to provide support for updates
 Patch400: rpm-4.9.1.2-rpmlib-filesystem-check.patch
 
@@ -217,6 +219,7 @@ packages on a system.
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
 %patch304 -p1 -b .ldflags
+%patch305 -p1 -b .dwz-debuginfo
 
 %patch400 -p1 -b .rpmlib-filesystem-check
 
@@ -439,6 +442,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Jun 25 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.0-2
+- add dwarf compression support to debuginfo generation (#833311)
+
 * Thu May 24 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.0-1
 - update to 4.10.0 final
 

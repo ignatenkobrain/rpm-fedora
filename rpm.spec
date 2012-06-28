@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.10.x/%{name}-%{srcver}.tar.bz2
@@ -45,6 +45,7 @@ Patch5: rpm-4.9.90-armhfp.patch
 Patch6: rpm-4.9.0-armhfp-logic.patch
 
 # Patches already in upstream
+Patch100: rpm-4.10.0-ppc64p7-fixes.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -217,6 +218,8 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
+
+%patch100 -p1 -b .ppc647p-fixes
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -445,6 +448,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Jun 28 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.0-4
+- merge ppc64p7 related fixes that only went into f17 (#835978)
+
 * Wed Jun 27 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.0-3
 - add support for minidebuginfo generation (#834073)
 

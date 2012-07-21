@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}5%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}.1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.10.x/%{name}-%{srcver}.tar.bz2
@@ -450,6 +450,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Sat Jul 21 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.10.0-5.1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Mon Jul 02 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.0-5
 - force _host_vendor to redhat to better match toolchain etc (#485203)
 

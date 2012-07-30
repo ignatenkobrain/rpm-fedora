@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}5%{?dist}.1
+Release: %{?snapver:0.%{snapver}.}6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.10.x/%{name}-%{srcver}.tar.bz2
@@ -281,8 +281,8 @@ install -m 755 scripts/rpm.daily ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.daily/rpm
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/logrotate.d
 install -m 644 scripts/rpm.log ${RPM_BUILD_ROOT}%{_sysconfdir}/logrotate.d/rpm
 
-mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/tmpfiles.d
-echo "r /var/lib/rpm/__db.*" > ${RPM_BUILD_ROOT}%{_sysconfdir}/tmpfiles.d/rpm.conf
+mkdir -p ${RPM_BUILD_ROOT}/usr/lib/tmpfiles.d
+echo "r /var/lib/rpm/__db.*" > ${RPM_BUILD_ROOT}/usr/lib/tmpfiles.d/rpm.conf
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm
 
@@ -345,7 +345,7 @@ exit 0
 %defattr(-,root,root,-)
 %doc GROUPS COPYING CREDITS ChangeLog.bz2 doc/manual/[a-z]*
 
-%{_sysconfdir}/tmpfiles.d/rpm.conf
+/usr/lib/tmpfiles.d/rpm.conf
 %dir %{_sysconfdir}/rpm
 
 %attr(0755, root, root) %dir /var/lib/rpm
@@ -450,6 +450,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Jul 30 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.0-6
+- move our tmpfiles config to more politically correct location (#840192)
+
 * Sat Jul 21 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.10.0-5.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 

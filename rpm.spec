@@ -11,7 +11,7 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.10.0
+%define rpmver 4.10.1
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
 
 %define bdbname libdb
@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}6%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.10.x/%{name}-%{srcver}.tar.bz2
@@ -45,7 +45,6 @@ Patch5: rpm-4.9.90-armhfp.patch
 Patch6: rpm-4.9.0-armhfp-logic.patch
 
 # Patches already in upstream
-Patch100: rpm-4.10.0-ppc64p7-fixes.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -219,8 +218,6 @@ packages on a system.
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
 
-%patch100 -p1 -b .ppc647p-fixes
-
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
 %patch304 -p1 -b .ldflags
@@ -379,6 +376,7 @@ exit 0
 %{rpmhome}/rpmdb_*
 %{rpmhome}/rpm.daily
 %{rpmhome}/rpm.log
+%{rpmhome}/rpm.supp
 %{rpmhome}/rpm2cpio.sh
 %{rpmhome}/tgpg
 
@@ -450,6 +448,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Wed Oct 03 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.1-1
+- update to 4.10.1 ((http://rpm.org/wiki/Releases/4.10.1)
+
 * Mon Jul 30 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.0-6
 - move our tmpfiles config to more politically correct location (#840192)
 

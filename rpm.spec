@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.10.x/%{name}-%{srcver}.tar.bz2
@@ -46,6 +46,7 @@ Patch6: rpm-4.9.0-armhfp-logic.patch
 
 # Patches already in upstream
 Patch100: rpm-4.10.1-skipped-hardlinks.patch
+Patch101: rpm-4.10.1-noarch-isa.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -220,6 +221,7 @@ packages on a system.
 %patch4 -p1 -b .use-gpg2
 
 %patch100 -p1 -b .skipped-hardlinks
+%patch101 -p1 -b .noarch-isa
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -451,6 +453,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Oct 11 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.1-3
+- fix noarch __isa_* macro filter in installplatform (#865436)
+
 * Wed Oct 10 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.1-2
 - account for intentionally skipped files when verifying hardlinks (#864622)
 

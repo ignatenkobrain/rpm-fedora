@@ -11,8 +11,9 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.10.1
-%define srcver %{rpmver}%{?snapver:-%{snapver}}
+%define rpmver 4.10.90
+%define snapver git11989
+%define srcver %{rpmver}%{?snapver:.%{snapver}}
 
 %define bdbname libdb
 %define bdbver 5.3.15
@@ -21,10 +22,10 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source0: http://rpm.org/releases/rpm-4.10.x/%{name}-%{srcver}.tar.bz2
+Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %else
@@ -45,8 +46,6 @@ Patch5: rpm-4.9.90-armhfp.patch
 Patch6: rpm-4.9.0-armhfp-logic.patch
 
 # Patches already in upstream
-Patch100: rpm-4.10.1-skipped-hardlinks.patch
-Patch101: rpm-4.10.1-noarch-isa.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -58,7 +57,7 @@ Patch305: rpm-4.10.0-dwz-debuginfo.patch
 # Minidebuginfo support (#834073)
 Patch306: rpm-4.10.0-minidebuginfo.patch
 # Temporary Patch to provide support for updates
-Patch400: rpm-4.9.1.2-rpmlib-filesystem-check.patch
+Patch400: rpm-4.10.90-rpmlib-filesystem-check.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -219,9 +218,6 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
-
-%patch100 -p1 -b .skipped-hardlinks
-%patch101 -p1 -b .noarch-isa
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -453,6 +449,10 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Nov 15 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.90-0.git11989.1
+- update to 4.11 (http://rpm.org/wiki/Releases/4.11.0) post-alpha snapshot
+- drop/adjust patches as necessary
+
 * Thu Oct 11 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.1-3
 - fix noarch __isa_* macro filter in installplatform (#865436)
 

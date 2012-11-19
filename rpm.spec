@@ -375,6 +375,7 @@ exit 0
 
 %attr(0755, root, root) %dir %{rpmhome}
 %{rpmhome}/macros
+%{rpmhome}/macros.d
 %{rpmhome}/rpmpopt*
 %{rpmhome}/rpmrc
 

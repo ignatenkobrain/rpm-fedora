@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -286,6 +286,7 @@ mkdir -p ${RPM_BUILD_ROOT}/usr/lib/tmpfiles.d
 echo "r /var/lib/rpm/__db.*" > ${RPM_BUILD_ROOT}/usr/lib/tmpfiles.d/rpm.conf
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm
+mkdir -p $RPM_BUILD_ROOT%{rpmhome}/macros.d
 
 install -m 644 %{SOURCE10} ${RPM_BUILD_ROOT}%{rpmhome}/fileattrs/libsymlink.attr
 
@@ -452,6 +453,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Nov 19 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.90-0.git11989.3
+- package /usr/lib/rpm/macros.d directory (related to #846679)
+
 * Sat Nov 17 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.90-0.git11989.2
 - fix double-free on %caps in spec (#877512)
 

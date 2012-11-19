@@ -455,6 +455,7 @@ exit 0
 %changelog
 * Mon Nov 19 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.90-0.git11989.3
 - package /usr/lib/rpm/macros.d directory (related to #846679)
+- fixup a bunch of old incorrect dates in spec changelog
 
 * Sat Nov 17 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.90-0.git11989.2
 - fix double-free on %caps in spec (#877512)
@@ -884,7 +885,7 @@ exit 0
 * Fri Jun 12 2009 Stepan Kasal <skasal@redhat.com> - 4.7.0-6
 - require libcap >= 2.16 (#505596)
 
-* Tue Jun 03 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-5
+* Wed Jun 03 2009 Panu Matilainen <pmatilai@redhat.com> - 4.7.0-5
 - don't mess up problem altNEVR in python ts.check() (#501068)
 - fix hardlink size calculation on build (#503020)
 
@@ -1146,15 +1147,15 @@ exit 0
 - 4.5.90-0.git8424.4
 - handle int vs external db in posttrans too
 
-* Wed Jul 08 2008 Panu Matilainen <pmatilai@redhat.com>
+* Wed Jul 09 2008 Panu Matilainen <pmatilai@redhat.com>
 - 4.5.90-0.git8424.3
 - require curl as external url helper
 
-* Wed Jul 08 2008 Panu Matilainen <pmatilai@redhat.com>
+* Wed Jul 09 2008 Panu Matilainen <pmatilai@redhat.com>
 - 4.5.90-0.git8424.2
 - add support for building with or without internal db
 
-* Wed Jul 08 2008 Panu Matilainen <pmatilai@redhat.com>
+* Wed Jul 09 2008 Panu Matilainen <pmatilai@redhat.com>
 - rpm 4.5.90-0.git8424.1 (alpha snapshot)
 - adjust to build against Berkeley DB 4.5.20 from compat-db for now
 - add posttrans to clean up db environment mismatch after upgrade

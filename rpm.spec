@@ -11,9 +11,9 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.10.90
-%define snapver git11989
-%define srcver %{rpmver}%{?snapver:.%{snapver}}
+%define rpmver 4.11.0
+%define snapver beta1
+%define srcver %{rpmver}%{?snapver:-%{snapver}}
 
 %define bdbname libdb
 %define bdbver 5.3.15
@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -46,7 +46,6 @@ Patch5: rpm-4.9.90-armhfp.patch
 Patch6: rpm-4.9.0-armhfp-logic.patch
 
 # Patches already in upstream
-Patch100: rpm-4.10.90-caps-free.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -219,8 +218,6 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
-
-%patch100 -p1 -b .caps-free
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -454,6 +451,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Dec 10 2012 Panu Matilainen <pmatilai@redhat.com> - 4.11.0-0.beta1.1
+- update to 4.11 beta
+
 * Mon Nov 19 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.90-0.git11989.3
 - package /usr/lib/rpm/macros.d directory (related to #846679)
 - fixup a bunch of old incorrect dates in spec changelog

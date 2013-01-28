@@ -421,7 +421,7 @@ exit 0
 %{rpmhome}/*.req
 %{rpmhome}/config.*
 %{rpmhome}/mkinstalldirs
-%{rpmhome}/macros.*
+%{rpmhome}/macros.p*
 %{rpmhome}/fileattrs
 
 %files sign
@@ -453,6 +453,7 @@ exit 0
 %changelog
 * Mon Jan 28 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.0-0.beta1.2
 - armv7hl and armv7hnl should not have -mthumb (#901901)
+- fix duplicate directory ownership between rpm and rpm-build (#894201)
 
 * Mon Dec 10 2012 Panu Matilainen <pmatilai@redhat.com> - 4.11.0-0.beta1.1
 - update to 4.11 beta

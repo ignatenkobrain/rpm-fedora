@@ -17,8 +17,8 @@ diff -uNr rpm-4.9.0-orig//rpmrc.in rpm-4.9.0/rpmrc.in
  optflags: armv5tejl -O2 -g -march=armv5te
  optflags: armv6l -O2 -g -march=armv6
  optflags: armv7l -O2 -g -march=armv7
-+optflags: armv7hl -O2 -g -march=armv7-a -mfloat-abi=hard -mfpu=vfpv3-d16 -mthumb
-+optflags: armv7hnl -O2 -g -march=armv7-a -mfloat-abi=hard -mfpu=neon -mthumb
++optflags: armv7hl -O2 -g -march=armv7-a -mfloat-abi=hard -mfpu=vfpv3-d16
++optflags: armv7hnl -O2 -g -march=armv7-a -mfloat-abi=hard -mfpu=neon
  
  optflags: atarist -O2 -g -fomit-frame-pointer
  optflags: atariste -O2 -g -fomit-frame-pointer

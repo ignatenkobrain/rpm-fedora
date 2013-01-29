@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -46,7 +46,6 @@ Patch5: rpm-4.9.90-armhfp.patch
 Patch6: rpm-4.9.0-armhfp-logic.patch
 
 # Patches already in upstream
-Patch100: rpm-4.11-beta-skip-ghost.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -219,8 +218,6 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
-
-%patch100 -p1 -b .skip-ghost
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -454,6 +451,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Jan 29 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.0-0.beta1.3
+- revert yesterdays ghost-fix, it eats rpmdb's on upgrades
+
 * Mon Jan 28 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.0-0.beta1.2
 - armv7hl and armv7hnl should not have -mthumb (#901901)
 - fix duplicate directory ownership between rpm and rpm-build (#894201)

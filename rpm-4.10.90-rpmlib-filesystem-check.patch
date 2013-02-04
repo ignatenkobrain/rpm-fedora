@@ -117,7 +117,7 @@ diff -up rpm-4.10.90.git11978/lib/depends.c.rpmlib-filesystem-check rpm-4.10.90.
      if (dsflags & RPMSENSE_RPMLIB) {
 -	if (tsmem->rpmlib == NULL)
 +	if (tsmem->rpmlib == NULL) {
- 	    rpmdsRpmlibPool(tsmem->pool, &(tsmem->rpmlib), NULL);
+ 	    rpmdsRpmlibPool(rpmtsPool(ts), &(tsmem->rpmlib), NULL);
 +	    CheckFilesystemHierarchy(&(tsmem->rpmlib), rpmtsRootDir(ts));
 +	}
  	

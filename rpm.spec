@@ -11,8 +11,7 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.11.0
-%define snapver beta1
+%define rpmver 4.11.0.1
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
 
 %define bdbname libdb
@@ -22,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -451,6 +450,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Feb 04 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.0.1-1
+- update to 4.11.0.1 (http://rpm.org/wiki/Releases/4.11.0.1)
+
 * Tue Jan 29 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.0-0.beta1.3
 - revert yesterdays ghost-fix, it eats rpmdb's on upgrades
 

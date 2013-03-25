@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -165,6 +165,11 @@ Requires: findutils sed grep gawk diffutils file patch >= 2.5
 Requires: unzip gzip bzip2 cpio xz
 Requires: pkgconfig >= 1:0.24
 Requires: /usr/bin/gdb-add-index
+# Technically rpmbuild doesn't require any external configuration, but
+# creating distro-compatible packages does. To make the common case
+# "just work" while allowing for alternatives, depend on a virtual
+# provide, typically coming from redhat-rpm-config.
+Requires: system-rpm-config
 Conflicts: ocaml-runtime < 3.11.1-7
 
 %description build
@@ -450,6 +455,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+- Mon Mar 25 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.0.1-2
+- make rpm-build depend on virtual system-rpm-config provide
+
 * Mon Feb 04 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.0.1-1
 - update to 4.11.0.1 (http://rpm.org/wiki/Releases/4.11.0.1)
 

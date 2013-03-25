@@ -455,7 +455,7 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
-- Mon Mar 25 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.0.1-2
+* Mon Mar 25 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.0.1-2
 - make rpm-build depend on virtual system-rpm-config provide
 
 * Mon Feb 04 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.0.1-1

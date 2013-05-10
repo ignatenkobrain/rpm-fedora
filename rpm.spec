@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -45,6 +45,8 @@ Patch5: rpm-4.9.90-armhfp.patch
 Patch6: rpm-4.9.0-armhfp-logic.patch
 
 # Patches already in upstream
+# http://www.rpm.org/ticket/865
+Patch100: 0001-Finish-lua-5.2-support-trac-865.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -222,6 +224,8 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
+
+%patch100 -p1 -b .lua-5.2
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -455,6 +459,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri May 10 2013 Tom Callaway <spot@fedoraproject.org> - 4.11.0.1-3
+- lua 5.2 fix from upstream
+
 * Mon Mar 25 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.0.1-2
 - make rpm-build depend on virtual system-rpm-config provide
 

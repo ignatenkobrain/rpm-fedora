@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -47,6 +47,8 @@ Patch6: rpm-4.9.0-armhfp-logic.patch
 # Patches already in upstream
 # http://www.rpm.org/ticket/865
 Patch100: 0001-Finish-lua-5.2-support-trac-865.patch
+# Check for stale locks when opening write-cursors
+Patch101: rpm-4.11.x-cursor-failchk.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -226,6 +228,7 @@ packages on a system.
 %patch4 -p1 -b .use-gpg2
 
 %patch100 -p1 -b .lua-5.2
+%patch101 -p1 -b .cursor-failchk
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -459,6 +462,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu May 16 2013 Panu Matilainen <pmatilai@redhat.com> - - 4.11.0.1-4
+- check for stale locks when opening write-cursors (#860500, #962750...)
+
 * Fri May 10 2013 Tom Callaway <spot@fedoraproject.org> - 4.11.0.1-3
 - lua 5.2 fix from upstream
 

@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -49,6 +49,8 @@ Patch6: rpm-4.9.0-armhfp-logic.patch
 Patch100: 0001-Finish-lua-5.2-support-trac-865.patch
 # Check for stale locks when opening write-cursors
 Patch101: rpm-4.11.x-cursor-failchk.patch
+# Filter soname dependencies by name
+Patch102: rpm-4.11.x-filter-soname-deps.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -229,6 +231,7 @@ packages on a system.
 
 %patch100 -p1 -b .lua-5.2
 %patch101 -p1 -b .cursor-failchk
+%patch102 -p1 -b .filter-soname-deps
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -462,6 +465,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri May 17 2013 Panu Matilainen <pmatilai@redhat.com> - - 4.11.0.1-5
+- filter out non-library soname dependencies
+
 * Thu May 16 2013 Panu Matilainen <pmatilai@redhat.com> - - 4.11.0.1-4
 - check for stale locks when opening write-cursors (#860500, #962750...)
 

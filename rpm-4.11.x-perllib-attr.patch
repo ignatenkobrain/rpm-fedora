@@ -1,0 +1,20 @@
+commit 9b734cee5dc9805a6f8d24c3f30ed82a7aef5673
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Wed May 22 08:38:53 2013 +0300
+
+    Only consider files with .pm suffix as perl modules (RhBug:927211)
+    
+    - Newer file is more eager to flag files as Perl module source,
+      causing false provides to be generated. Require both magic
+      and path to match for perllib classification to reduce the pain.
+
+diff --git a/fileattrs/perllib.attr b/fileattrs/perllib.attr
+index 4e54225..fcad480 100644
+--- a/fileattrs/perllib.attr
++++ b/fileattrs/perllib.attr
+@@ -1,3 +1,5 @@
+ %__perllib_provides	%{_rpmconfigdir}/perl.prov
+ %__perllib_requires	%{_rpmconfigdir}/perl.req
+ %__perllib_magic	^Perl[[:digit:]] module source.*
++%__perllib_path		\\.pm$
++%__perllib_flags	magic_and_path

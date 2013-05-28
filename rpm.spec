@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}6%{?dist}
+Release: %{?snapver:0.%{snapver}.}7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -53,6 +53,8 @@ Patch101: rpm-4.11.x-cursor-failchk.patch
 Patch102: rpm-4.11.x-filter-soname-deps.patch
 # Stricter perllib classification
 Patch103: rpm-4.11.x-perllib-attr.patch
+# Serialize BDB environment open+close
+Patch104: rpm-4.11.x-dbenv-serialize.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -235,6 +237,7 @@ packages on a system.
 %patch101 -p1 -b .cursor-failchk
 %patch102 -p1 -b .filter-soname-deps
 %patch103 -p1 -b .perllib-attr
+%patch104 -p1 -b .dbenv-serialize
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -468,6 +471,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue May 28 2013 Panu Matilainen <pmatilai@redhat.com> - - 4.11.0.1-7
+- serialize BDB environment open/close (#924417)
+
 * Wed May 22 2013 Panu Matilainen <pmatilai@redhat.com> - - 4.11.0.1-6
 - only consider files with .pm suffix as perl modules (#927211)
 

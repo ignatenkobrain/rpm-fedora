@@ -1,0 +1,12 @@
+diff -up rpm-4.11.0.1/macros.in.siteconfig rpm-4.11.0.1/macros.in
+--- rpm-4.11.0.1/macros.in.siteconfig	2013-06-11 14:45:01.446979922 +0300
++++ rpm-4.11.0.1/macros.in	2013-06-11 14:45:22.148930246 +0300
+@@ -654,6 +654,8 @@ package or when debugging this package.\
+   export CLASSPATH}\
+   PKG_CONFIG_PATH=\"%{_libdir}/pkgconfig:%{_datadir}/pkgconfig\"\
+   export PKG_CONFIG_PATH\
++  CONFIG_SITE=NONE\
++  export CONFIG_SITE\
+   \
+   %{verbose:set -x}%{!verbose:exec > /dev/null}\
+   umask 022\

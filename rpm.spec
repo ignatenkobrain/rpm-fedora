@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -33,6 +33,8 @@ BuildRequires: libdb-devel
 %endif
 Source10: libsymlink.attr
 
+# Disable autoconf config.site processing (#962837)
+Patch1: rpm-4.11.x-siteconfig.patch
 # Fedora specspo is setup differently than what rpm expects, considering
 # this as Fedora-specific patch for now
 Patch2: rpm-4.9.90-fedora-specspo.patch
@@ -222,6 +224,7 @@ packages on a system.
 
 %prep
 %setup -q -n %{name}-%{srcver} %{?with_int_bdb:-a 1}
+%patch1 -p1 -b .siteconfig
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
@@ -461,6 +464,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Jun 11 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-0.rc1.3
+- disable autoconf config.site processing in builds (#962837)
+
 * Tue Jun 11 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-0.rc1.2
 - fix regression on addressing main package by its name (#972994)
 

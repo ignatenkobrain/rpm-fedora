@@ -1,0 +1,27 @@
+commit 389d260ca41a277de49ca0154966d549945d8635
+Author: Kyle McMartin <kmcmarti@redhat.com>
+Date:   Sun Jun 16 12:48:46 2013 -0400
+
+    debugedit: handle aarch64 debug_info relocations (RhBug:974860)
+    
+    AArch64 generates a relocation which must be handled similar to other
+    architectures. Adding this patch allows debugedit to run against the
+    kernel debuginfo.
+    
+    Signed-off-by: Panu Matilainen <pmatilai@redhat.com>
+
+diff --git a/tools/debugedit.c b/tools/debugedit.c
+index a658d5b..434bab0 100644
+--- a/tools/debugedit.c
++++ b/tools/debugedit.c
+@@ -1158,6 +1158,10 @@ edit_dwarf2 (DSO *dso)
+ 		  if (rtype != R_ALPHA_REFLONG)
+ 		    goto fail;
+ 		  break;
++		case EM_AARCH64:
++		  if (rtype != R_AARCH64_ABS32)
++		    goto fail;
++		  break;
+ 		default:
+ 		fail:
+ 		  error (1, 0, "%s: Unhandled relocation %d in .debug_info section",

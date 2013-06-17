@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -51,6 +51,8 @@ Patch6: rpm-4.9.0-armhfp-logic.patch
 Patch100: rpm-4.11.x-filter-soname-deps.patch
 # Fix regression on addressing main package by its name
 Patch101: rpm-4.11.1-rc1-lookup-mainpkg.patch
+# handle aarch64 debug_info relocations
+Patch102: rpm-4.11.x-aarch64-debugedit.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -231,6 +233,7 @@ packages on a system.
 
 %patch100 -p1 -b .filter-soname-deps
 %patch101 -p1 -b .lookup-mainpkg
+%patch102 -p1 -b .aarch64-debugedit
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -464,6 +467,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Jun 17 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-0.rc1.4
+- handle aarch64 debug_info relocations in debugedit (#974860)
+
 * Tue Jun 11 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-0.rc1.3
 - disable autoconf config.site processing in builds (#962837)
 

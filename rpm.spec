@@ -12,7 +12,6 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.11.1
-%define snapver rc2
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
 
 %define bdbname libdb
@@ -461,6 +460,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Jun 27 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-1
+- update to 4.11.1 final (http://rpm.org/wiki/Releases/4.11.1)
+
 * Thu Jun 20 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-0.rc2.1
 - update to 4.11.2-rc2 (http://rpm.org/wiki/Releases/4.11.1)
 - drop upstreamed patches

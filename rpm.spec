@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -58,6 +58,8 @@ Patch304: rpm-4.9.1.1-ld-flags.patch
 Patch305: rpm-4.10.0-dwz-debuginfo.patch
 # Minidebuginfo support (#834073)
 Patch306: rpm-4.10.0-minidebuginfo.patch
+# Fix CRC32 after dwz (#971119)
+Patch307: rpm-4.11.1-sepdebugcrcfix.patch
 # Temporary Patch to provide support for updates
 Patch400: rpm-4.10.90-rpmlib-filesystem-check.patch
 
@@ -233,6 +235,7 @@ packages on a system.
 %patch304 -p1 -b .ldflags
 %patch305 -p1 -b .dwz-debuginfo
 %patch306 -p1 -b .minidebuginfo
+%patch307 -p1 -b .sepdebugcrcfix
 
 %patch400 -p1 -b .rpmlib-filesystem-check
 
@@ -421,6 +424,7 @@ exit 0
 %{rpmhome}/brp-*
 %{rpmhome}/check-*
 %{rpmhome}/debugedit
+%{rpmhome}/sepdebugcrcfix
 %{rpmhome}/find-debuginfo.sh
 %{rpmhome}/find-lang.sh
 %{rpmhome}/*provides*
@@ -460,6 +464,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Jul 04 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-2
+- fix .gnu_debuglink CRC32 after dwz (#971119)
+
 * Thu Jun 27 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-1
 - update to 4.11.1 final (http://rpm.org/wiki/Releases/4.11.1)
 

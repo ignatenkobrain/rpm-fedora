@@ -108,6 +108,8 @@ BuildRequires: libacl-devel%{_isa}
 %if ! %{without xz}
 BuildRequires: xz-devel%{_isa} >= 4.999.8
 %endif
+# Only required by sepdebugcrcfix patch
+BuildRequires: binutils-devel
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -465,7 +467,7 @@ exit 0
 
 %changelog
 * Thu Jul 04 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-2
-- fix .gnu_debuglink CRC32 after dwz (#971119)
+- fix .gnu_debuglink CRC32 after dwz, buildrequire binutils-devel (#971119)
 
 * Thu Jun 27 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-1
 - update to 4.11.1 final (http://rpm.org/wiki/Releases/4.11.1)

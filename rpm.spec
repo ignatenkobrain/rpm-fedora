@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -48,6 +48,7 @@ Patch6: rpm-4.9.0-armhfp-logic.patch
 # Patches already in upstream
 # Filter soname dependencies by name
 Patch100: rpm-4.11.x-filter-soname-deps.patch
+Patch101: rpm-4.11.1-instprefix.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -231,6 +232,7 @@ packages on a system.
 %patch4 -p1 -b .use-gpg2
 
 %patch100 -p1 -b .filter-soname-deps
+%patch101 -p1 -b .instprefix
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -466,6 +468,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri Jul 05 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-3
+- ensure relocatable packages always get install-prefix(es) set (#979443)
+
 * Thu Jul 04 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-2
 - fix .gnu_debuglink CRC32 after dwz, buildrequire binutils-devel (#971119)
 

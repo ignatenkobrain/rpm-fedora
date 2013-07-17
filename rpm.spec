@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}.1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -468,6 +468,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Wed Jul 17 2013 Petr Pisar <ppisar@redhat.com> - 4.11.1-3.1
+- Perl 5.18 rebuild
+
 * Fri Jul 05 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-3
 - ensure relocatable packages always get install-prefix(es) set (#979443)
 

@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}.1
+Release: %{?snapver:0.%{snapver}.}4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -49,6 +49,7 @@ Patch6: rpm-4.9.0-armhfp-logic.patch
 # Filter soname dependencies by name
 Patch100: rpm-4.11.x-filter-soname-deps.patch
 Patch101: rpm-4.11.1-instprefix.patch
+Patch102: rpm-4.11.x-do-not-filter-ld64.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -233,6 +234,7 @@ packages on a system.
 
 %patch100 -p1 -b .filter-soname-deps
 %patch101 -p1 -b .instprefix
+%patch102 -p1 -b .dont-filter-ld64
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -468,6 +470,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Jul 30 2013 Florian Festi <ffesti@redhat.com> - 4.11.1-4
+- Do not filter out lib64.* dependencies (#988373)
+
 * Wed Jul 17 2013 Petr Pisar <ppisar@redhat.com> - 4.11.1-3.1
 - Perl 5.18 rebuild
 

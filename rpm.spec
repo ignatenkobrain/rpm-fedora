@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -171,7 +171,7 @@ Group: Development/Tools
 Requires: rpm = %{version}-%{release}
 Requires: elfutils >= 0.128 binutils
 Requires: findutils sed grep gawk diffutils file patch >= 2.5
-Requires: unzip gzip bzip2 cpio xz
+Requires: tar unzip gzip bzip2 cpio xz
 Requires: pkgconfig >= 1:0.24
 Requires: /usr/bin/gdb-add-index
 # Technically rpmbuild doesn't require any external configuration, but
@@ -470,6 +470,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri Aug 02 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-5
+- add missing dependency on tar to rpm-build (#986539)
+
 * Tue Jul 30 2013 Florian Festi <ffesti@redhat.com> - 4.11.1-4
 - Do not filter out lib64.* dependencies (#988373)
 

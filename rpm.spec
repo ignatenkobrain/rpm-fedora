@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}5%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}.1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -470,6 +470,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Sat Aug 03 2013 Petr Pisar <ppisar@redhat.com> - 4.11.1-5.1
+- Perl 5.18 rebuild
+
 * Fri Aug 02 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-5
 - add missing dependency on tar to rpm-build (#986539)
 

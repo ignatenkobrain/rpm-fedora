@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}5%{?dist}.1
+Release: %{?snapver:0.%{snapver}.}6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -62,6 +62,8 @@ Patch305: rpm-4.10.0-dwz-debuginfo.patch
 Patch306: rpm-4.10.0-minidebuginfo.patch
 # Fix CRC32 after dwz (#971119)
 Patch307: rpm-4.11.1-sepdebugcrcfix.patch
+# To be upstreamed in slightly different form
+Patch308: rpm-4.11.0.1-setuppy-fixes.patch
 # Temporary Patch to provide support for updates
 Patch400: rpm-4.10.90-rpmlib-filesystem-check.patch
 
@@ -104,6 +106,7 @@ BuildRequires: libsemanage-devel%{_isa}
 BuildRequires: ncurses-devel%{_isa}
 BuildRequires: bzip2-devel%{_isa} >= 0.9.0c-2
 BuildRequires: python-devel%{_isa} >= 2.6
+BuildRequires: python3-devel%{_isa} >= 3.2
 BuildRequires: lua-devel%{_isa} >= 5.1
 BuildRequires: libcap-devel%{_isa}
 BuildRequires: libacl-devel%{_isa}
@@ -194,7 +197,7 @@ Requires: rpm-build-libs%{_isa} = %{version}-%{release}
 This package contains support for digitally signing RPM packages.
 
 %package python
-Summary: Python bindings for apps which will manipulate RPM packages
+Summary: Python 2 bindings for apps which will manipulate RPM packages
 Group: Development/Libraries
 Requires: rpm = %{version}-%{release}
 
@@ -203,7 +206,20 @@ The rpm-python package contains a module that permits applications
 written in the Python programming language to use the interface
 supplied by RPM Package Manager libraries.
 
-This package should be installed if you want to develop Python
+This package should be installed if you want to develop Python 2
+programs that will manipulate RPM packages and databases.
+
+%package python3
+Summary: Python 3 bindings for apps which will manipulate RPM packages
+Group: Development/Libraries
+Requires: rpm = %{version}-%{release}
+
+%description python3
+The rpm-python3 package contains a module that permits applications
+written in the Python programming language to use the interface
+supplied by RPM Package Manager libraries.
+
+This package should be installed if you want to develop Python 3
 programs that will manipulate RPM packages and databases.
 
 %package apidocs
@@ -242,6 +258,7 @@ packages on a system.
 %patch305 -p1 -b .dwz-debuginfo
 %patch306 -p1 -b .minidebuginfo
 %patch307 -p1 -b .sepdebugcrcfix
+%patch308 -p1 -b .setuppy-fixes
 
 %patch400 -p1 -b .rpmlib-filesystem-check
 
@@ -285,10 +302,24 @@ export CPPFLAGS CFLAGS LDFLAGS
 
 make %{?_smp_mflags}
 
+pushd python
+%{__python} setup.py build
+%{__python3} setup.py build
+popd
+
 %install
 rm -rf $RPM_BUILD_ROOT
 
 make DESTDIR="$RPM_BUILD_ROOT" install
+
+# We need to build with --enable-python for the self-test suite, but we
+# actually package the bindings built with setup.py (#531543#c26)
+rm -rf $RPM_BUILD_ROOT/%{python_sitearch}
+pushd python
+%{__python} setup.py install --skip-build --root $RPM_BUILD_ROOT
+%{__python3} setup.py install --skip-build --root $RPM_BUILD_ROOT
+popd
+
 
 # Save list of packages through cron
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.daily
@@ -451,6 +482,12 @@ exit 0
 %files python
 %defattr(-,root,root)
 %{python_sitearch}/rpm
+%{python_sitearch}/rpm_python-%{version}-py2.7.egg-info
+
+%files python3
+%defattr(-,root,root)
+%{python3_sitearch}/rpm
+%{python3_sitearch}/rpm_python-%{version}-py%{python3_version}.egg-info
 
 %files devel
 %defattr(-,root,root)
@@ -470,6 +507,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Wed Aug 21 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-6
+- add python3 sub-package, based on patch by Bohuslav Kabrda
+
 * Sat Aug 03 2013 Petr Pisar <ppisar@redhat.com> - 4.11.1-5.1
 - Perl 5.18 rebuild
 

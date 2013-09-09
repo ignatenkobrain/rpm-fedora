@@ -21,10 +21,10 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}6%{?dist}
+Release: %{?snapver:0.%{snapver}.}7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
+Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %else
@@ -50,6 +50,9 @@ Patch6: rpm-4.9.0-armhfp-logic.patch
 Patch100: rpm-4.11.x-filter-soname-deps.patch
 Patch101: rpm-4.11.1-instprefix.patch
 Patch102: rpm-4.11.x-do-not-filter-ld64.patch
+Patch103: rpm-4.11.1-file-triplet-check.patch
+Patch104: rpm-4.11.1-caps-double-free.patch
+Patch105: rpm-4.11.1-empty-lua-script.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -251,6 +254,9 @@ packages on a system.
 %patch100 -p1 -b .filter-soname-deps
 %patch101 -p1 -b .instprefix
 %patch102 -p1 -b .dont-filter-ld64
+%patch103 -p1 -b .file-triplet-check
+%patch104 -p1 -b .caps-double-free
+%patch105 -p1 -b .empty-lua-script
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -507,6 +513,12 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Sep 09 2013 Matilainen <pmatilai@redhat.com> - 4.11.1-7
+- fix build-time double-free on file capability processing (#956190)
+- fix relocation related regression on file sanity check (#1001553)
+- fix segfault on empty -p <lua> scriptlet body (#1004062)
+- fix source url, once again
+
 * Wed Aug 21 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-6
 - add python3 sub-package, based on patch by Bohuslav Kabrda
 

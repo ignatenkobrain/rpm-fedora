@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}8%{?dist}
+Release: %{?snapver:0.%{snapver}.}9%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -54,6 +54,7 @@ Patch103: rpm-4.11.1-file-triplet-check.patch
 Patch104: rpm-4.11.1-caps-double-free.patch
 Patch105: rpm-4.11.1-empty-lua-script.patch
 Patch106: rpm-4.11.1-ppc64le.patch
+Patch107: rpm-4.11.1-application-provides.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -259,6 +260,7 @@ packages on a system.
 %patch104 -p1 -b .caps-double-free
 %patch105 -p1 -b .empty-lua-script
 %patch106 -p1 -b .ppc64le
+%patch107 -p1 -b .application-provides
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -515,6 +517,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Oct 14 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-9
+- generate application() provides for gnome-software
+
 * Tue Oct 01 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-8
 - add support for ppc64le architecture
 

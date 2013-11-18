@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}9%{?dist}
+Release: %{?snapver:0.%{snapver}.}10%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -55,6 +55,7 @@ Patch104: rpm-4.11.1-caps-double-free.patch
 Patch105: rpm-4.11.1-empty-lua-script.patch
 Patch106: rpm-4.11.1-ppc64le.patch
 Patch107: rpm-4.11.1-application-provides.patch
+Patch108: rpm-4.11.1-py3-fixes.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -261,6 +262,7 @@ packages on a system.
 %patch105 -p1 -b .empty-lua-script
 %patch106 -p1 -b .ppc64le
 %patch107 -p1 -b .application-provides
+%patch108 -p1 -b .py3-fixes
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -517,6 +519,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Nov 18 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-10
+- python 3 string and file compatibility fixes
+
 * Mon Oct 14 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-9
 - generate application() provides for gnome-software
 

@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}10%{?dist}
+Release: %{?snapver:0.%{snapver}.}11%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -44,6 +44,8 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 Patch5: rpm-4.9.90-armhfp.patch
 #conditionally applied patch for arm hardware floating point
 Patch6: rpm-4.9.0-armhfp-logic.patch
+# Generate kmod(basename.ko) provides for kernel
+Patch7: rpm-4.11.1-kmod-find-provides.patch
 
 # Patches already in upstream
 # Filter soname dependencies by name
@@ -253,6 +255,7 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
+%patch7 -p1 -b .kmod-provides
 
 %patch100 -p1 -b .filter-soname-deps
 %patch101 -p1 -b .instprefix
@@ -519,6 +522,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Dec 03 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-11
+- generate kmod(module.ko) provides for kernel (#1025513)
+
 * Mon Nov 18 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-10
 - python 3 string and file compatibility fixes
 

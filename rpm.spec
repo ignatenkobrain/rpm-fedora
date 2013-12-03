@@ -524,6 +524,7 @@ exit 0
 %changelog
 * Tue Dec 03 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-11
 - generate kmod(module.ko) provides for kernel (#1025513)
+- dont override CONFIG_SITE if already set (related to #962837)
 
 * Mon Nov 18 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-10
 - python 3 string and file compatibility fixes

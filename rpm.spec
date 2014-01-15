@@ -21,7 +21,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}11%{?dist}
+Release: %{?snapver:0.%{snapver}.}12%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -522,6 +522,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Wed Jan 15 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-12
+- include ppc64le in %%power64 macro (#1052930)
+
 * Tue Dec 03 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-11
 - generate kmod(module.ko) provides for kernel (#1025513)
 - dont override CONFIG_SITE if already set (related to #962837)

@@ -522,7 +522,7 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
-* Wed Jan 15 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-12
+* Wed Jan 15 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-12
 - include ppc64le in %%power64 macro (#1052930)
 
 * Tue Dec 03 2013 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-11

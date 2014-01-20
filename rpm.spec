@@ -118,6 +118,8 @@ BuildRequires: xz-devel%{_isa} >= 4.999.8
 %endif
 # Only required by sepdebugcrcfix patch
 BuildRequires: binutils-devel
+# Couple of patches change makefiles so, require for now...
+BuildRequires: automake
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 

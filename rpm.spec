@@ -11,8 +11,10 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.11.1
+%define rpmver 4.11.2
+%define snapver rc1
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
+%define eggver %{rpmver}%{?snapver:_%{snapver}}
 
 %define bdbname libdb
 %define bdbver 5.3.15
@@ -21,7 +23,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}12%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -50,14 +52,7 @@ Patch7: rpm-4.11.1-kmod-find-provides.patch
 # Patches already in upstream
 # Filter soname dependencies by name
 Patch100: rpm-4.11.x-filter-soname-deps.patch
-Patch101: rpm-4.11.1-instprefix.patch
-Patch102: rpm-4.11.x-do-not-filter-ld64.patch
-Patch103: rpm-4.11.1-file-triplet-check.patch
-Patch104: rpm-4.11.1-caps-double-free.patch
-Patch105: rpm-4.11.1-empty-lua-script.patch
-Patch106: rpm-4.11.1-ppc64le.patch
-Patch107: rpm-4.11.1-application-provides.patch
-Patch108: rpm-4.11.1-py3-fixes.patch
+Patch101: rpm-4.11.x-do-not-filter-ld64.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -258,14 +253,7 @@ packages on a system.
 %patch7 -p1 -b .kmod-provides
 
 %patch100 -p1 -b .filter-soname-deps
-%patch101 -p1 -b .instprefix
-%patch102 -p1 -b .dont-filter-ld64
-%patch103 -p1 -b .file-triplet-check
-%patch104 -p1 -b .caps-double-free
-%patch105 -p1 -b .empty-lua-script
-%patch106 -p1 -b .ppc64le
-%patch107 -p1 -b .application-provides
-%patch108 -p1 -b .py3-fixes
+%patch101 -p1 -b .dont-filter-ld64
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -497,12 +485,12 @@ exit 0
 %files python
 %defattr(-,root,root)
 %{python_sitearch}/rpm
-%{python_sitearch}/rpm_python-%{version}-py2.7.egg-info
+%{python_sitearch}/rpm_python-%{eggver}-py2.7.egg-info
 
 %files python3
 %defattr(-,root,root)
 %{python3_sitearch}/rpm
-%{python3_sitearch}/rpm_python-%{version}-py%{python3_version}.egg-info
+%{python3_sitearch}/rpm_python-%{eggver}-py%{python3_version}.egg-info
 
 %files devel
 %defattr(-,root,root)
@@ -522,6 +510,11 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Jan 20 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-0.rc1.1
+- update to 4.11.2-rc1 (http://rpm.org/wiki/Releases/4.11.2)
+- drop upstreamed patches, adjust others as needed
+- handle python egg-info's version munging in file lists
+
 * Wed Jan 15 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.1-12
 - include ppc64le in %%power64 macro (#1052930)
 

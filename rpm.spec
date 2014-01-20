@@ -119,7 +119,7 @@ BuildRequires: xz-devel%{_isa} >= 4.999.8
 # Only required by sepdebugcrcfix patch
 BuildRequires: binutils-devel
 # Couple of patches change makefiles so, require for now...
-BuildRequires: automake
+BuildRequires: automake libtool
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -285,6 +285,8 @@ ln -s db-%{bdbver} db
 CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss`"
 CFLAGS="$RPM_OPT_FLAGS"
 export CPPFLAGS CFLAGS LDFLAGS
+
+autoreconf -i -f
 
 # Using configure macro has some unwanted side-effects on rpm platform
 # setup, use the old-fashioned way for now only defining minimal paths.

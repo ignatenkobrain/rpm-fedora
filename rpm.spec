@@ -12,7 +12,6 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.11.2
-%define snapver rc2
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
 %define eggver %{rpmver}%{?snapver:_%{snapver}}
 
@@ -514,6 +513,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Feb 13 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-1
+- update to 4.11.2 final (http://rpm.org/wiki/Releases/4.11.2)
+
 * Thu Feb 06 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-0.rc2.1
 - update to 4.11.2-rc2 (http://rpm.org/wiki/Releases/4.11.2)
 

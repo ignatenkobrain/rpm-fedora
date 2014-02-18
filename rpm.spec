@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -47,6 +47,10 @@ Patch5: rpm-4.9.90-armhfp.patch
 Patch6: rpm-4.9.0-armhfp-logic.patch
 # Generate kmod(basename.ko) provides for kernel
 Patch7: rpm-4.11.1-kmod-find-provides.patch
+
+# Fedora has big package stacks based on broken dependency EVRs, reduce the
+# double separator error into an error on released versions (#1065563)
+Patch10: rpm-4.11.2-double-separator-warning.patch
 
 # Patches already in upstream
 # Filter soname dependencies by name
@@ -252,6 +256,8 @@ packages on a system.
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
 %patch7 -p1 -b .kmod-provides
+
+%patch10 -p1 -b .double-sep-warning
 
 %patch100 -p1 -b .filter-soname-deps
 %patch101 -p1 -b .dont-filter-ld64
@@ -513,6 +519,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Feb 18 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-2
+- reduce the double separator spec parse error into a warning (#1065563)
+
 * Thu Feb 13 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-1
 - update to 4.11.2 final (http://rpm.org/wiki/Releases/4.11.2)
 

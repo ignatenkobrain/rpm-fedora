@@ -57,6 +57,7 @@ Patch10: rpm-4.11.2-double-separator-warning.patch
 Patch100: rpm-4.11.x-filter-soname-deps.patch
 Patch101: rpm-4.11.x-do-not-filter-ld64.patch
 Patch102: rpm-4.11.2-macro-newlines.patch
+Patch103: rpm-4.11.x-reset-fileactions.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -263,6 +264,7 @@ packages on a system.
 %patch100 -p1 -b .filter-soname-deps
 %patch101 -p1 -b .dont-filter-ld64
 %patch102 -p1 -b .macro-newlines
+%patch103 -p1 -b .reset-fileactions
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -523,6 +525,7 @@ exit 0
 %changelog
 * Wed Mar 26 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-3
 - dont eat newlines on parametrized macro invocations (#1045723)
+- fully reset file actions between rpmtsRun() calls (#1076552)
 
 * Tue Feb 18 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-2
 - reduce the double separator spec parse error into a warning (#1065563)

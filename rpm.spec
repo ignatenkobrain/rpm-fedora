@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -264,7 +264,7 @@ packages on a system.
 
 %patch100 -p1 -b .filter-soname-deps
 %patch101 -p1 -b .dont-filter-ld64
-%patch102 -p1 -b .macro-newlines
+#patch102 -p1 -b .macro-newlines
 %patch103 -p1 -b .reset-fileactions
 %patch104 -p1 -b .python3-buildsign
 
@@ -525,6 +525,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu Mar 27 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-4
+- revert #1045723 fix for now, it breaks some java package macros
+
 * Wed Mar 26 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-3
 - dont eat newlines on parametrized macro invocations (#1045723)
 - fully reset file actions between rpmtsRun() calls (#1076552)

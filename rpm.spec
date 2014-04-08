@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -59,6 +59,7 @@ Patch101: rpm-4.11.x-do-not-filter-ld64.patch
 Patch102: rpm-4.11.2-macro-newlines.patch
 Patch103: rpm-4.11.x-reset-fileactions.patch
 Patch104: rpm-4.11.2-python3-buildsign.patch
+Patch105: rpm-4.11.x-rpmdeps-wrap.patch
 
 # These are not yet upstream
 Patch301: rpm-4.6.0-niagara.patch
@@ -267,6 +268,7 @@ packages on a system.
 #patch102 -p1 -b .macro-newlines
 %patch103 -p1 -b .reset-fileactions
 %patch104 -p1 -b .python3-buildsign
+%patch105 -p1 -b .rpmdeps-wrap
 
 %patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
@@ -525,6 +527,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Apr 08 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-5
+- replace unmaintained dependency generator scripts with rpmdeps wrappers
+
 * Thu Mar 27 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-4
 - revert #1045723 fix for now, it breaks some java package macros
 

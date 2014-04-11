@@ -7,7 +7,7 @@
 # disable plugins initially
 %bcond_with plugins
 # build with sanitizers?
-%bcond_without sanitizer
+%bcond_with sanitizer
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
@@ -24,7 +24,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}6%{?dist}
+Release: %{?snapver:0.%{snapver}.}7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -537,6 +537,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri Apr 11 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-7
+- disable sanitizers for now, needs more work...
+
 * Fri Apr 11 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-6
 - build with -fsanitize=address and -fsanitize=undefined for now
 - add spec build conditional for sanitizer build

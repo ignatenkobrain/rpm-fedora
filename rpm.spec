@@ -296,7 +296,7 @@ ln -s db-%{bdbver} db
 #LDFLAGS=-L%{_libdir}/db%{bdbver}
 %endif
 CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss`"
-CFLAGS="$RPM_OPT_FLAGS -fsanitize=address -fsanitize=undefined"
+CFLAGS="$RPM_OPT_FLAGS -fsanitize=address"
 export CPPFLAGS CFLAGS LDFLAGS
 
 autoreconf -i -f
@@ -528,7 +528,7 @@ exit 0
 
 %changelog
 * Fri Apr 11 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-6
-- build with -fsanitize=undefined and -fsanitize=address for now
+- build with -fsanitize=address for now
 
 * Tue Apr 08 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-5
 - replace unmaintained dependency generator scripts with rpmdeps wrappers

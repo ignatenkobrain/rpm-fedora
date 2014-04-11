@@ -6,6 +6,8 @@
 %bcond_without check
 # disable plugins initially
 %bcond_with plugins
+# build with sanitizers?
+%bcond_without sanitizer
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
@@ -127,6 +129,14 @@ BuildRequires: xz-devel%{_isa} >= 4.999.8
 BuildRequires: binutils-devel
 # Couple of patches change makefiles so, require for now...
 BuildRequires: automake libtool
+
+%if %{with sanitizer}
+BuildRequires: libasan
+BuildRequires: libubsan
+#BuildRequires: liblsan
+#BuildRequires: libtsan
+%global sanitizer_flags -fsanitize=address -fsanitize=undefined
+%endif
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -296,7 +306,7 @@ ln -s db-%{bdbver} db
 #LDFLAGS=-L%{_libdir}/db%{bdbver}
 %endif
 CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss`"
-CFLAGS="$RPM_OPT_FLAGS -fsanitize=address"
+CFLAGS="$RPM_OPT_FLAGS %{?sanitizer_flags}"
 export CPPFLAGS CFLAGS LDFLAGS
 
 autoreconf -i -f
@@ -528,7 +538,8 @@ exit 0
 
 %changelog
 * Fri Apr 11 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-6
-- build with -fsanitize=address for now
+- build with -fsanitize=address and -fsanitize=undefined for now
+- add spec build conditional for sanitizer build
 
 * Tue Apr 08 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-5
 - replace unmaintained dependency generator scripts with rpmdeps wrappers

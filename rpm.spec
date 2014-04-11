@@ -22,7 +22,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}5%{?dist}
+Release: %{?snapver:0.%{snapver}.}6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -296,7 +296,7 @@ ln -s db-%{bdbver} db
 #LDFLAGS=-L%{_libdir}/db%{bdbver}
 %endif
 CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss`"
-CFLAGS="$RPM_OPT_FLAGS"
+CFLAGS="$RPM_OPT_FLAGS -fsanitize=address -fsanitize=undefined"
 export CPPFLAGS CFLAGS LDFLAGS
 
 autoreconf -i -f
@@ -527,6 +527,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Fri Apr 11 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-6
+- build with -fsanitize=undefined and -fsanitize=address for now
+
 * Tue Apr 08 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-5
 - replace unmaintained dependency generator scripts with rpmdeps wrappers
 

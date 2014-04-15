@@ -3,7 +3,7 @@ index 7656c80..d1aeeba 100644
 --- a/scripts/Makefile.am
 +++ b/scripts/Makefile.am
 @@ -23,6 +23,7 @@ EXTRA_DIST = \
- 	macros.perl macros.php macros.python kmod.prov
+ 	macros.perl macros.php macros.python
  
  rpmconfig_SCRIPTS = \
 +	appdata.prov \

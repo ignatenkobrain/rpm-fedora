@@ -24,7 +24,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}8%{?dist}
+Release: %{?snapver:0.%{snapver}.}9%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -33,7 +33,6 @@ Source1: db-%{bdbver}.tar.gz
 %else
 BuildRequires: libdb-devel
 %endif
-Source10: libsymlink.attr
 
 # Disable autoconf config.site processing (#962837)
 Patch1: rpm-4.11.x-siteconfig.patch
@@ -47,8 +46,6 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 Patch5: rpm-4.9.90-armhfp.patch
 #conditionally applied patch for arm hardware floating point
 Patch6: rpm-4.9.0-armhfp-logic.patch
-# Generate kmod(basename.ko) provides for kernel
-Patch7: rpm-4.11.1-kmod-find-provides.patch
 
 # Fedora has big package stacks based on broken dependency EVRs, reduce the
 # double separator error into an error on released versions (#1065563)
@@ -270,7 +267,6 @@ packages on a system.
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
-%patch7 -p1 -b .kmod-provides
 
 %patch10 -p1 -b .double-sep-warning
 
@@ -365,8 +361,6 @@ echo "r /var/lib/rpm/__db.*" > ${RPM_BUILD_ROOT}/usr/lib/tmpfiles.d/rpm.conf
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm
 mkdir -p $RPM_BUILD_ROOT%{rpmhome}/macros.d
-
-install -m 644 %{SOURCE10} ${RPM_BUILD_ROOT}%{rpmhome}/fileattrs/libsymlink.attr
 
 mkdir -p $RPM_BUILD_ROOT/var/lib/rpm
 for dbi in \
@@ -539,6 +533,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Tue Apr 15 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-9
+- move kmod and libsymlink dependency generators to redhat-rpm-config
+
 * Mon Apr 14 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-8
 - fix appdata.prov script missing from package
 

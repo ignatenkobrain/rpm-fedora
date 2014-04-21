@@ -24,7 +24,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}9%{?dist}
+Release: %{?snapver:0.%{snapver}.}10%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -90,7 +90,7 @@ Requires: popt%{_isa} >= 1.10.2.1
 Requires: curl
 
 %if %{without int_bdb}
-BuildRequires: %{bdbname}-devel%{_isa}
+BuildRequires: %{bdbname}-devel
 %endif
 
 %if %{with check}
@@ -101,27 +101,27 @@ BuildRequires: fakechroot
 # is a bit special...
 BuildRequires: redhat-rpm-config
 BuildRequires: gawk
-BuildRequires: elfutils-devel%{_isa} >= 0.112
-BuildRequires: elfutils-libelf-devel%{_isa}
-BuildRequires: readline-devel%{_isa} zlib-devel%{_isa}
-BuildRequires: nss-devel%{_isa}
-BuildRequires: nss-softokn-freebl-devel%{_isa}
+BuildRequires: elfutils-devel >= 0.112
+BuildRequires: elfutils-libelf-devel
+BuildRequires: readline-devel zlib-devel
+BuildRequires: nss-devel
+BuildRequires: nss-softokn-freebl-devel
 # The popt version here just documents an older known-good version
-BuildRequires: popt-devel%{_isa} >= 1.10.2
-BuildRequires: file-devel%{_isa}
-BuildRequires: gettext-devel%{_isa}
-BuildRequires: libselinux-devel%{_isa}
+BuildRequires: popt-devel >= 1.10.2
+BuildRequires: file-devel
+BuildRequires: gettext-devel
+BuildRequires: libselinux-devel
 # XXX semanage is only used by sepolicy plugin but configure requires it...
-BuildRequires: libsemanage-devel%{_isa}
-BuildRequires: ncurses-devel%{_isa}
-BuildRequires: bzip2-devel%{_isa} >= 0.9.0c-2
-BuildRequires: python-devel%{_isa} >= 2.6
-BuildRequires: python3-devel%{_isa} >= 3.2
-BuildRequires: lua-devel%{_isa} >= 5.1
-BuildRequires: libcap-devel%{_isa}
-BuildRequires: libacl-devel%{_isa}
+BuildRequires: libsemanage-devel
+BuildRequires: ncurses-devel
+BuildRequires: bzip2-devel >= 0.9.0c-2
+BuildRequires: python-devel >= 2.6
+BuildRequires: python3-devel >= 3.2
+BuildRequires: lua-devel >= 5.1
+BuildRequires: libcap-devel
+BuildRequires: libacl-devel
 %if ! %{without xz}
-BuildRequires: xz-devel%{_isa} >= 4.999.8
+BuildRequires: xz-devel >= 4.999.8
 %endif
 # Only required by sepdebugcrcfix patch
 BuildRequires: binutils-devel
@@ -533,6 +533,10 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Mon Apr 21 2014 Tom Callaway <spot@fedoraproject.org> - 4.11.2-10
+- remove _isa from all BuildRequires (bz 554854)
+  See: https://fedoraproject.org/wiki/Packaging:Guidelines#BuildRequires_and_.25.7B_isa.7D
+
 * Tue Apr 15 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-9
 - move kmod and libsymlink dependency generators to redhat-rpm-config
 

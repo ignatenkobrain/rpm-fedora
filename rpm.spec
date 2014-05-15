@@ -24,7 +24,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}10%{?dist}
+Release: %{?snapver:0.%{snapver}.}11%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -533,6 +533,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Thu May 15 2014 Bohuslav Kabrda <bkabrda@redhat.com> - 4.11.2-11
+- Rebuilt for https://fedoraproject.org/wiki/Changes/Python_3.4
+
 * Mon Apr 21 2014 Tom Callaway <spot@fedoraproject.org> - 4.11.2-10
 - remove _isa from all BuildRequires (bz 554854)
   See: https://fedoraproject.org/wiki/Packaging:Guidelines#BuildRequires_and_.25.7B_isa.7D

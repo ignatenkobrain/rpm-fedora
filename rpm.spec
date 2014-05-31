@@ -24,7 +24,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}11%{?dist}
+Release: %{?snapver:0.%{snapver}.}12%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -417,7 +417,7 @@ exit 0
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
-%doc GROUPS COPYING CREDITS ChangeLog.bz2 doc/manual/[a-z]*
+%doc GROUPS COPYING CREDITS doc/manual/[a-z]*
 
 /usr/lib/tmpfiles.d/rpm.conf
 %dir %{_sysconfdir}/rpm
@@ -533,6 +533,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Sat May 31 2014 Peter Robinson <pbrobinson@fedoraproject.org> 4.11.2-12
+- Drop ChangeLog.bz2 (it's in the source, and it's large)
+
 * Thu May 15 2014 Bohuslav Kabrda <bkabrda@redhat.com> - 4.11.2-11
 - Rebuilt for https://fedoraproject.org/wiki/Changes/Python_3.4
 

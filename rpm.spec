@@ -24,7 +24,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}14%{?dist}
+Release: %{?snapver:0.%{snapver}.}15%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -202,6 +202,7 @@ Requires: /usr/bin/gdb-add-index
 # "just work" while allowing for alternatives, depend on a virtual
 # provide, typically coming from redhat-rpm-config.
 Requires: system-rpm-config
+Requires: perl-generators
 Conflicts: ocaml-runtime < 3.11.1-7
 
 %description build
@@ -384,8 +385,9 @@ done
 
 find $RPM_BUILD_ROOT -name "*.la"|xargs rm -f
 
-# avoid dragging in tonne of perl libs for an unused script
-chmod 0644 $RPM_BUILD_ROOT/%{rpmhome}/perldeps.pl
+# These live in perl-generators now
+rm -f $RPM_BUILD_ROOT/%{rpmhome}/{perldeps.pl,perl.*}
+rm -f $RPM_BUILD_ROOT/%{_fileattrsdir}/perl*
 
 # compress our ChangeLog, it's fairly big...
 bzip2 -9 ChangeLog
@@ -533,6 +535,9 @@ exit 0
 %doc COPYING doc/librpm/html/*
 
 %changelog
+* Wed Jun 25 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-15
+- Perl dependency generators live in perl-generators (#1110823) now
+
 * Wed Jun 18 2014 Lubomir Rintel <lkundrak@v3.sk> - 4.11.2-14
 - Fix the armhfp patch for armv6hl
 

@@ -24,7 +24,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}15%{?dist}
+Release: %{?snapver:0.%{snapver}.}16%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -419,7 +419,8 @@ exit 0
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
-%doc GROUPS COPYING CREDITS doc/manual/[a-z]*
+%license COPYING
+%doc GROUPS CREDITS doc/manual/[a-z]*
 
 /usr/lib/tmpfiles.d/rpm.conf
 %dir %{_sysconfdir}/rpm
@@ -532,9 +533,13 @@ exit 0
 
 %files apidocs
 %defattr(-,root,root)
-%doc COPYING doc/librpm/html/*
+%license COPYING
+%doc doc/librpm/html/*
 
 %changelog
+* Thu Jun 26 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-16
+- Mark licenses as such, not documentation
+
 * Wed Jun 25 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-15
 - Perl dependency generators live in perl-generators (#1110823) now
 

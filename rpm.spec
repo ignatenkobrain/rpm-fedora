@@ -24,7 +24,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}16%{?dist}
+Release: %{?snapver:0.%{snapver}.}17%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
@@ -136,8 +136,6 @@ BuildRequires: libubsan
 %global sanitizer_flags -fsanitize=address -fsanitize=undefined
 %endif
 
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-
 %description
 The RPM Package Manager (RPM) is a powerful command line driven
 package management system capable of installing, uninstalling,
@@ -203,7 +201,6 @@ Requires: /usr/bin/gdb-add-index
 # provide, typically coming from redhat-rpm-config.
 Requires: system-rpm-config
 Requires: perl-generators
-Conflicts: ocaml-runtime < 3.11.1-7
 
 %description build
 The rpm-build package contains the scripts and executable programs
@@ -389,12 +386,6 @@ find $RPM_BUILD_ROOT -name "*.la"|xargs rm -f
 rm -f $RPM_BUILD_ROOT/%{rpmhome}/{perldeps.pl,perl.*}
 rm -f $RPM_BUILD_ROOT/%{_fileattrsdir}/perl*
 
-# compress our ChangeLog, it's fairly big...
-bzip2 -9 ChangeLog
-
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %if %{with check}
 %check
 make check
@@ -537,6 +528,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Jun 26 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-17
+- Clean up old, no longer needed cruft from spec
+
 * Thu Jun 26 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-16
 - Mark licenses as such, not documentation
 

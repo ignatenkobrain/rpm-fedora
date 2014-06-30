@@ -4,18 +4,21 @@
 %bcond_with int_bdb
 # run internal testsuite?
 %bcond_with check
-# disable plugins initially
-%bcond_with plugins
+# build with plugins?
+%bcond_without plugins
 # build with sanitizers?
 %bcond_with sanitizer
+# build with libarchive? (needed for rpm2archive)
+%bcond_without libarchive
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.11.2
+%define rpmver 4.11.90
+%define snapver git12844
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
-%define eggver %{rpmver}%{?snapver:_%{snapver}}
+%define eggver %{rpmver}
 
 %define bdbname libdb
 %define bdbver 5.3.15
@@ -24,10 +27,10 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}17%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source0: http://rpm.org/releases/rpm-4.11.x/%{name}-%{srcver}.tar.bz2
+Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %else
@@ -43,26 +46,8 @@ Patch2: rpm-4.9.90-fedora-specspo.patch
 Patch3: rpm-4.9.90-no-man-dirs.patch
 # gnupg2 comes installed by default, avoid need to drag in gnupg too
 Patch4: rpm-4.8.1-use-gpg2.patch
-Patch5: rpm-4.9.90-armhfp.patch
-#conditionally applied patch for arm hardware floating point
-Patch6: rpm-4.9.0-armhfp-logic.patch
-
-# Fedora has big package stacks based on broken dependency EVRs, reduce the
-# double separator error into an error on released versions (#1065563)
-Patch10: rpm-4.11.2-double-separator-warning.patch
-
-# Patches already in upstream
-# Filter soname dependencies by name
-Patch100: rpm-4.11.x-filter-soname-deps.patch
-Patch101: rpm-4.11.x-do-not-filter-ld64.patch
-Patch102: rpm-4.11.2-macro-newlines.patch
-Patch103: rpm-4.11.x-reset-fileactions.patch
-Patch104: rpm-4.11.2-python3-buildsign.patch
-Patch105: rpm-4.11.x-rpmdeps-wrap.patch
-Patch106: rpm-4.11.2-appdata-prov.patch
 
 # These are not yet upstream
-Patch301: rpm-4.6.0-niagara.patch
 Patch302: rpm-4.7.1-geode-i686.patch
 # Probably to be upstreamed in slightly different form
 Patch304: rpm-4.9.1.1-ld-flags.patch
@@ -72,8 +57,6 @@ Patch305: rpm-4.10.0-dwz-debuginfo.patch
 Patch306: rpm-4.10.0-minidebuginfo.patch
 # Fix CRC32 after dwz (#971119)
 Patch307: rpm-4.11.1-sepdebugcrcfix.patch
-# To be upstreamed in slightly different form
-Patch308: rpm-4.11.0.1-setuppy-fixes.patch
 # Temporary Patch to provide support for updates
 Patch400: rpm-4.10.90-rpmlib-filesystem-check.patch
 
@@ -110,9 +93,6 @@ BuildRequires: nss-softokn-freebl-devel
 BuildRequires: popt-devel >= 1.10.2
 BuildRequires: file-devel
 BuildRequires: gettext-devel
-BuildRequires: libselinux-devel
-# XXX semanage is only used by sepolicy plugin but configure requires it...
-BuildRequires: libsemanage-devel
 BuildRequires: ncurses-devel
 BuildRequires: bzip2-devel >= 0.9.0c-2
 BuildRequires: python-devel >= 2.6
@@ -123,10 +103,18 @@ BuildRequires: libacl-devel
 %if ! %{without xz}
 BuildRequires: xz-devel >= 4.999.8
 %endif
+%if ! %{without libarchive}
+BuildRequires: libarchive-devel
+%endif
 # Only required by sepdebugcrcfix patch
 BuildRequires: binutils-devel
 # Couple of patches change makefiles so, require for now...
 BuildRequires: automake libtool
+
+%if %{with plugins}
+BuildRequires: libselinux-devel
+BuildRequires: dbus-devel
+%endif
 
 %if %{with sanitizer}
 BuildRequires: libasan
@@ -151,6 +139,10 @@ Requires: rpm = %{version}-%{release}
 # librpm uses cap_compare, introduced sometimes between libcap 2.10 and 2.16.
 # A manual require is needed, see #505596
 Requires: libcap%{_isa} >= 2.16
+# Drag in SELinux support at least for transition phase
+%if %{with plugins}
+Requires: rpm-plugin-selinux%{_isa} = %{version}-%{release}
+%endif
 
 %description libs
 This package contains the RPM shared libraries.
@@ -259,6 +251,32 @@ Requires: crontabs logrotate rpm = %{version}-%{release}
 This package contains a cron job which creates daily logs of installed
 packages on a system.
 
+%if %{with plugins}
+%package plugin-selinux
+Summary: Rpm plugin for SELinux functionality
+Group: System Environment/Base
+Requires: rpm-libs%{_isa} = %{version}-%{release}
+
+%description plugin-selinux
+%{summary}
+
+%package plugin-syslog
+Summary: Rpm plugin for syslog functionality
+Group: System Environment/Base
+Requires: rpm-libs%{_isa} = %{version}-%{release}
+
+%description plugin-syslog
+%{summary}
+
+%package plugin-systemd-inhibit
+Summary: Rpm plugin for systemd inhibit functionality
+Group: System Environment/Base
+Requires: rpm-libs%{_isa} = %{version}-%{release}
+
+%description plugin-systemd-inhibit
+%{summary}
+%endif
+
 %prep
 %setup -q -n %{name}-%{srcver} %{?with_int_bdb:-a 1}
 %patch1 -p1 -b .siteconfig
@@ -266,31 +284,13 @@ packages on a system.
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
 
-%patch10 -p1 -b .double-sep-warning
-
-%patch100 -p1 -b .filter-soname-deps
-%patch101 -p1 -b .dont-filter-ld64
-#patch102 -p1 -b .macro-newlines
-%patch103 -p1 -b .reset-fileactions
-%patch104 -p1 -b .python3-buildsign
-%patch105 -p1 -b .rpmdeps-wrap
-%patch106 -p1 -b .appdata-prov
-
-%patch301 -p1 -b .niagara
 %patch302 -p1 -b .geode
 %patch304 -p1 -b .ldflags
 %patch305 -p1 -b .dwz-debuginfo
 %patch306 -p1 -b .minidebuginfo
 %patch307 -p1 -b .sepdebugcrcfix
-%patch308 -p1 -b .setuppy-fixes
 
 %patch400 -p1 -b .rpmlib-filesystem-check
-
-%patch5 -p1 -b .armhfp
-# this patch cant be applied on softfp builds
-%ifnarch armv3l armv4b armv4l armv4tl armv5tel armv5tejl armv6l armv7l
-%patch6 -p1 -b .armhfp-logic
-%endif
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -420,6 +420,7 @@ exit 0
 %attr(0644, root, root) %verify(not md5 size mtime) %ghost %config(missingok,noreplace) /var/lib/rpm/*
 
 /bin/rpm
+%{_bindir}/rpm2archive
 %{_bindir}/rpm2cpio
 %{_bindir}/rpmdb
 %{_bindir}/rpmkeys
@@ -458,8 +459,17 @@ exit 0
 %defattr(-,root,root)
 %{_libdir}/librpmio.so.*
 %{_libdir}/librpm.so.*
+%dir %{_libdir}/rpm-plugins
+
 %if %{with plugins}
-%{_libdir}/rpm-plugins
+%files plugin-syslog
+%{_libdir}/rpm-plugins/syslog.so
+
+%files plugin-selinux
+%{_libdir}/rpm-plugins/selinux.so
+
+%files plugin-systemd-inhibit
+%{_libdir}/rpm-plugins/systemd_inhibit.so
 %endif
 
 %files build-libs
@@ -528,6 +538,11 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Jun 30 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.90-0.git12844.1
+- Update to rpm 4.12-alpha ((http://rpm.org/wiki/Releases/4.12.0)
+- Drop/adjust patches as appropriate
+- New sub-package(s) for plugins
+
 * Thu Jun 26 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.2-17
 - Clean up old, no longer needed cruft from spec
 

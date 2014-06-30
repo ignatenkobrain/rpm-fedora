@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -46,6 +46,9 @@ Patch2: rpm-4.9.90-fedora-specspo.patch
 Patch3: rpm-4.9.90-no-man-dirs.patch
 # gnupg2 comes installed by default, avoid need to drag in gnupg too
 Patch4: rpm-4.8.1-use-gpg2.patch
+
+# Patches already upstream:
+Patch100: rpm-4.11.90-hardlink-groups.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -283,6 +286,8 @@ Requires: rpm-libs%{_isa} = %{version}-%{release}
 %patch2 -p1 -b .fedora-specspo
 %patch3 -p1 -b .no-man-dirs
 %patch4 -p1 -b .use-gpg2
+
+%patch100 -p1 -b .hardlink-groups
 
 %patch302 -p1 -b .geode
 %patch304 -p1 -b .ldflags
@@ -538,6 +543,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Jun 30 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.90-0.git12844.2
+- Fix multiple interleaved hardlink groups during build
+
 * Mon Jun 30 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.90-0.git12844.1
 - Update to rpm 4.12-alpha ((http://rpm.org/wiki/Releases/4.12.0)
 - Drop/adjust patches as appropriate

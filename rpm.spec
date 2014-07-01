@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -60,8 +60,6 @@ Patch305: rpm-4.10.0-dwz-debuginfo.patch
 Patch306: rpm-4.10.0-minidebuginfo.patch
 # Fix CRC32 after dwz (#971119)
 Patch307: rpm-4.11.1-sepdebugcrcfix.patch
-# Temporary Patch to provide support for updates
-Patch400: rpm-4.10.90-rpmlib-filesystem-check.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -294,8 +292,6 @@ Requires: rpm-libs%{_isa} = %{version}-%{release}
 %patch305 -p1 -b .dwz-debuginfo
 %patch306 -p1 -b .minidebuginfo
 %patch307 -p1 -b .sepdebugcrcfix
-
-%patch400 -p1 -b .rpmlib-filesystem-check
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -543,6 +539,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Jul 01 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.90-0.git12844.3
+- Drop no longer needed temporary UsrMove patch
+
 * Mon Jun 30 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.90-0.git12844.2
 - Fix multiple interleaved hardlink groups during build
 

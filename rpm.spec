@@ -49,6 +49,7 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already upstream:
 Patch100: rpm-4.11.90-hardlink-groups.patch
+Patch101: rpm-4.11.90-expand-load-arg.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -286,6 +287,7 @@ Requires: rpm-libs%{_isa} = %{version}-%{release}
 %patch4 -p1 -b .use-gpg2
 
 %patch100 -p1 -b .hardlink-groups
+%patch101 -p1 -b .expand-load-arg
 
 %patch302 -p1 -b .geode
 %patch304 -p1 -b .ldflags
@@ -541,6 +543,7 @@ exit 0
 %changelog
 * Tue Jul 01 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.90-0.git12844.3
 - Drop no longer needed temporary UsrMove patch
+- Macro-expand load macro argument
 
 * Mon Jun 30 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.90-0.git12844.2
 - Fix multiple interleaved hardlink groups during build

@@ -1,0 +1,18 @@
+diff -up rpm-4.11.90-git12844/lib/rpmrc.c.arm-vfp3 rpm-4.11.90-git12844/lib/rpmrc.c
+--- rpm-4.11.90-git12844/lib/rpmrc.c.arm-vfp3	2014-07-02 13:06:07.626643228 +0300
++++ rpm-4.11.90-git12844/lib/rpmrc.c	2014-07-02 13:06:24.290591042 +0300
+@@ -1156,11 +1156,11 @@ static void defaultMachine(rpmrcCtx ctx,
+ #	if !defined(HWCAP_ARM_NEON)
+ #	    define HWCAP_ARM_NEON	(1 << 12)
+ #	endif
+-#	if !defined(HWCAP_ARM_VFPv3D16)
+-#	    define HWCAP_ARM_VFPv3D16	(1 << 13)
++#	if !defined(HWCAP_ARM_VFPv3)
++#	    define HWCAP_ARM_VFPv3	(1 << 13)
+ #	endif
+ 	if (rstreq(un.machine, "armv7l")) {
+-	    if (rpmat.hwcap & HWCAP_ARM_VFPv3D16) {
++	    if (rpmat.hwcap & HWCAP_ARM_VFPv3) {
+ 		if (rpmat.hwcap & HWCAP_ARM_NEON)
+ 		    strcpy(un.machine, "armv7hnl");
+ 		else

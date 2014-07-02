@@ -50,6 +50,7 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 # Patches already upstream:
 Patch100: rpm-4.11.90-hardlink-groups.patch
 Patch101: rpm-4.11.90-expand-load-arg.patch
+Patch102: rpm-4.11.90-arm-vfp3.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -530,6 +531,7 @@ exit 0
 %changelog
 * Wed Jul 02 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.90-0.git12844.4
 - Use autosetup for building rpm itself
+- Hopefully fix armv7 vfp/neon detection
 
 * Tue Jul 01 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.90-0.git12844.3
 - Drop no longer needed temporary UsrMove patch

@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -280,20 +280,7 @@ Requires: rpm-libs%{_isa} = %{version}-%{release}
 %endif
 
 %prep
-%setup -q -n %{name}-%{srcver} %{?with_int_bdb:-a 1}
-%patch1 -p1 -b .siteconfig
-%patch2 -p1 -b .fedora-specspo
-%patch3 -p1 -b .no-man-dirs
-%patch4 -p1 -b .use-gpg2
-
-%patch100 -p1 -b .hardlink-groups
-%patch101 -p1 -b .expand-load-arg
-
-%patch302 -p1 -b .geode
-%patch304 -p1 -b .ldflags
-%patch305 -p1 -b .dwz-debuginfo
-%patch306 -p1 -b .minidebuginfo
-%patch307 -p1 -b .sepdebugcrcfix
+%autosetup -n %{name}-%{srcver} %{?with_int_bdb:-a 1} -p1
 
 %if %{with int_bdb}
 ln -s db-%{bdbver} db
@@ -541,6 +528,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Jul 02 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.90-0.git12844.4
+- Use autosetup for building rpm itself
+
 * Tue Jul 01 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.90-0.git12844.3
 - Drop no longer needed temporary UsrMove patch
 - Macro-expand load macro argument

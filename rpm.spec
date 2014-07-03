@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -51,6 +51,7 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 Patch100: rpm-4.11.90-hardlink-groups.patch
 Patch101: rpm-4.11.90-expand-load-arg.patch
 Patch102: rpm-4.11.90-arm-vfp3.patch
+Patch103: rpm-4.11.90-mireskip.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -529,6 +530,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Jul 03 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.90-0.git12844.5
+- Fix wildcard database iterator (#1115824)
+
 * Wed Jul 02 2014 Panu Matilainen <pmatilai@redhat.com> - 4.11.90-0.git12844.4
 - Use autosetup for building rpm itself
 - Hopefully fix armv7 vfp/neon detection

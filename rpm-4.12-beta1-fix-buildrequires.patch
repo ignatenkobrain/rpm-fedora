@@ -1,0 +1,41 @@
+commit 1b41c91431d37295701281ff208f99a51f660c89
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Mon Aug 18 15:04:23 2014 +0300
+
+    Populate src.rpm header with dependencies early again
+    
+    - BuildRequire checking requires a header populated with dependencies,
+      commit a357c99c58a5e1367160dfa692f26d14bd3a3df1 changed this to
+      occur too late for this purpose. Move to initSourceHeader() seems
+      to fix, also goes to show we dont have a test-case for buildrequires...
+
+diff --git a/build/pack.c b/build/pack.c
+index 227737b..dc24fb5 100644
+--- a/build/pack.c
++++ b/build/pack.c
+@@ -702,10 +702,6 @@ rpmRC packageSources(rpmSpec spec, char **cookie)
+     headerPutString(sourcePkg->header, RPMTAG_BUILDHOST, buildHost());
+     headerPutUint32(sourcePkg->header, RPMTAG_BUILDTIME, getBuildTime(), 1);
+ 
+-    for (int i=0; i<PACKAGE_NUM_DEPS; i++) {
+-	rpmdsPutToHeader(sourcePkg->dependencies[i], sourcePkg->header);
+-    }
+-
+     /* XXX this should be %_srpmdir */
+     {	char *fn = rpmGetPath("%{_srcrpmdir}/", spec->sourceRpmName,NULL);
+ 	char *pkgcheck = rpmExpand("%{?_build_pkgcheck_srpm} ", fn, NULL);
+diff --git a/build/parseSpec.c b/build/parseSpec.c
+index e38a4d9..b14c3ee 100644
+--- a/build/parseSpec.c
++++ b/build/parseSpec.c
+@@ -466,6 +466,10 @@ static void initSourceHeader(rpmSpec spec)
+     headerCopyTags(spec->packages->header, sourcePkg->header, sourceTags);
+ 
+     /* Add the build restrictions */
++    for (int i=0; i<PACKAGE_NUM_DEPS; i++) {
++	rpmdsPutToHeader(sourcePkg->dependencies[i], sourcePkg->header);
++    }
++
+     {
+ 	HeaderIterator hi = headerInitIterator(spec->buildRestrictions);
+ 	struct rpmtd_s td;

@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}.1
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -48,6 +48,7 @@ Patch3: rpm-4.9.90-no-man-dirs.patch
 Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already upstream:
+Patch100: rpm-4.12-beta1-fix-buildrequires.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -526,6 +527,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Aug 18 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0-0.beta1.2
+- Fix regression on BuildRequires checking
+
 * Mon Aug 18 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0-0.beta1.1
 - Update to 4.12.0-beta1 (http://rpm.org/wiki/Releases/4.12.0)
 - Fixes #1122004, #1111349, #1117912, #1123722

@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -50,6 +50,7 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 # Patches already upstream:
 Patch100: rpm-4.12-beta1-fix-buildrequires.patch
 Patch101: rpm-4.12-beta1-spec-header-deps.patch
+Patch102: rpm-4.12-beta-triggerindex.patch
 
 # These are not yet upstream
 # Emergency hack for rpmdeps crash (#1131892)
@@ -530,6 +531,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Aug 20 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0-0.beta1.5
+- Fix duplicate trigger indexes caused by beta1.3 fix (#1131960)
+
 * Wed Aug 20 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0-0.beta1.4
 - Emergency hack for #1131892
 

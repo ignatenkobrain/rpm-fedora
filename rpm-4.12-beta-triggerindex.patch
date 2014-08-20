@@ -1,0 +1,27 @@
+commit 1566c18b6efbda7b4c367f4c0ee31b4d5be2d2fe
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Wed Aug 20 15:10:36 2014 +0300
+
+    Delete trigger indexes too from header before adding again (RhBug:1131892)
+    
+    - Fixes regression introduced in the regression-fix
+      commit 0bda2faa4de368a87f85084856a5fed701774acb, *facepalm*
+    - Unlike other dependency types, trigger dependencies involve a fourth
+      tag which we forgot to delete before adding again, causing duplicate
+      trigger indexes
+
+diff --git a/build/pack.c b/build/pack.c
+index 4abca48..78a4f0e 100644
+--- a/build/pack.c
++++ b/build/pack.c
+@@ -617,8 +617,9 @@ rpmRC packageBinaries(rpmSpec spec, const char *cookie, int cheating)
+ 	headerPutString(pkg->header, RPMTAG_BUILDHOST, buildHost());
+ 	headerPutUint32(pkg->header, RPMTAG_BUILDTIME, getBuildTime(), 1);
+ 
++	/* Nuke any previously added dependencies from the header */
++	headerDel(pkg->header, RPMTAG_TRIGGERINDEX);
+ 	for (int i=0; i<PACKAGE_NUM_DEPS; i++) {
+-	    /* Nuke any previously added dependencies from the header */
+ 	    headerDel(pkg->header, rpmdsTagN(pkg->dependencies[i]));
+ 	    headerDel(pkg->header, rpmdsTagEVR(pkg->dependencies[i]));
+ 	    headerDel(pkg->header, rpmdsTagF(pkg->dependencies[i]));

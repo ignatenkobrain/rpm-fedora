@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -52,6 +52,8 @@ Patch100: rpm-4.12-beta1-fix-buildrequires.patch
 Patch101: rpm-4.12-beta1-spec-header-deps.patch
 
 # These are not yet upstream
+# Emergency hack for rpmdeps crash (#1131892)
+Patch300: rpm-4.12-beta-rpmdeps.patch
 Patch302: rpm-4.7.1-geode-i686.patch
 # Probably to be upstreamed in slightly different form
 Patch304: rpm-4.9.1.1-ld-flags.patch
@@ -528,6 +530,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Aug 20 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0-0.beta1.4
+- Emergency hack for #1131892
+
 * Mon Aug 18 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0-0.beta1.3
 - Fix regression on rpmspec dependency queries
 

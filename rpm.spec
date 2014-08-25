@@ -52,7 +52,7 @@ Patch100: rpm-4.12-beta1-fix-buildrequires.patch
 Patch101: rpm-4.12-beta1-spec-header-deps.patch
 Patch102: rpm-4.12-beta-triggerindex.patch
 Patch103: rpm-4.12-beta-print-deps.patch
-Patch104: rpm-4.12-beta1-srpm-deps.patch
+Patch104: rpm-4.12-beta-srpm-deps.patch
 
 # These are not yet upstream
 # Emergency hack for rpmdeps crash (#1131892)

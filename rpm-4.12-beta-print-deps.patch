@@ -1,0 +1,51 @@
+commit 404f053f7829fa859209ded8399243dba851f263
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Mon Aug 25 10:41:27 2014 +0300
+
+    Resurrect dependency spew during build
+    
+    - Since commit a357c99c58a5e1367160dfa692f26d14bd3a3df1 the dependencies
+      are no longer in the header so there's little to print from there.
+      As it happens things are much saner this way, we no longer need
+      to create rpmds'es just to print stuff.
+
+diff --git a/build/rpmfc.c b/build/rpmfc.c
+index e798950..f22053c 100644
+--- a/build/rpmfc.c
++++ b/build/rpmfc.c
+@@ -1110,7 +1110,7 @@ static DepMsg_t DepMsgs = depMsgs;
+ 
+ /**
+  */
+-static void printDeps(rpmstrPool pool, Header h)
++static void printDeps(rpmfc fc)
+ {
+     DepMsg_t dm;
+     rpmds ds = NULL;
+@@ -1120,8 +1120,7 @@ static void printDeps(rpmstrPool pool, Header h)
+ 
+     for (dm = DepMsgs; dm->msg != NULL; dm++) {
+ 	if (dm->ntag != -1) {
+-	    rpmdsFree(ds);
+-	    ds = rpmdsNewPool(pool, h, dm->ntag, 0);
++	    ds = rpmfcDependencies(fc, dm->ntag);
+ 	}
+ 	if (dm->ftag == 0)
+ 	    continue;
+@@ -1148,7 +1147,6 @@ static void printDeps(rpmstrPool pool, Header h)
+ 	if (bingo)
+ 	    rpmlog(RPMLOG_NOTICE, "\n");
+     }
+-    rpmdsFree(ds);
+ }
+ 
+ static rpmRC rpmfcGenerateDependsHelper(const rpmSpec spec, Package pkg, rpmfi fi)
+@@ -1333,7 +1331,7 @@ rpmRC rpmfcGenerateDepends(const rpmSpec spec, Package pkg)
+ 	free(msg);
+     }
+ exit:
+-    printDeps(fc ? fc->pool : NULL, pkg->header);
++    printDeps(fc);
+ 
+     /* Clean up. */
+     free(fmode);

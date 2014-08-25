@@ -1,0 +1,33 @@
+commit 8b540fbf1bb77320772b87d40518d761f62752b3
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Mon Aug 25 11:03:00 2014 +0300
+
+    Resurrect rpmlib() dependencies on source rpms
+    
+    - Commit 0bda2faa4de368a87f85084856a5fed701774acb caused a regression
+      where rpmlib() dependencies are no longer added to src.rpm packages
+      as the header is populated early, whereas rpmlib() dependencies
+      get added late in the game. So nothing was pushing the rpmlib
+      stuff to header. Sigh.
+
+diff --git a/build/pack.c b/build/pack.c
+index 71d75f5..4aa4a66 100644
+--- a/build/pack.c
++++ b/build/pack.c
+@@ -708,6 +708,16 @@ rpmRC packageSources(rpmSpec spec, char **cookie)
+     headerPutString(sourcePkg->header, RPMTAG_BUILDHOST, buildHost());
+     headerPutUint32(sourcePkg->header, RPMTAG_BUILDTIME, getBuildTime(), 1);
+ 
++    for (int i=0; i<PACKAGE_NUM_DEPS; i++) {
++	/* Nuke any previously added dependencies from the header */
++	headerDel(sourcePkg->header, rpmdsTagN(sourcePkg->dependencies[i]));
++	headerDel(sourcePkg->header, rpmdsTagEVR(sourcePkg->dependencies[i]));
++	headerDel(sourcePkg->header, rpmdsTagF(sourcePkg->dependencies[i]));
++	headerDel(sourcePkg->header, rpmdsTagTi(sourcePkg->dependencies[i]));
++	/* ...and add again, now with automatic dependencies included */
++	rpmdsPutToHeader(sourcePkg->dependencies[i], sourcePkg->header);
++    }
++
+     /* XXX this should be %_srpmdir */
+     {	char *fn = rpmGetPath("%{_srcrpmdir}/", spec->sourceRpmName,NULL);
+ 	char *pkgcheck = rpmExpand("%{?_build_pkgcheck_srpm} ", fn, NULL);

@@ -16,7 +16,7 @@
 %define rpmhome /usr/lib/rpm
 
 %define rpmver 4.12.0
-%define snapver beta1
+%define snapver rc1
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
 %define eggver %{rpmver}%{?snapver:_%{snapver}}
 
@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}6%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/testing/%{name}-%{srcver}.tar.bz2
@@ -48,15 +48,8 @@ Patch3: rpm-4.9.90-no-man-dirs.patch
 Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already upstream:
-Patch100: rpm-4.12-beta1-fix-buildrequires.patch
-Patch101: rpm-4.12-beta1-spec-header-deps.patch
-Patch102: rpm-4.12-beta-triggerindex.patch
-Patch103: rpm-4.12-beta-print-deps.patch
-Patch104: rpm-4.12-beta-srpm-deps.patch
 
 # These are not yet upstream
-# Emergency hack for rpmdeps crash (#1131892)
-Patch300: rpm-4.12-beta-rpmdeps.patch
 Patch302: rpm-4.7.1-geode-i686.patch
 # Probably to be upstreamed in slightly different form
 Patch304: rpm-4.9.1.1-ld-flags.patch
@@ -533,6 +526,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Aug 27 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0-0.rc1.1
+- Update to rpm-4.12.0-rc1
+
 * Mon Aug 25 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0-0.beta1.6
 - Resurrect dependency logging on package build
 - Resurrect rpmlib() dependencies in src.rpms

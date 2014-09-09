@@ -1,0 +1,68 @@
+commit cac311c2ddb43b62ad9dbdb5543d50848eb9fd65
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Tue Sep 9 12:58:08 2014 +0300
+
+    Regression the 13th: The Final Friday
+    
+    - Yet another regression from the recent dependency refactoring and
+      ensuing patches-on-patches-on-patches work: some rpmlib() dependencies
+      (payload, tilde) are added as late as writeRPM(), those have been going
+      to /dev/null recently.
+    - The fix actually removing code is probably a good sign...
+
+diff --git a/build/pack.c b/build/pack.c
+index d25449f..74471d9 100644
+--- a/build/pack.c
++++ b/build/pack.c
+@@ -438,6 +438,17 @@ static rpmRC writeRPM(Package pkg, unsigned char ** pkgidp,
+     if (haveTildeDep(pkg->header))
+ 	(void) rpmlibNeedsFeature(pkg, "TildeInVersions", "4.10.0-1");
+ 
++    /* All dependencies added finally, write them into the header */
++    for (int i = 0; i < PACKAGE_NUM_DEPS; i++) {
++	/* Nuke any previously added dependencies from the header */
++	headerDel(pkg->header, rpmdsTagN(pkg->dependencies[i]));
++	headerDel(pkg->header, rpmdsTagEVR(pkg->dependencies[i]));
++	headerDel(pkg->header, rpmdsTagF(pkg->dependencies[i]));
++	headerDel(pkg->header, rpmdsTagTi(pkg->dependencies[i]));
++	/* ...and add again, now with automatic dependencies included */
++	rpmdsPutToHeader(pkg->dependencies[i], pkg->header);
++    }
++
+     /* Create and add the cookie */
+     if (cookie) {
+ 	rasprintf(cookie, "%s %d", buildHost(), (int) (*getBuildTime()));
+@@ -623,16 +634,6 @@ rpmRC packageBinaries(rpmSpec spec, const char *cookie, int cheating)
+ 	headerPutString(pkg->header, RPMTAG_BUILDHOST, buildHost());
+ 	headerPutUint32(pkg->header, RPMTAG_BUILDTIME, getBuildTime(), 1);
+ 
+-	for (int i=0; i<PACKAGE_NUM_DEPS; i++) {
+-	    /* Nuke any previously added dependencies from the header */
+-	    headerDel(pkg->header, rpmdsTagN(pkg->dependencies[i]));
+-	    headerDel(pkg->header, rpmdsTagEVR(pkg->dependencies[i]));
+-	    headerDel(pkg->header, rpmdsTagF(pkg->dependencies[i]));
+-	    headerDel(pkg->header, rpmdsTagTi(pkg->dependencies[i]));
+-	    /* ...and add again, now with automatic dependencies included */
+-	    rpmdsPutToHeader(pkg->dependencies[i], pkg->header);
+-	}
+-
+ 	if (spec->sourcePkgId != NULL) {
+ 	    headerPutBin(pkg->header, RPMTAG_SOURCEPKGID, spec->sourcePkgId,16);
+ 	}
+@@ -714,16 +715,6 @@ rpmRC packageSources(rpmSpec spec, char **cookie)
+     headerPutString(sourcePkg->header, RPMTAG_BUILDHOST, buildHost());
+     headerPutUint32(sourcePkg->header, RPMTAG_BUILDTIME, getBuildTime(), 1);
+ 
+-    for (int i=0; i<PACKAGE_NUM_DEPS; i++) {
+-	/* Nuke any previously added dependencies from the header */
+-	headerDel(sourcePkg->header, rpmdsTagN(sourcePkg->dependencies[i]));
+-	headerDel(sourcePkg->header, rpmdsTagEVR(sourcePkg->dependencies[i]));
+-	headerDel(sourcePkg->header, rpmdsTagF(sourcePkg->dependencies[i]));
+-	headerDel(sourcePkg->header, rpmdsTagTi(sourcePkg->dependencies[i]));
+-	/* ...and add again, now with automatic dependencies included */
+-	rpmdsPutToHeader(sourcePkg->dependencies[i], sourcePkg->header);
+-    }
+-
+     /* XXX this should be %_srpmdir */
+     {	char *fn = rpmGetPath("%{_srcrpmdir}/", spec->sourceRpmName,NULL);
+ 	char *pkgcheck = rpmExpand("%{?_build_pkgcheck_srpm} ", fn, NULL);

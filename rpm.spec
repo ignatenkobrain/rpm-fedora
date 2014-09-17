@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -48,6 +48,7 @@ Patch3: rpm-4.9.90-no-man-dirs.patch
 Patch4: rpm-4.8.1-use-gpg2.patch
 
 # Patches already upstream:
+Patch100: rpm-4.12.0-double-separator-warning.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -526,6 +527,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Sep 17 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0-2
+- Reduce the double separator spec parse error into a warning (#1065563)
+
 * Tue Sep 16 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0-1
 - Update to rpm-4.12.0 final (http://rpm.org/wiki/Releases/4.12.0)
 

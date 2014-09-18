@@ -15,7 +15,7 @@
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.12.0
+%define rpmver 4.12.0.1
 #define snapver rc1
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
 %define eggver %{rpmver}%{?snapver:_%{snapver}}
@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -46,9 +46,10 @@ Patch2: rpm-4.9.90-fedora-specspo.patch
 Patch3: rpm-4.9.90-no-man-dirs.patch
 # gnupg2 comes installed by default, avoid need to drag in gnupg too
 Patch4: rpm-4.8.1-use-gpg2.patch
+# Temporary band-aid for rpm2cpio whining on payload size mismatch (#1142949)
+Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 
 # Patches already upstream:
-Patch100: rpm-4.12.0-double-separator-warning.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -527,6 +528,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Sep 18 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0.1-1
+- Update to rpm-4.12.0.1 final (http://rpm.org/wiki/Releases/4.12.0.1)
+- Temporary workaround payload size mismatch issue in rpm2cpio (#1142949)
+
 * Wed Sep 17 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0-2
 - Reduce the double separator spec parse error into a warning (#1065563)
 

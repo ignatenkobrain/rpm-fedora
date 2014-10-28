@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -52,6 +52,10 @@ Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 # Patches already upstream:
 # Dont wait for transaction lock inside scriptlets (#1135596)
 Patch100: rpm-4.12.0-tslock-nowait.patch
+# Skip ghosts in payload (#1156497)
+Patch101: rpm-4.12.0-payload-ghost.patch
+# Unbreak size tag generation on big-endian systems
+Patch102: rpm-4.12.0-archive-endian.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -530,6 +534,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Oct 28 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0.1-3
+- Skip ghost files in payload (#1156497)
+- Fix size and archice size tag generation on big-endian systems
+
 * Wed Oct 01 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0.1-2
 - Dont wait for transaction lock inside scriptlets (#1135596)
 

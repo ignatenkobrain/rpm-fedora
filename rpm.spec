@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -381,6 +381,8 @@ find $RPM_BUILD_ROOT -name "*.la"|xargs rm -f
 # These live in perl-generators now
 rm -f $RPM_BUILD_ROOT/%{rpmhome}/{perldeps.pl,perl.*}
 rm -f $RPM_BUILD_ROOT/%{_fileattrsdir}/perl*
+# Axe unused cruft
+rm -f $RPM_BUILD_ROOT/%{rpmhome}/{tcl.req,osgideps.pl}
 
 %if %{with check}
 %check
@@ -534,6 +536,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Oct 30 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0.1-4
+- Axe unused generator scripts forcing a perl dependency (#1158580, #1158583)
+
 * Tue Oct 28 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0.1-3
 - Skip ghost files in payload (#1156497)
 - Fix size and archice size tag generation on big-endian systems

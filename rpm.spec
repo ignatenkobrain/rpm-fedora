@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -67,6 +67,10 @@ Patch305: rpm-4.10.0-dwz-debuginfo.patch
 Patch306: rpm-4.10.0-minidebuginfo.patch
 # Fix CRC32 after dwz (#971119)
 Patch307: rpm-4.11.1-sepdebugcrcfix.patch
+# Fix race condidition where unchecked data is exposed in the file system
+Patch308: rpm-4.12.0.x-CVE-2013-6435.patch
+# Add check against malicious CPIO file name size
+Patch309: rpm-4.12.0.x-CVE-2014-8118.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -536,6 +540,13 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Dec 12 2014 Lubos Kardos <lkardos@redhat.com> - 4.12.0.1-5
+- Add check against malicious CPIO file name size (#1168715)
+- Fixes CVE-2014-8118
+- Fix race condidition where unchecked data is exposed in the file system
+  (#1039811)
+- Fixes CVE-2013-6435
+
 * Thu Oct 30 2014 Panu Matilainen <pmatilai@redhat.com> - 4.12.0.1-4
 - Axe unused generator scripts forcing a perl dependency (#1158580, #1158583)
 

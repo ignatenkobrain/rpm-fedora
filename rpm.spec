@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}5%{?dist}
+Release: %{?snapver:0.%{snapver}.}6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -301,8 +301,8 @@ ln -s db-%{bdbver} db
 #CPPFLAGS=-I%{_includedir}/db%{bdbver} 
 #LDFLAGS=-L%{_libdir}/db%{bdbver}
 %endif
-CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss`"
-CFLAGS="$RPM_OPT_FLAGS %{?sanitizer_flags}"
+CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss` -DLUA_COMPAT_APIINTCASTS"
+CFLAGS="$RPM_OPT_FLAGS %{?sanitizer_flags} -DLUA_COMPAT_APIINTCASTS"
 export CPPFLAGS CFLAGS LDFLAGS
 
 autoreconf -i -f
@@ -540,6 +540,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Jan 16 2015 Tom Callaway <spot@fedoraproject.org> - 4.12.0.1-6
+- rebuild against lua 5.3
+
 * Fri Dec 12 2014 Lubos Kardos <lkardos@redhat.com> - 4.12.0.1-5
 - Add check against malicious CPIO file name size (#1168715)
 - Fixes CVE-2014-8118

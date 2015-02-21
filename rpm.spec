@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}7%{?dist}
+Release: %{?snapver:0.%{snapver}.}7%{?dist}.1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -543,6 +543,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sat Feb 21 2015 Till Maas <opensource@till.name> - 4.12.0.1-7.1
+- Rebuilt for Fedora 23 Change
+  https://fedoraproject.org/wiki/Changes/Harden_all_packages_with_position-independent_code
+
 * Tue Feb 17 2015 Richard W.M. Jones <rjones@redhat.com> - 4.12.0.1-7
 - Include upstream patch to fix find-debuginfo (http://www.rpm.org/ticket/887).
 

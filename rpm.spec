@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}7%{?dist}.1
+Release: %{?snapver:0.%{snapver}.}8%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -543,6 +543,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Mar 16 2015 Than Ngo <than@redhat.com> - 4.12.0.1-8
+- bump release and rebuild so that koji-shadow can rebuild it
+  against new gcc on secondary arch
+
 * Sat Feb 21 2015 Till Maas <opensource@till.name> - 4.12.0.1-7.1
 - Rebuilt for Fedora 23 Change
   https://fedoraproject.org/wiki/Changes/Harden_all_packages_with_position-independent_code

@@ -59,6 +59,8 @@ Patch102: rpm-4.12.0-archive-endian.patch
 # find-debuginfo.sh fails on ELF with more than 256 notes
 # http://www.rpm.org/ticket/887
 Patch103: 0001-Fix-find-debuginfo.sh-for-ELF-with-file-warnings.patch
+# Fix --excludedocs option (#1192625)
+Patch104: rpm-4.12.0-exclude-doc.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -543,6 +545,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Mar 20 2015 Lubos Kardos <lkardos@redhat.com> 4.12.0-10
+- Fix "--excludedocs" option (#1192625)
+
 * Fri Mar 20 2015 Florian Festi <ffesti@rpm.org> - 4.12.0.1-9
 - Fix spec to allow building without plugins (#1182385)
 * Mon Mar 16 2015 Than Ngo <than@redhat.com> - 4.12.0.1-8

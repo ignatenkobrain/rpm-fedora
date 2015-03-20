@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}8%{?dist}
+Release: %{?snapver:0.%{snapver}.}9%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -464,9 +464,9 @@ exit 0
 %defattr(-,root,root)
 %{_libdir}/librpmio.so.*
 %{_libdir}/librpm.so.*
+%if %{with plugins}
 %dir %{_libdir}/rpm-plugins
 
-%if %{with plugins}
 %files plugin-syslog
 %{_libdir}/rpm-plugins/syslog.so
 
@@ -543,6 +543,8 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Mar 20 2015 Florian Festi <ffesti@rpm.org> - 4.12.0.1-9
+- Fix spec to allow building without plugins (#1182385)
 * Mon Mar 16 2015 Than Ngo <than@redhat.com> - 4.12.0.1-8
 - bump release and rebuild so that koji-shadow can rebuild it
   against new gcc on secondary arch

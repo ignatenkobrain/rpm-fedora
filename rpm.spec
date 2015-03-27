@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}9%{?dist}
+Release: %{?snapver:0.%{snapver}.}11%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -61,6 +61,8 @@ Patch102: rpm-4.12.0-archive-endian.patch
 Patch103: 0001-Fix-find-debuginfo.sh-for-ELF-with-file-warnings.patch
 # Fix --excludedocs option (#1192625)
 Patch104: rpm-4.12.0-exclude-doc.patch
+# Pass _find_debuginfo_opts -g to eu-strip for executables (#1186563)
+Patch105: rpm-4.12.0-eu-strip-g-option.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -545,6 +547,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Mar 27 2015 Lubos Kardos <lkardos@redhat.com> 4.12.0-11
+- Pass _find_debuginfo_opts -g to eu-strip for executables (#1186563)
+- add_minidebug is not ran when strip_g is set (#1186563)
+
 * Fri Mar 20 2015 Lubos Kardos <lkardos@redhat.com> 4.12.0-10
 - Fix "--excludedocs" option (#1192625)
 

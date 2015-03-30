@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}11%{?dist}
+Release: %{?snapver:0.%{snapver}.}12%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -547,6 +547,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Mar 30 2015 Lubos Kardos <lkardos@redhat.com> 4.12.0-12
+- Fix segmentation fault (#1206750)
+
 * Fri Mar 27 2015 Lubos Kardos <lkardos@redhat.com> 4.12.0-11
 - Pass _find_debuginfo_opts -g to eu-strip for executables (#1186563)
 - add_minidebug is not ran when strip_g is set (#1186563)

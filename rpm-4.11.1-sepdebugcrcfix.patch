@@ -29,7 +29,7 @@
 @@ -316,6 +318,8 @@
  
    # strip -g implies we have full symtab, don't add mini symtab in that case.
-   strip_g || ($include_minidebug && add_minidebug "${debugfn}" "$f")
+   $strip_g || ($include_minidebug && add_minidebug "${debugfn}" "$f")
 +
 +  echo "./${f#$RPM_BUILD_ROOT}" >> "$ELFBINSFILE"
    

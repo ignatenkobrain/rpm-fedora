@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}12%{?dist}
+Release: %{?snapver:0.%{snapver}.}13%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -547,6 +547,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Mar 31 2015 Lubos Kardos <lkardos@redhat.com> 4.12.0-13
+- Fix wrong use of variable strip_g in find-debuginfo.sh (#1207434)
+
 * Mon Mar 30 2015 Lubos Kardos <lkardos@redhat.com> 4.12.0-12
 - Fix segmentation fault (#1206750)
 

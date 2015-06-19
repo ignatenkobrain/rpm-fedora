@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}15%{?dist}.1
+Release: %{?snapver:0.%{snapver}.}16%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -66,6 +66,8 @@ Patch105: rpm-4.12.0-eu-strip-g-option.patch
 # Fix golang debuginfo packages
 Patch106: rpm-4.12.0-golang-debuginfo.patch
 Patch107: rpm-4.12.0-whatrecommends.patch
+Patch108: rpm-4.12.0-gpg-passphrase1.patch
+Patch109: rpm-4.12.0-gpg-passphrase2.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -550,6 +552,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Jun 19 2015 Lubos Kardos <lkardos@redhat.com> 4.12.0.1-16
+- Allow gpg to get passphrase by itself (#1228234)
+
 * Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.12.0.1-15.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 

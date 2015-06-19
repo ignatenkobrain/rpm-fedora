@@ -1,0 +1,370 @@
+From 0bce5fcf270711a2e077fba0fb7c5979ea007eb5 Mon Sep 17 00:00:00 2001
+From: Lubos Kardos <lkardos@redhat.com>
+Date: Tue, 9 Jun 2015 18:06:29 +0200
+Subject: [PATCH 2/2] Allow gpg to get passphrase by itself.
+
+Remove rpm asking for passphrase and then passing this passphrase
+to gpg via file descriptor (--passphrase-fd) but provide gpg with
+access to unredirected stdin to get passphrase directly from user.
+
+Remove also macro %__gpg_check_password_cmd because in this new signing
+scheme has no sense. rpm doesn't handle passphrase in any way,
+everything is done in gpg including checking of passphrase.
+
+We did this modification because of changes in gpg behavior. Since
+gpg-2.1 option "--passphrase-fd" doesn't work by default, only when
+it is explicitly allowed in gpg.conf. (rhbz:#1228234)
+---
+ macros.in           |  4 +--
+ python/rpmsmodule.c |  9 +++---
+ rpmsign.c           | 82 +++--------------------------------------------------
+ sign/rpmgensig.c    | 67 +++++++++----------------------------------
+ sign/rpmsign.h      |  3 +-
+ 5 files changed, 23 insertions(+), 142 deletions(-)
+
+diff --git a/macros.in b/macros.in
+index 414c1be..de89420 100644
+--- a/macros.in
++++ b/macros.in
+@@ -538,11 +538,9 @@ package or when debugging this package.\
+ #	Macro(s) to hold the arguments passed to GPG/PGP for package
+ #	signing and verification.
+ #
+-%__gpg_check_password_cmd	%{__gpg} \
+-	gpg --batch --no-verbose --passphrase-fd 3 -u "%{_gpg_name}" -so -
+ 
+ %__gpg_sign_cmd			%{__gpg} \
+-	gpg --batch --no-verbose --no-armor --passphrase-fd 3 \
++	gpg --no-verbose --no-armor \
+ 	%{?_gpg_digest_algo:--digest-algo %{_gpg_digest_algo}} \
+ 	--no-secmem-warning \
+ 	-u "%{_gpg_name}" -sbo %{__signature_filename} %{__plaintext_filename}
+diff --git a/python/rpmsmodule.c b/python/rpmsmodule.c
+index a8289b5..0601353 100644
+--- a/python/rpmsmodule.c
++++ b/python/rpmsmodule.c
+@@ -8,19 +8,18 @@ static char rpms__doc__[] =
+ static PyObject * addSign(PyObject * self, PyObject * args, PyObject *kwds)
+ {
+     const char *path = NULL;
+-    const char *passPhrase = NULL;
+-    char * kwlist[] = { "path", "passPhrase", "keyid", "hashalgo", NULL };
++    char * kwlist[] = { "path", "keyid", "hashalgo", NULL };
+     struct rpmSignArgs sig, *sigp = NULL;
+ 
+     memset(&sig, 0, sizeof(sig));
+-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "ss|si", kwlist,
+-				&path, &passPhrase, &sig.keyid, &sig.hashalgo))
++    if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|si", kwlist,
++				&path, &sig.keyid, &sig.hashalgo))
+ 	return NULL;
+ 
+     if (sig.keyid || sig.hashalgo)
+ 	sigp = &sig;
+ 
+-    return PyBool_FromLong(rpmPkgSign(path, sigp, passPhrase) == 0);
++    return PyBool_FromLong(rpmPkgSign(path, sigp) == 0);
+ }
+ 
+ static PyObject * delSign(PyObject * self, PyObject * args, PyObject *kwds)
+diff --git a/rpmsign.c b/rpmsign.c
+index b8e5598..9b93e39 100644
+--- a/rpmsign.c
++++ b/rpmsign.c
+@@ -41,72 +41,6 @@ static struct poptOption optionsTable[] = {
+     POPT_TABLEEND
+ };
+ 
+-static int checkPassPhrase(const char * passPhrase)
+-{
+-    int passPhrasePipe[2];
+-    int pid, status;
+-    int rc = -1;
+-    int xx;
+-
+-    if (passPhrase == NULL)
+-	return -1;
+-
+-    passPhrasePipe[0] = passPhrasePipe[1] = 0;
+-    if (pipe(passPhrasePipe))
+-	return -1;
+-
+-    pid = fork();
+-    if (pid < 0) {
+-	close(passPhrasePipe[0]);
+-	close(passPhrasePipe[1]);
+-	return -1;
+-    }
+-
+-    if (pid == 0) {
+-	char * cmd, * gpg_path;
+-	char *const *av;
+-	int fdno;
+-
+-	close(STDIN_FILENO);
+-	close(STDOUT_FILENO);
+-	close(passPhrasePipe[1]);
+-	if ((fdno = open("/dev/null", O_RDONLY)) != STDIN_FILENO) {
+-	    xx = dup2(fdno, STDIN_FILENO);
+-	    close(fdno);
+-	}
+-	if ((fdno = open("/dev/null", O_WRONLY)) != STDOUT_FILENO) {
+-	    xx = dup2(fdno, STDOUT_FILENO);
+-	    close(fdno);
+-	}
+-	xx = dup2(passPhrasePipe[0], 3);
+-
+-	unsetenv("MALLOC_CHECK_");
+-	gpg_path = rpmExpand("%{?_gpg_path}", NULL);
+-
+-	if (!rstreq(gpg_path, ""))
+-	    setenv("GNUPGHOME", gpg_path, 1);
+-	
+-	cmd = rpmExpand("%{?__gpg_check_password_cmd}", NULL);
+-	rc = poptParseArgvString(cmd, NULL, (const char ***)&av);
+-	if (xx >= 0 && rc == 0) {
+-	    rc = execve(av[0], av+1, environ);
+-	    fprintf(stderr, _("Could not exec %s: %s\n"), "gpg",
+-			strerror(errno));
+-	}
+-	_exit(EXIT_FAILURE);
+-    }
+-
+-    close(passPhrasePipe[0]);
+-    xx = write(passPhrasePipe[1], passPhrase, strlen(passPhrase));
+-    xx = write(passPhrasePipe[1], "\n", 1);
+-    close(passPhrasePipe[1]);
+-
+-    if (xx >= 0 && waitpid(pid, &status, 0) >= 0)
+-	rc = (WIFEXITED(status) && WEXITSTATUS(status) == 0) ? 0 : 1;
+-
+-    return rc;
+-}
+-
+ /* TODO: permit overriding macro setup on the command line */
+ static int doSign(poptContext optCon)
+ {
+@@ -119,18 +53,10 @@ static int doSign(poptContext optCon)
+ 	goto exit;
+     }
+ 
+-    /* XXX FIXME: eliminate obsolete getpass() usage */
+-    passPhrase = getpass(_("Enter pass phrase: "));
+-    passPhrase = (passPhrase != NULL) ? rstrdup(passPhrase) : NULL;
+-    if (checkPassPhrase(passPhrase) == 0) {
+-	const char *arg;
+-	fprintf(stderr, _("Pass phrase is good.\n"));
+-	rc = 0;
+-	while ((arg = poptGetArg(optCon)) != NULL) {
+-	    rc += rpmPkgSign(arg, NULL, passPhrase);
+-	}
+-    } else {
+-	fprintf(stderr, _("Pass phrase check failed or gpg key expired\n"));
++    const char *arg;
++    rc = 0;
++    while ((arg = poptGetArg(optCon)) != NULL) {
++	rc += rpmPkgSign(arg, NULL);
+     }
+ 
+ exit:
+diff --git a/sign/rpmgensig.c b/sign/rpmgensig.c
+index 9691f0d..24bf39e 100644
+--- a/sign/rpmgensig.c
++++ b/sign/rpmgensig.c
+@@ -245,11 +245,9 @@ exit:
+     return rc;
+ }
+ 
+-static int runGPG(sigTarget sigt, const char *sigfile, const char * passPhrase)
++static int runGPG(sigTarget sigt, const char *sigfile)
+ {
+     int pid = 0, status;
+-    int inpipe[2];
+-    FILE * fpipe = NULL;
+     FD_t fnamedPipe = NULL;
+     char *namedPipeName = NULL;
+     unsigned char buf[BUFSIZ];
+@@ -258,12 +256,6 @@ static int runGPG(sigTarget sigt, const char *sigfile, const char * passPhrase)
+     rpm_loff_t size;
+     int rc = 1; /* assume failure */
+ 
+-    inpipe[0] = inpipe[1] = 0;
+-    if (pipe(inpipe) < 0) {
+-	rpmlog(RPMLOG_ERR, _("Couldn't create pipe for signing: %m"));
+-	goto exit;
+-    }
+-
+     namedPipeName = mkTempFifo();
+ 
+     addMacro(NULL, "__plaintext_filename", NULL, namedPipeName, -1);
+@@ -274,9 +266,6 @@ static int runGPG(sigTarget sigt, const char *sigfile, const char * passPhrase)
+ 	char *cmd = NULL;
+ 	const char *gpg_path = rpmExpand("%{?_gpg_path}", NULL);
+ 
+-	(void) dup2(inpipe[0], 3);
+-	(void) close(inpipe[1]);
+-
+ 	if (gpg_path && *gpg_path != '\0')
+ 	    (void) setenv("GNUPGHOME", gpg_path, 1);
+ 	(void) setenv("LC_ALL", "C", 1);
+@@ -295,23 +284,6 @@ static int runGPG(sigTarget sigt, const char *sigfile, const char * passPhrase)
+     delMacro(NULL, "__plaintext_filename");
+     delMacro(NULL, "__signature_filename");
+ 
+-    (void) close(inpipe[0]);
+-    inpipe[0] = 0;
+-
+-    fpipe = fdopen(inpipe[1], "w");
+-    if (!fpipe) {
+-	rpmlog(RPMLOG_ERR, _("fdopen failed\n"));
+-	goto exit;
+-    }
+-    inpipe[1] = 0;
+-
+-    if (fprintf(fpipe, "%s\n", (passPhrase ? passPhrase : "")) < 0) {
+-	rpmlog(RPMLOG_ERR, _("Could not write to pipe\n"));
+-	goto exit;
+-    }
+-    (void) fclose(fpipe);
+-    fpipe = NULL;
+-
+     fnamedPipe = Fopen(namedPipeName, "w");
+     if (!fnamedPipe) {
+ 	rpmlog(RPMLOG_ERR, _("Fopen failed\n"));
+@@ -352,14 +324,6 @@ static int runGPG(sigTarget sigt, const char *sigfile, const char * passPhrase)
+     }
+ 
+ exit:
+-    if (fpipe)
+-	fclose(fpipe);
+-
+-    if (inpipe[0])
+-	close(inpipe[0]);
+-
+-    if (inpipe[1])
+-	close(inpipe[1]);
+ 
+     if (fnamedPipe)
+ 	Fclose(fnamedPipe);
+@@ -383,8 +347,7 @@ exit:
+  * @param passPhrase	private key pass phrase
+  * @return		0 on success, 1 on failure
+  */
+-static int makeGPGSignature(Header sigh, int ishdr, sigTarget sigt,
+-			    const char * passPhrase)
++static int makeGPGSignature(Header sigh, int ishdr, sigTarget sigt)
+ {
+     char * sigfile = rstrscat(NULL, sigt->fileName, ".sig", NULL);
+     struct stat st;
+@@ -392,7 +355,7 @@ static int makeGPGSignature(Header sigh, int ishdr, sigTarget sigt,
+     size_t pktlen = 0;
+     int rc = 1; /* assume failure */
+ 
+-    if (runGPG(sigt, sigfile, passPhrase))
++    if (runGPG(sigt, sigfile))
+ 	goto exit;
+ 
+     if (stat(sigfile, &st)) {
+@@ -431,16 +394,15 @@ exit:
+     return rc;
+ }
+ 
+-static int rpmGenSignature(Header sigh, sigTarget sigt1, sigTarget sigt2,
+-			    const char * passPhrase)
++static int rpmGenSignature(Header sigh, sigTarget sigt1, sigTarget sigt2)
+ {
+     int ret;
+ 
+-    ret = makeGPGSignature(sigh, 0, sigt1, passPhrase);
++    ret = makeGPGSignature(sigh, 0, sigt1);
+     if (ret)
+ 	goto exit;
+ 
+-    ret = makeGPGSignature(sigh, 1, sigt2, passPhrase);
++    ret = makeGPGSignature(sigh, 1, sigt2);
+     if (ret)
+ 	goto exit;
+ exit:
+@@ -486,8 +448,7 @@ static int sameSignature(rpmTagVal sigtag, Header h1, Header h2)
+     return (rc == 0);
+ }
+ 
+-static int replaceSignature(Header sigh, sigTarget sigt1, sigTarget sigt2,
+-			    const char *passPhrase)
++static int replaceSignature(Header sigh, sigTarget sigt1, sigTarget sigt2)
+ {
+     /* Grab a copy of the header so we can compare the result */
+     Header oldsigh = headerCopy(sigh);
+@@ -500,7 +461,7 @@ static int replaceSignature(Header sigh, sigTarget sigt1, sigTarget sigt2,
+      * rpmGenSignature() internals parse the actual signing result and 
+      * adds appropriate tags for DSA/RSA.
+      */
+-    if (rpmGenSignature(sigh, sigt1, sigt2, passPhrase) == 0) {
++    if (rpmGenSignature(sigh, sigt1, sigt2) == 0) {
+ 	/* Lets see what we got and whether its the same signature as before */
+ 	rpmTagVal sigtag = headerIsEntry(sigh, RPMSIGTAG_DSA) ?
+ 					RPMSIGTAG_DSA : RPMSIGTAG_RSA;
+@@ -517,10 +478,9 @@ static int replaceSignature(Header sigh, sigTarget sigt1, sigTarget sigt2,
+  * Create/modify elements in signature header.
+  * @param rpm		path to package
+  * @param deleting	adding or deleting signature?
+- * @param passPhrase	passPhrase (ignored when deleting)
+  * @return		0 on success, -1 on error
+  */
+-static int rpmSign(const char *rpm, int deleting, const char *passPhrase)
++static int rpmSign(const char *rpm, int deleting)
+ {
+     FD_t fd = NULL;
+     FD_t ofd = NULL;
+@@ -605,7 +565,7 @@ static int rpmSign(const char *rpm, int deleting, const char *passPhrase)
+ 	sigt2 = sigt1;
+ 	sigt2.size = headerSizeof(h, HEADER_MAGIC_YES);
+ 
+-	res = replaceSignature(sigh, &sigt1, &sigt2, passPhrase);
++	res = replaceSignature(sigh, &sigt1, &sigt2);
+ 	if (res != 0) {
+ 	    if (res == 1) {
+ 		rpmlog(RPMLOG_WARNING,
+@@ -722,8 +682,7 @@ exit:
+     return res;
+ }
+ 
+-int rpmPkgSign(const char *path,
+-		const struct rpmSignArgs * args, const char *passPhrase)
++int rpmPkgSign(const char *path, const struct rpmSignArgs * args)
+ {
+     int rc;
+ 
+@@ -739,7 +698,7 @@ int rpmPkgSign(const char *path,
+ 	}
+     }
+ 
+-    rc = rpmSign(path, 0, passPhrase);
++    rc = rpmSign(path, 0);
+ 
+     if (args) {
+ 	if (args->hashalgo) {
+@@ -755,5 +714,5 @@ int rpmPkgSign(const char *path,
+ 
+ int rpmPkgDelSign(const char *path)
+ {
+-    return rpmSign(path, 1, NULL);
++    return rpmSign(path, 1);
+ }
+diff --git a/sign/rpmsign.h b/sign/rpmsign.h
+index 15b3e0f..e161aff 100644
+--- a/sign/rpmsign.h
++++ b/sign/rpmsign.h
+@@ -21,8 +21,7 @@ struct rpmSignArgs {
+  * @param passPhrase	passphrase for the signing key
+  * @return		0 on success
+  */
+-int rpmPkgSign(const char *path,
+-	       const struct rpmSignArgs * args, const char *passPhrase);
++int rpmPkgSign(const char *path, const struct rpmSignArgs * args);
+ 
+ /** \ingroup rpmsign
+  * Delete signature(s) from a package
+-- 
+1.9.3
+

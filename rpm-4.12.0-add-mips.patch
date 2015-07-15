@@ -1,0 +1,148 @@
+diff -urp rpm-4.12.0.1/installplatform r/installplatform
+--- rpm-4.12.0.1/installplatform	2014-06-30 10:47:13.954503637 +0200
++++ r/installplatform	2015-07-14 09:34:15.917109096 +0200
+@@ -114,6 +114,30 @@ for ARCH in noarch `grep ^arch_canon $RP
+ 	CANONARCH=aarch64
+ 	CANONCOLOR=3
+ 	;;
++    mips)
++	ISANAME=mips
++	ISABITS=32
++	CANONARCH=mips
++	CANONCOLOR=0
++	;;
++    mipsel)
++	ISANAME=mips
++	ISABITS=32
++	CANONARCH=mipsel
++	CANONCOLOR=0
++	;;
++    mips64)
++	ISANAME=mips
++	ISABITS=64
++	CANONARCH=mips64
++	CANONCOLOR=3
++	;;
++    mips64el)
++	ISANAME=mips
++	ISABITS=64
++	CANONARCH=mips64el
++	CANONCOLOR=3
++	;;
+     m68k)
+ 	ISANAME=m68k
+ 	ISABITS=32
+diff -urp rpm-4.12.0.1/lib/rpmrc.c r/lib/rpmrc.c
+--- rpm-4.12.0.1/lib/rpmrc.c	2014-07-03 17:11:48.572096075 +0200
++++ r/lib/rpmrc.c	2015-07-14 09:34:15.918109105 +0200
+@@ -1053,10 +1053,22 @@ static void defaultMachine(rpmrcCtx ctx,
+ 
+ #	if defined(__MIPSEL__) || defined(__MIPSEL) || defined(_MIPSEL)
+ 	    /* little endian */
+-	    strcpy(un.machine, "mipsel");
++#		if defined(__LP64__) || defined(_LP64)
++		    /* 64-bit */
++		    strcpy(un.machine, "mips64el");
++#		else
++		    /* 32-bit */
++		    strcpy(un.machine, "mipsel");
++#		endif
+ #	elif defined(__MIPSEB__) || defined(__MIPSEB) || defined(_MIPSEB)
+ 	   /* big endian */
+-		strcpy(un.machine, "mips");
++#		if defined(__LP64__) || defined(_LP64)
++		    /* 64-bit */
++		    strcpy(un.machine, "mips64");
++#		else
++		    /* 32-bit */
++		    strcpy(un.machine, "mips");
++#		endif
+ #	endif
+ 
+ #	if defined(__hpux) && defined(_SC_CPU_VERSION)
+diff -urp rpm-4.12.0.1/macros.in r/macros.in
+--- rpm-4.12.0.1/macros.in	2015-07-14 09:33:34.422697268 +0200
++++ r/macros.in	2015-07-14 09:34:15.918109105 +0200
+@@ -1011,6 +1011,10 @@ done \
+ %arm	armv3l armv4b armv4l armv4tl armv5tel armv5tejl armv6l armv6hl armv7l armv7hl armv7hnl
+ 
+ #------------------------------------------------------------------------------
++# arch macro for all supported MIPS processors
++%mips	mips mipsel mips64 mips64el
++
++#------------------------------------------------------------------------------
+ # arch macro for all supported Sparc processors
+ %sparc sparc sparcv8 sparcv9 sparcv9v sparc64 sparc64v
+ 
+diff -urp rpm-4.12.0.1/rpmrc.in r/rpmrc.in
+--- rpm-4.12.0.1/rpmrc.in	2015-07-14 09:33:34.413697179 +0200
++++ r/rpmrc.in	2015-07-14 09:34:47.557423122 +0200
+@@ -59,6 +59,8 @@ optflags: hppa2.0 -O2 -g -mpa-risc-1-0
+ 
+ optflags: mips -O2 -g
+ optflags: mipsel -O2 -g
++optflags: mips64 -O2 -g
++optflags: mips64el -O2 -g
+ 
+ optflags: armv3l -O2 -g -march=armv3
+ optflags: armv4b -O2 -g -march=armv4
+@@ -114,6 +116,11 @@ archcolor: armv5tejl 1
+ archcolor: armv6l 1
+ archcolor: armv7l 1
+ 
++archcolor: mips 1
++archcolor: mipsel 1
++archcolor: mips64 2
++archcolor: mips64el 2
++
+ archcolor: m68k 1
+ 
+ archcolor: m68kmint 1
+@@ -167,6 +174,7 @@ arch_canon:   sparcv9: sparcv9	3
+ arch_canon:	sparcv9v: sparcv9v	3
+ # This is really a place holder for MIPS.
+ arch_canon:	mips:	mips	4
++arch_canon:	mipsel:	mipsel	4
+ 
+ arch_canon:	ppc:	ppc	5
+ arch_canon:	ppc8260:	ppc8260	5
+@@ -180,7 +188,8 @@ arch_canon:	IP:	sgi	7
+ arch_canon:     rs6000:	rs6000  8
+ arch_canon:     ia64:	ia64	9
+ 
+-arch_canon:	mipsel:	mipsel	11
++arch_canon:	mips64:		mips64		11
++arch_canon:	mips64el:	mips64el	11
+ 
+ arch_canon:	armv3l: armv3l	12
+ arch_canon:     armv4b:	armv4b 	12
+@@ -309,6 +318,11 @@ buildarchtranslate: armv7l: armv7l
+ buildarchtranslate: armv7hl: armv7hl
+ buildarchtranslate: armv7hnl: armv7hnl
+ 
++buildarchtranslate: mips: mips
++buildarchtranslate: mipsel: mipsel
++buildarchtranslate: mips64: mips64
++buildarchtranslate: mips64el: mips64el
++
+ buildarchtranslate: m68k: m68k
+ 
+ buildarchtranslate: atarist: m68kmint
+@@ -387,6 +401,8 @@ arch_compat: sparc: noarch
+ 
+ arch_compat: mips: noarch
+ arch_compat: mipsel: noarch
++arch_compat: mips64: mips
++arch_compat: mips64el: mipsel
+ 
+ arch_compat: hppa2.0: hppa1.2
+ arch_compat: hppa1.2: hppa1.1
+@@ -508,6 +524,8 @@ buildarch_compat: ppc64p7: ppc64
+ 
+ buildarch_compat: mips: noarch
+ buildarch_compat: mipsel: noarch
++buildarch_compat: mips64: noarch
++buildarch_compat: mips64el: noarch
+ 
+ buildarch_compat: armv4b: noarch
+ buildarch_compat: armv7l: armv6l

@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}17%{?dist}
+Release: %{?snapver:0.%{snapver}.}18%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -84,6 +84,8 @@ Patch307: rpm-4.11.1-sepdebugcrcfix.patch
 Patch308: rpm-4.12.0.x-CVE-2013-6435.patch
 # Add check against malicious CPIO file name size
 Patch309: rpm-4.12.0.x-CVE-2014-8118.patch
+# Add support for MIPS platform
+Patch310: rpm-4.12.0-add-mips.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -553,6 +555,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Jul 14 2015 Michal Toman <mtoman@fedoraproject.org> - 4.12.0.1-18
+- Add support for MIPS platform
+
 * Mon Jun 29 2015 Florian Festi <ffesti@rpm.org> - 4.12.0.1-17
 - Fix Python import directive for more strict Python3 search rules (#1236493)
 

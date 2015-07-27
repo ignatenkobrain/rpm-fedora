@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -50,6 +50,7 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 
 # Patches already upstream:
+Patch100: rpm-4.12.90-braces-expansion.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -534,6 +535,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Jul 27 2015 Lubos Kardos <lkardos@redhat.com> - 4.12.90-2
+- Enable braces expansion in rpmGlob() (#1246743)
+
 * Fri Jul 24 2015 Florian Festi <ffesti@rpm.org> - 4.12.90-1
 - Update to upstream alpha release
 

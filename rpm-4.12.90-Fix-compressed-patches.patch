@@ -1,0 +1,26 @@
+From 8fab4539051091f71d88f6b1d8c6660a40d5a5bd Mon Sep 17 00:00:00 2001
+From: Florian Festi <ffesti@redhat.com>
+Date: Mon, 27 Jul 2015 18:52:25 +0200
+Subject: [PATCH] Fix compressed patches
+
+Regression caused by d9f673bf2841bb8c854e6676871078ab563a51c9 caused uncompressed patch content to be printed out to std instead of being piped into patch command.
+---
+ build/parsePrep.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/build/parsePrep.c b/build/parsePrep.c
+index 5ba5aee..b94aad2 100644
+--- a/build/parsePrep.c
++++ b/build/parsePrep.c
+@@ -101,7 +101,7 @@ static char *doPatch(rpmSpec spec, uint32_t c, int strip, const char *db,
+ 
+     /* Avoid the extra cost of fork and pipe for uncompressed patches */
+     if (compressed != COMPRESSED_NOT) {
+-	patchcmd = rpmExpand("%{uncompress: ", fn, "} || echo patch_fail | "
++	patchcmd = rpmExpand("{ %{uncompress: ", fn, "} || echo patch_fail ; } | "
+                              "%{__patch} ", args, NULL);
+     } else {
+ 	patchcmd = rpmExpand("%{__patch} ", args, " < ", fn, NULL);
+-- 
+2.1.0
+

@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -52,6 +52,7 @@ Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 # Patches already upstream:
 Patch100: rpm-4.12.90-braces-expansion.patch
 Patch101: rpm-4.12.90-Fix-compressed-patches.patch
+Patch102: rpm-4.12.90-fix-macro-warning.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -536,6 +537,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Jul 30 2015 Lubos Kardos <lkardos@redhat.com> - 4.12.90-4
+- Don't warn when an escaped macro is in a comment (#1224660)
+
 * Mon Jul 27 2015 Florian Festi <ffesti@rpm.org> - 4.12.90-3
 - Fix compressed patches (#1247248)
 

@@ -1,0 +1,48 @@
+From 655ca18630d4a89e022b51ea495fa63718303413 Mon Sep 17 00:00:00 2001
+From: Lubos Kardos <lkardos@redhat.com>
+Date: Thu, 30 Jul 2015 16:23:58 +0200
+Subject: [PATCH] Don't warn when an escaped macro is in comment.
+
+- Related to 2a3f49585e5bd82d0bbfe5b9d6cdf24d9501b5cd
+---
+ build/parseSpec.c | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/build/parseSpec.c b/build/parseSpec.c
+index 706579d..edc3d00 100644
+--- a/build/parseSpec.c
++++ b/build/parseSpec.c
+@@ -189,12 +189,25 @@ static int expandMacrosInSpecBuf(rpmSpec spec, int strip)
+ 	goto exit;
+     }
+ 
+-    if (strip & STRIP_COMMENTS &&
+-	isComment && !rstreq(spec->lbuf, lbuf)) {
++    if (strip & STRIP_COMMENTS && isComment) {
++	char *bufA = lbuf;
++	char *bufB = spec->lbuf;
+ 
+-	rpmlog(RPMLOG_WARNING,
+-	    _("Macro expanded in comment on line %d: %s\n"),
+-	    spec->lineNum, lbuf);
++	while (*bufA != '\0' && *bufB != '\0') {
++	    if (*bufA == '%' && *(bufA + 1) == '%')
++		bufA++;
++
++	    if (*bufA != *bufB)
++		break;
++
++	    bufA++;
++	    bufB++;
++	}
++
++	if (*bufA != '\0' || *bufB != '\0')
++	    rpmlog(RPMLOG_WARNING,
++		_("Macro expanded in comment on line %d: %s\n"),
++		spec->lineNum, lbuf);
+     }
+ 
+ exit:
+-- 
+1.9.3
+

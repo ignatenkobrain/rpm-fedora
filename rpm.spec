@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -53,6 +53,8 @@ Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 Patch100: rpm-4.12.90-braces-expansion.patch
 Patch101: rpm-4.12.90-Fix-compressed-patches.patch
 Patch102: rpm-4.12.90-fix-macro-warning.patch
+Patch103: rpm-4.12.90-modify-rpmisglob.patch
+Patch104: rpm-4.12.90-try-unglobbed.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -537,6 +539,12 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Aug 03 2015 Lubos Kardos <lkardos@redhat.com> - 4.12.90-5
+- If globbing of a filename fails, try use the filename without globbing.
+  (#1246743)
+- Modify rpmIsGlob() to be more precise and compatible with glob().
+  (#1246743)
+
 * Thu Jul 30 2015 Lubos Kardos <lkardos@redhat.com> - 4.12.90-4
 - Don't warn when an escaped macro is in a comment (#1224660)
 

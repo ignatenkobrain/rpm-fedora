@@ -1,0 +1,45 @@
+From c16c70cbd6b31cd93541d5c22d23ba98d212ad3d Mon Sep 17 00:00:00 2001
+From: Lubos Kardos <lkardos@redhat.com>
+Date: Mon, 3 Aug 2015 12:10:14 +0200
+Subject: [PATCH 2/2] If globbing of a filename fails, try use the filename
+ without globbing.
+
+Commit d14ecfe587efbe80e5534161dbd3a4f7158b4e2b enabled {} expansion
+but {} expansion caused regresion because rpm tried to expand filenames
+which weren't expanded previously and expansion failed because these
+filenames weren't supposed to be expanded. Now if expansion fails then
+rpm tries to use original filename.
+---
+ build/files.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+diff --git a/build/files.c b/build/files.c
+index d16bb17..ea595b9 100644
+--- a/build/files.c
++++ b/build/files.c
+@@ -1584,16 +1584,13 @@ static rpmRC processBinaryFile(Package pkg, FileList fl, const char * fileName)
+ 	    }
+ 	    argvFree(argv);
+ 	} else {
+-	    int lvl = RPMLOG_WARNING;
+ 	    const char *msg = (fl->cur.isDir) ?
+-				_("Directory not found by glob: %s\n") :
+-				_("File not found by glob: %s\n");
+-	    if (!(fl->cur.attrFlags & RPMFILE_EXCLUDE)) {
+-		lvl = RPMLOG_ERR;
+-		rc = RPMRC_FAIL;
+-	    }
+-	    rpmlog(lvl, msg, diskPath);
+-	    goto exit;
++				_("Directory not found by glob: %s. "
++				"Trying without globbing.\n") :
++				_("File not found by glob: %s. "
++				"Trying without globbing.\n");
++	    rpmlog(RPMLOG_DEBUG, msg, diskPath);
++	    rc = addFile(fl, diskPath, NULL);
+ 	}
+     } else {
+ 	rc = addFile(fl, diskPath, NULL);
+-- 
+1.9.3
+

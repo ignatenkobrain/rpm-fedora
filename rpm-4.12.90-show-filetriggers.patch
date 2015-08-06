@@ -1,0 +1,257 @@
+From d18fdd7f8964d01b4dfc39bf84133695cff5a13a Mon Sep 17 00:00:00 2001
+From: Lubos Kardos <lkardos@redhat.com>
+Date: Thu, 6 Aug 2015 14:28:25 +0200
+Subject: [PATCH] Add --filetriggers option to show info about file triggers.
+
+---
+ lib/rpmtag.h        |   4 ++
+ lib/tagexts.c       | 107 +++++++++++++++++++++++++++++++++++++++++++++++-----
+ rpmpopt.in          |   8 ++++
+ tests/rpmgeneral.at |   4 ++
+ 4 files changed, 113 insertions(+), 10 deletions(-)
+
+diff --git a/lib/rpmtag.h b/lib/rpmtag.h
+index ac6ee64..94c0655 100644
+--- a/lib/rpmtag.h
++++ b/lib/rpmtag.h
+@@ -352,6 +352,10 @@ typedef enum rpmTag_e {
+     RPMTAG_REMOVEPATHPOSTFIXES  = 5083, /* s internal */
+     RPMTAG_FILETRIGGERPRIORITIES	= 5084, /* i[] */
+     RPMTAG_TRANSFILETRIGGERPRIORITIES	= 5085, /* i[] */
++    RPMTAG_FILETRIGGERCONDS		= 5086, /* s[] extension */
++    RPMTAG_FILETRIGGERTYPE		= 5087, /* s[] extension */
++    RPMTAG_TRANSFILETRIGGERCONDS	= 5088, /* s[] extension */
++    RPMTAG_TRANSFILETRIGGERTYPE		= 5089, /* s[] extension */
+ 
+     RPMTAG_FIRSTFREE_TAG	/*!< internal */
+ } rpmTag;
+diff --git a/lib/tagexts.c b/lib/tagexts.c
+index fa3fe72..69f3c24 100644
+--- a/lib/tagexts.c
++++ b/lib/tagexts.c
+@@ -191,6 +191,12 @@ exit:
+     return rc;
+ }
+ 
++typedef enum tMode_e {
++    NORMALTRIGGER     = 0,
++    FILETRIGGER       = 1,
++    TRANSFILETRIGGER  = 2,
++} tMode;
++
+ /**
+  * Retrieve trigger info.
+  * @param h		header
+@@ -198,22 +204,49 @@ exit:
+  * @param hgflags	header get flags
+  * @return		1 on success
+  */
+-static int triggercondsTag(Header h, rpmtd td, headerGetFlags hgflags)
++static int triggercondsTagFor(tMode mode, Header h, rpmtd td,
++				headerGetFlags hgflags)
+ {
+     uint32_t * indices;
+     int i, j;
+     char ** conds;
+     struct rpmtd_s nametd, indextd, flagtd, versiontd, scripttd;
+     int hgeflags = HEADERGET_MINMEM;
++    rpmTagVal triggername, triggerindex, triggerflags;
++    rpmTagVal triggerversion, triggerscripts;
++
++    switch (mode) {
++	case NORMALTRIGGER:
++	    triggername = RPMTAG_TRIGGERNAME;
++	    triggerindex = RPMTAG_TRIGGERINDEX;
++	    triggerflags = RPMTAG_TRIGGERFLAGS;
++	    triggerversion = RPMTAG_TRIGGERVERSION;
++	    triggerscripts = RPMTAG_TRIGGERSCRIPTS;
++	    break;
++	case FILETRIGGER:
++	    triggername = RPMTAG_FILETRIGGERNAME;
++	    triggerindex = RPMTAG_FILETRIGGERINDEX;
++	    triggerflags = RPMTAG_FILETRIGGERFLAGS;
++	    triggerversion = RPMTAG_FILETRIGGERVERSION;
++	    triggerscripts = RPMTAG_FILETRIGGERSCRIPTS;
++	    break;
++	case TRANSFILETRIGGER:
++	    triggername = RPMTAG_TRANSFILETRIGGERNAME;
++	    triggerindex = RPMTAG_TRANSFILETRIGGERINDEX;
++	    triggerflags = RPMTAG_TRANSFILETRIGGERFLAGS;
++	    triggerversion = RPMTAG_TRANSFILETRIGGERVERSION;
++	    triggerscripts = RPMTAG_TRANSFILETRIGGERSCRIPTS;
++	    break;
++    }
+ 
+-    if (!headerGet(h, RPMTAG_TRIGGERNAME, &nametd, hgeflags)) {
++    if (!headerGet(h, triggername, &nametd, hgeflags)) {
+ 	return 0;
+     }
+ 
+-    headerGet(h, RPMTAG_TRIGGERINDEX, &indextd, hgeflags);
+-    headerGet(h, RPMTAG_TRIGGERFLAGS, &flagtd, hgeflags);
+-    headerGet(h, RPMTAG_TRIGGERVERSION, &versiontd, hgeflags);
+-    headerGet(h, RPMTAG_TRIGGERSCRIPTS, &scripttd, hgeflags);
++    headerGet(h, triggerindex, &indextd, hgeflags);
++    headerGet(h, triggerflags, &flagtd, hgeflags);
++    headerGet(h, triggerversion, &versiontd, hgeflags);
++    headerGet(h, triggerscripts, &scripttd, hgeflags);
+ 
+     td->type = RPM_STRING_ARRAY_TYPE;
+     td->flags = RPMTD_ALLOCED | RPMTD_PTR_ALLOCED;
+@@ -262,6 +295,21 @@ static int triggercondsTag(Header h, rpmtd td, headerGetFlags hgflags)
+     return 1;
+ }
+ 
++static int triggercondsTag(Header h, rpmtd td, headerGetFlags hgflags)
++{
++    return triggercondsTagFor(NORMALTRIGGER, h, td, hgflags);
++}
++
++static int filetriggercondsTag(Header h, rpmtd td, headerGetFlags hgflags)
++{
++    return triggercondsTagFor(FILETRIGGER, h, td, hgflags);
++}
++
++static int transfiletriggercondsTag(Header h, rpmtd td, headerGetFlags hgflags)
++{
++    return triggercondsTagFor(TRANSFILETRIGGER, h, td, hgflags);
++}
++
+ /**
+  * Retrieve trigger type info.
+  * @param h		header
+@@ -269,18 +317,38 @@ static int triggercondsTag(Header h, rpmtd td, headerGetFlags hgflags)
+  * @param hgflags	header get flags
+  * @return		1 on success
+  */
+-static int triggertypeTag(Header h, rpmtd td, headerGetFlags hgflags)
++static int triggertypeTagFor(tMode mode, Header h, rpmtd td,
++				headerGetFlags hgflags)
+ {
+     int i;
+     char ** conds;
+     struct rpmtd_s indices, flags, scripts;
++    rpmTagVal triggerindex, triggerflags, triggerscripts;
++
++    switch (mode) {
++	case NORMALTRIGGER:
++	    triggerindex = RPMTAG_TRIGGERINDEX;
++	    triggerflags = RPMTAG_TRIGGERFLAGS;
++	    triggerscripts = RPMTAG_TRIGGERSCRIPTS;
++	    break;
++	case FILETRIGGER:
++	    triggerindex = RPMTAG_FILETRIGGERINDEX;
++	    triggerflags = RPMTAG_FILETRIGGERFLAGS;
++	    triggerscripts = RPMTAG_FILETRIGGERSCRIPTS;
++	    break;
++	case TRANSFILETRIGGER:
++	    triggerindex = RPMTAG_TRANSFILETRIGGERINDEX;
++	    triggerflags = RPMTAG_TRANSFILETRIGGERFLAGS;
++	    triggerscripts = RPMTAG_TRANSFILETRIGGERSCRIPTS;
++	    break;
++    }
+ 
+-    if (!headerGet(h, RPMTAG_TRIGGERINDEX, &indices, HEADERGET_MINMEM)) {
++    if (!headerGet(h, triggerindex, &indices, HEADERGET_MINMEM)) {
+ 	return 0;
+     }
+ 
+-    headerGet(h, RPMTAG_TRIGGERFLAGS, &flags, HEADERGET_MINMEM);
+-    headerGet(h, RPMTAG_TRIGGERSCRIPTS, &scripts, HEADERGET_MINMEM);
++    headerGet(h, triggerflags, &flags, HEADERGET_MINMEM);
++    headerGet(h, triggerscripts, &scripts, HEADERGET_MINMEM);
+ 
+     td->flags = RPMTD_ALLOCED | RPMTD_PTR_ALLOCED;
+     td->count = rpmtdCount(&scripts);
+@@ -316,6 +384,21 @@ static int triggertypeTag(Header h, rpmtd td, headerGetFlags hgflags)
+     return 1;
+ }
+ 
++static int triggertypeTag(Header h, rpmtd td, headerGetFlags hgflags)
++{
++    return triggertypeTagFor(NORMALTRIGGER, h, td, hgflags);
++}
++
++static int filetriggertypeTag(Header h, rpmtd td, headerGetFlags hgflags)
++{
++    return triggertypeTagFor(FILETRIGGER, h, td, hgflags);
++}
++
++static int transfiletriggertypeTag(Header h, rpmtd td, headerGetFlags hgflags)
++{
++    return triggertypeTagFor(TRANSFILETRIGGER, h, td, hgflags);
++}
++
+ /**
+  * Retrieve installed file paths.
+  * @param h		header
+@@ -873,7 +956,11 @@ static const struct headerTagFunc_s rpmHeaderTagExtensions[] = {
+     { RPMTAG_FILEPROVIDE,	fileprovideTag },
+     { RPMTAG_FILEREQUIRE,	filerequireTag },
+     { RPMTAG_TRIGGERCONDS,	triggercondsTag },
++    { RPMTAG_FILETRIGGERCONDS,	filetriggercondsTag },
++    { RPMTAG_TRANSFILETRIGGERCONDS,	transfiletriggercondsTag },
+     { RPMTAG_TRIGGERTYPE,	triggertypeTag },
++    { RPMTAG_FILETRIGGERTYPE,	filetriggertypeTag },
++    { RPMTAG_TRANSFILETRIGGERTYPE,	transfiletriggertypeTag },
+     { RPMTAG_LONGFILESIZES,	longfilesizesTag },
+     { RPMTAG_LONGARCHIVESIZE,	longarchivesizeTag },
+     { RPMTAG_LONGSIZE,		longsizeTag },
+diff --git a/rpmpopt.in b/rpmpopt.in
+index 48c5c55..d930862 100644
+--- a/rpmpopt.in
++++ b/rpmpopt.in
+@@ -115,6 +115,14 @@ rpm	alias --triggerscripts --qf '\
+ rpm	alias --triggers --triggerscripts \
+ 	--POPTdesc=$"list trigger scriptlets from package(s)"
+ 
++rpm	alias --filetriggerscripts --qf '\
++[filetrigger%{FILETRIGGERTYPE} scriptlet (using %{FILETRIGGERSCRIPTPROG}) -- \
++%{FILETRIGGERCONDS}\n%{FILETRIGGERSCRIPTS}\n]\
++[transfiletrigger%{TRANSFILETRIGGERTYPE} scriptlet (using %{TRANSFILETRIGGERSCRIPTPROG}) -- \
++%{TRANSFILETRIGGERCONDS}\n%{TRANSFILETRIGGERSCRIPTS}\n]'
++rpm	alias --filetriggers --filetriggerscripts \
++	--POPTdesc=$"list filetrigger scriptlets from package(s)"
++
+ rpm	alias --last --qf '%|INSTALLTIME?{%{INSTALLTIME}}:{000000000}| %{NVRA} %|INSTALLTIME?{%{INSTALLTIME:date}}:{(not installed)}|\n' \
+ 	--pipe "LC_NUMERIC=C sort -r -n | sed 's,^[0-9]\+ ,,' | awk '{printf(\"%-45s %-s\n\", $1, substr($0,length($1)+2))}' " \
+ 	--POPTdesc=$"list package(s) by install time, most recent first"
+diff --git a/tests/rpmgeneral.at b/tests/rpmgeneral.at
+index 312f43b..ac21a40 100644
+--- a/tests/rpmgeneral.at
++++ b/tests/rpmgeneral.at
+@@ -115,6 +115,7 @@ FILERDEVS
+ FILEREQUIRE
+ FILESIZES
+ FILESTATES
++FILETRIGGERCONDS
+ FILETRIGGERFLAGS
+ FILETRIGGERINDEX
+ FILETRIGGERNAME
+@@ -122,6 +123,7 @@ FILETRIGGERPRIORITIES
+ FILETRIGGERSCRIPTFLAGS
+ FILETRIGGERSCRIPTPROG
+ FILETRIGGERSCRIPTS
++FILETRIGGERTYPE
+ FILETRIGGERVERSION
+ FILEUSERNAME
+ FILEVERIFYFLAGS
+@@ -256,6 +258,7 @@ SUPPLEMENTNAME
+ SUPPLEMENTNEVRS
+ SUPPLEMENTS
+ SUPPLEMENTVERSION
++TRANSFILETRIGGERCONDS
+ TRANSFILETRIGGERFLAGS
+ TRANSFILETRIGGERINDEX
+ TRANSFILETRIGGERNAME
+@@ -263,6 +266,7 @@ TRANSFILETRIGGERPRIORITIES
+ TRANSFILETRIGGERSCRIPTFLAGS
+ TRANSFILETRIGGERSCRIPTPROG
+ TRANSFILETRIGGERSCRIPTS
++TRANSFILETRIGGERTYPE
+ TRANSFILETRIGGERVERSION
+ TRIGGERCONDS
+ TRIGGERFLAGS
+-- 
+1.9.3
+

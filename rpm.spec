@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}6%{?dist}
+Release: %{?snapver:0.%{snapver}.}7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -56,6 +56,7 @@ Patch102: rpm-4.12.90-fix-macro-warning.patch
 Patch103: rpm-4.12.90-modify-rpmisglob.patch
 Patch104: rpm-4.12.90-try-unglobbed.patch
 Patch105: rpm-4.12.90-show-filetriggers.patch
+Patch106: rpm-4.12.90-remove-pystring.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -540,6 +541,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Aug 10 2015 Lubos Kardos <lkardos@redhat.com> - 4.12.90-7
+- Fix last occurence of PyString
+
 * Thu Aug 06 2015 Lubos Kardos <lkardos@redhat.com> - 4.12.90-6
 - Add --filetriggers option to show info about file triggers.
 

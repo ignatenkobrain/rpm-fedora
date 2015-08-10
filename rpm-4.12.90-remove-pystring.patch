@@ -1,0 +1,33 @@
+From aec4f88ed585aedae1b35f447ee730a9054d6a4a Mon Sep 17 00:00:00 2001
+From: Thierry Vignaud <thierry.vignaud@gmail.com>
+Date: Mon, 10 Aug 2015 04:38:47 -0400
+Subject: [PATCH] Fix last occurence of PyString
+
+This should have been done in
+commit 1866fc41c8fdf5a82705cee7f1043d5fb634c3be
+This fixes:
+
+$ python3 -c 'import rpm._rpmb'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ImportError: /usr/lib64/python3.4/site-packages/rpm/_rpmb.cpython-34m.so: undefined symbol: PyString_FromString
+---
+ python/spec-py.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/python/spec-py.c b/python/spec-py.c
+index 728b63c..f710f5c 100644
+--- a/python/spec-py.c
++++ b/python/spec-py.c
+@@ -51,7 +51,7 @@ static PyObject *pkgGetSection(rpmSpecPkg pkg, int section)
+ {
+     char *sect = rpmSpecPkgGetSection(pkg, section);
+     if (sect != NULL) {
+-        PyObject *ps = PyString_FromString(sect);
++        PyObject *ps = PyBytes_FromString(sect);
+         free(sect);
+         if (ps != NULL)
+             return ps;
+-- 
+1.9.3
+

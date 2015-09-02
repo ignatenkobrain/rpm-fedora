@@ -10,13 +10,15 @@
 %bcond_with sanitizer
 # build with libarchive? (needed for rpm2archive)
 %bcond_without libarchive
+# build with libimaevm.so
+%bcond_without libimaevm
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.12.90
-#define snapver rc1
+%define rpmver 4.13.0
+%define snapver rc1
 %define srcver %{rpmver}%{?snapver:-%{snapver}}
 %define eggver %{rpmver}%{?snapver:_%{snapver}}
 
@@ -27,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}7%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -50,13 +52,6 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 
 # Patches already upstream:
-Patch100: rpm-4.12.90-braces-expansion.patch
-Patch101: rpm-4.12.90-Fix-compressed-patches.patch
-Patch102: rpm-4.12.90-fix-macro-warning.patch
-Patch103: rpm-4.12.90-modify-rpmisglob.patch
-Patch104: rpm-4.12.90-try-unglobbed.patch
-Patch105: rpm-4.12.90-show-filetriggers.patch
-Patch106: rpm-4.12.90-remove-pystring.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -135,6 +130,10 @@ BuildRequires: libubsan
 #BuildRequires: liblsan
 #BuildRequires: libtsan
 %global sanitizer_flags -fsanitize=address -fsanitize=undefined
+%endif
+
+%if %{with libimaevm}
+BuildRequires: ima-evm-utils
 %endif
 
 %description
@@ -288,6 +287,15 @@ Requires: rpm-libs%{_isa} = %{version}-%{release}
 
 %description plugin-systemd-inhibit
 %{summary}
+
+%package plugin-ima
+Summary: Rpm plugin ima file signatures
+Group: System Environment/Base
+Requires: rpm-libs%{_isa} = %{version}-%{release}
+
+%description plugin-ima
+%{summary}
+
 %endif
 
 %prep
@@ -473,6 +481,9 @@ exit 0
 
 %files plugin-systemd-inhibit
 %{_libdir}/rpm-plugins/systemd_inhibit.so
+
+%files plugin-ima
+%{_libdir}/rpm-plugins/ima.so
 %endif
 
 %files build-libs
@@ -541,6 +552,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+
+* Wed Sep 02 2015 Florian Festi <ffesti@rpm.org> - 4.13.0-0.rc1.1
+- Update to upstream rc1 release
+
 * Mon Aug 10 2015 Lubos Kardos <lkardos@redhat.com> - 4.12.90-7
 - Fix last occurence of PyString
 

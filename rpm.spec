@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -155,6 +155,8 @@ Requires: libcap%{_isa} >= 2.16
 %if %{with plugins}
 Requires: rpm-plugin-selinux%{_isa} = %{version}-%{release}
 %endif
+# Remove temporary compat-librpm3 package from F23
+Obsoletes: compat-librpm3 < %{version}-%{release}
 
 %description libs
 This package contains the RPM shared libraries.
@@ -552,6 +554,8 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sat Sep 05 2015 Kalev Lember <klember@redhat.com> - 4.13.0-0.rc1.2
+- Obsolete compat-librpm3
 
 * Wed Sep 02 2015 Florian Festi <ffesti@rpm.org> - 4.13.0-0.rc1.1
 - Update to upstream rc1 release

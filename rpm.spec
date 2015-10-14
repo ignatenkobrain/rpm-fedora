@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -556,6 +556,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Oct 14 2015 Robert Kuska <rkuska@redhat.com> - 4.13.0-0.rc1.5
+- Rebuilt for Python3.5 rebuild
+
 * Mon Oct 12 2015 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.4
 - Fix selinux plugin for permissive mode
 

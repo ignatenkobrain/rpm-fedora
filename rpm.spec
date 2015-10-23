@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}6%{?dist}
+Release: %{?snapver:0.%{snapver}.}7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -56,6 +56,9 @@ Patch100: rpm-4.13.0-rc1-Fix-new-richdep-syntax.patch
 Patch101: rpm-4.13.0-selinux--permissive-scriptlets.patch
 Patch102: rpm-4.13.0-non-numeric-epoch.patch
 Patch103: rpm-4.13.0-wrong-version-macro.patch
+Patch104: rpm-4.13.0-memory-error.patch
+Patch105: rpm-4.13.0-rpmdeps-weakdep-support.patch
+Patch106: rpm-4.13.0-autopatch-fix.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -558,6 +561,11 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Oct 23 2015 Lubos Kardos <lkardos@redhat.com> - 4.13-0.rc1.7
+- Fix reading a memory right after the end of an allocated area (#1260248)
+- Add support for various types of dependencies to rpmdeps tool (#1247092)
+- fix %%autopatch when patch do not exist (#1244172)
+
 * Fri Oct 23 2015 Lubos Kardos <lkardos@redhat.com> - 4.13-0.rc1.6
 - If %%_wrong_version_format_terminate_build is 1 then terminate build in case
   that version format is wrong i. e. epoch is not unsigned integer or version

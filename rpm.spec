@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}7%{?dist}
+Release: %{?snapver:0.%{snapver}.}8%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -475,6 +475,8 @@ exit 0
 
 %{rpmhome}/platform
 
+%dir %{rpmhome}/fileattrs
+
 %files libs
 %defattr(-,root,root)
 %{_libdir}/librpmio.so.*
@@ -525,7 +527,7 @@ exit 0
 %{rpmhome}/config.*
 %{rpmhome}/mkinstalldirs
 %{rpmhome}/macros.p*
-%{rpmhome}/fileattrs
+%{rpmhome}/fileattrs/*
 
 %files sign
 %defattr(-,root,root)
@@ -561,6 +563,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Oct 30 2015 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.8
+- Move /usr/lib/rpm/fileattrs directory from rpm-build to rpm (#1272766)
+
 * Fri Oct 23 2015 Lubos Kardos <lkardos@redhat.com> - 4.13-0.rc1.7
 - Fix reading a memory right after the end of an allocated area (#1260248)
 - Add support for various types of dependencies to rpmdeps tool (#1247092)

@@ -1,0 +1,62 @@
+From 2dd06933726cf5191e05264901789f8e1da6e51d Mon Sep 17 00:00:00 2001
+From: Lubos Kardos <lkardos@redhat.com>
+Date: Fri, 6 Nov 2015 12:45:32 +0100
+Subject: [PATCH] Fix SIGSEGV in case of old unsupported gpg keys
+ (rhbz:1277464)
+
+Regression from: a173d781a631a92524ce5be364c679ba19b3e321
+Adds also warning that gpg key is not supported.
+---
+ rpmio/rpmkeyring.c | 5 ++---
+ rpmio/rpmpgp.c     | 5 +++++
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/rpmio/rpmkeyring.c b/rpmio/rpmkeyring.c
+index b6b5703..c3d2c19 100644
+--- a/rpmio/rpmkeyring.c
++++ b/rpmio/rpmkeyring.c
+@@ -159,9 +159,8 @@ rpmPubkey *rpmGetSubkeys(rpmPubkey mainkey, int *count)
+     int pgpsubkeysCount = 0;
+     int i;
+ 
+-    if (!pgpPrtParamsSubkeys(mainkey->pkt, mainkey->pktlen, mainkey->pgpkey,
+-			    &pgpsubkeys, &pgpsubkeysCount)) {
+-
++    if (mainkey && !pgpPrtParamsSubkeys(mainkey->pkt, mainkey->pktlen,
++			mainkey->pgpkey, &pgpsubkeys, &pgpsubkeysCount)) {
+ 
+ 	subkeys = xmalloc(pgpsubkeysCount * sizeof(*subkeys));
+ 
+diff --git a/rpmio/rpmpgp.c b/rpmio/rpmpgp.c
+index f020650..6f8d77b 100644
+--- a/rpmio/rpmpgp.c
++++ b/rpmio/rpmpgp.c
+@@ -624,6 +624,7 @@ static int pgpPrtSig(pgpTag tag, const uint8_t *h, size_t hlen,
+ 	rc = pgpPrtSigParams(tag, v->pubkey_algo, v->sigtype, p, h, hlen, _digp);
+     }	break;
+     default:
++	rpmlog(RPMLOG_WARNING, _("Unsupported version of key: V%d\n"), h[0]);
+ 	rc = 1;
+ 	break;
+     }
+@@ -710,6 +711,8 @@ static int pgpPrtKey(pgpTag tag, const uint8_t *h, size_t hlen,
+ 	    rc = pgpPrtPubkeyParams(v->pubkey_algo, p, h, hlen, _digp);
+ 	}
+     }	break;
++    default:
++	rpmlog(RPMLOG_WARNING, _("Unsupported version of key: V%d\n"), h[0]);
+     }
+     return rc;
+ }
+@@ -775,6 +778,8 @@ static int getFingerprint(const uint8_t *h, size_t hlen, pgpKeyID_t keyid)
+ 	}
+ 
+       }	break;
++    default:
++	rpmlog(RPMLOG_WARNING, _("Unsupported version of key: V%d\n"), h[0]);
+     }
+     return rc;
+ }
+-- 
+1.9.3
+

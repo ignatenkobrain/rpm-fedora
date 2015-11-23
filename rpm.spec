@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}12%{?dist}
+Release: %{?snapver:0.%{snapver}.}13%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -62,6 +62,7 @@ Patch106: rpm-4.13.0-autopatch-fix.patch
 Patch107: rpm-4.13.0-ignore-sigpipe.patch
 Patch108: rpm-4.13.0-unsupported-keys.patch
 Patch109: rpm-4.13.0-fix-crash-on-corrupted.patch
+Patch110: rpm-4.13.0-disabling-filetriggers.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -566,6 +567,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Nov 23 2015 Lubos Kardos <lkardos@rpm.org> - 4.13.0-0.rc1.13
+- Add possibility to disable file triggers
+- Fix unwanted multiple execution of filetriggers in dnf (#1282115)
+
 * Thu Nov 12 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.13.0-0.rc1.12
 - Rebuilt for https://fedoraproject.org/wiki/Changes/python3.5
 

@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}14%{?dist}
+Release: %{?snapver:0.%{snapver}.}15%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -64,6 +64,7 @@ Patch108: rpm-4.13.0-unsupported-keys.patch
 Patch109: rpm-4.13.0-fix-crash-on-corrupted.patch
 Patch110: rpm-4.13.0-disabling-filetriggers.patch
 Patch111: rpm-4.13.0-chroot-file-triggers.patch
+Patch112: rpm-4.13.0-missingok.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -568,6 +569,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Jan 15 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.15
+- Add support for missingok file attribute
+
 * Fri Jan 15 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.14
 - Fix not chrooting transaction file triggers
 

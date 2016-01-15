@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}13%{?dist}
+Release: %{?snapver:0.%{snapver}.}14%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -63,6 +63,7 @@ Patch107: rpm-4.13.0-ignore-sigpipe.patch
 Patch108: rpm-4.13.0-unsupported-keys.patch
 Patch109: rpm-4.13.0-fix-crash-on-corrupted.patch
 Patch110: rpm-4.13.0-disabling-filetriggers.patch
+Patch111: rpm-4.13.0-chroot-file-triggers.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -567,6 +568,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Jan 15 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.14
+- Fix not chrooting transaction file triggers
+
 * Mon Nov 23 2015 Lubos Kardos <lkardos@rpm.org> - 4.13.0-0.rc1.13
 - Add possibility to disable file triggers
 - Fix unwanted multiple execution of filetriggers in dnf (#1282115)

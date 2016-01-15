@@ -1,0 +1,71 @@
+From 9aff39d0d530332e8cae376f2390b6546239a20e Mon Sep 17 00:00:00 2001
+From: Lubos Kardos <lkardos@redhat.com>
+Date: Thu, 14 Jan 2016 13:35:28 +0100
+Subject: [PATCH] Fix not chrooting transaction file triggers
+
+previously those filetriggers would call tools out of the chroot, which
+breaks installers such as DrakX or Anaconda.
+
+See https://bugs.mageia.org/show_bug.cgi?id=17217
+
+Thanks Thierry Vignaud for finding and helping to solve this.
+---
+ lib/rpmtriggers.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/lib/rpmtriggers.c b/lib/rpmtriggers.c
+index 211e62f..4c6e821 100644
+--- a/lib/rpmtriggers.c
++++ b/lib/rpmtriggers.c
+@@ -11,6 +11,7 @@
+ #include "lib/rpmdb_internal.h"
+ #include "lib/rpmds_internal.h"
+ #include "lib/rpmfi_internal.h"
++#include "lib/rpmchroot.h"
+ 
+ #define TRIGGER_PRIORITY_BOUND 10000
+ 
+@@ -157,6 +158,9 @@ int runPostUnTransFileTrigs(rpmts ts)
+     rpmtriggers trigs = ts->trigs2run;
+     int nerrors = 0;
+ 
++    if (rpmChrootIn() != 0)
++	return -1;
++
+     rpmtriggersSortAndUniq(trigs);
+     /* Iterate over stored triggers */
+     for (i = 0; i < trigs->count; i++) {
+@@ -180,6 +184,9 @@ int runPostUnTransFileTrigs(rpmts ts)
+ 	rpmScriptFree(script);
+ 	headerFree(trigH);
+     }
++
++    rpmChrootOut();
++
+     return nerrors;
+ }
+ 
+@@ -530,6 +537,11 @@ rpmRC runFileTriggers(rpmts ts, rpmte te, rpmsenseFlags sense,
+     /* Sort triggers by priority, offset, trigger index */
+     rpmtriggersSortAndUniq(triggers);
+ 
++    if (rpmChrootIn() != 0) {
++	rpmtriggersFree(triggers);
++	return RPMRC_FAIL;
++    }
++
+     /* Handle stored triggers */
+     for (i = 0; i < triggers->count; i++) {
+ 	if (priorityClass == 1) {
+@@ -550,6 +562,8 @@ rpmRC runFileTriggers(rpmts ts, rpmte te, rpmsenseFlags sense,
+ 	headerFree(trigH);
+     }
+     rpmtriggersFree(triggers);
++    /* XXX an error here would require a full abort */
++    (void) rpmChrootOut();
+ 
+     return (nerrors == 0) ? RPMRC_OK : RPMRC_FAIL;
+ }
+-- 
+1.9.3
+

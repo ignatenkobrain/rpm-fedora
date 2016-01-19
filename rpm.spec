@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}16%{?dist}
+Release: %{?snapver:0.%{snapver}.}17%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -66,6 +66,7 @@ Patch110: rpm-4.13.0-disabling-filetriggers.patch
 Patch111: rpm-4.13.0-chroot-file-triggers.patch
 Patch112: rpm-4.13.0-missingok.patch
 Patch113: rpm-4.13.0-recursing-rpmdeps.patch
+Patch114: rpm-4.13.0-autosetup-errors.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -570,6 +571,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Jan 19 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.17
+- Fix %autosetup not to cause errors during run of rpmspec tool (#1293687)
+
 * Fri Jan 15 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.16
 - Fix recursive calling of rpmdeps tool (#1297557)
 

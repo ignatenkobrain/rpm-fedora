@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}18%{?dist}
+Release: %{?snapver:0.%{snapver}.}19%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -335,14 +335,7 @@ autoreconf -i -f
 
 # Using configure macro has some unwanted side-effects on rpm platform
 # setup, use the old-fashioned way for now only defining minimal paths.
-./configure \
-    --prefix=%{_usr} \
-    --sysconfdir=%{_sysconfdir} \
-    --localstatedir=%{_var} \
-    --sharedstatedir=%{_var}/lib \
-    --libdir=%{_libdir} \
-    --build=%{_target_platform} \
-    --host=%{_target_platform} \
+%configure \
     --with-vendor=redhat \
     %{!?with_int_bdb: --with-external-db} \
     %{!?with_plugins: --disable-plugins} \
@@ -571,6 +564,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Jan 29 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.19
+- Use %%configure macro, harden rpm package (#1289734)
+
 * Tue Jan 19 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.18
 - Escape %%autosetup in previous changelog record
 

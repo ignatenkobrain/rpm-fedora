@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}20%{?dist}
+Release: %{?snapver:0.%{snapver}.}21%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -333,10 +333,6 @@ export CPPFLAGS CFLAGS LDFLAGS
 
 autoreconf -i -f
 
-%ifarch %{arm}
-%global _gnu -gnueabi
-%endif
-
 # Using configure macro has some unwanted side-effects on rpm platform
 # setup, use the old-fashioned way for now only defining minimal paths.
 ./configure \
@@ -575,6 +571,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Feb 01 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.21
+- Remove setting %%_gnu macro explictly, no more needed (#1303265)
+
 * Mon Feb 01 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.20
 - Revert using %%configure, it causes problems
 - Temporary set %%_gnu macro explictly, just for one build (#1303265)

@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}21%{?dist}
+Release: %{?snapver:0.%{snapver}.}22%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -329,9 +329,15 @@ ln -s db-%{bdbver} db
 %endif
 CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss` -DLUA_COMPAT_APIINTCASTS"
 CFLAGS="$RPM_OPT_FLAGS %{?sanitizer_flags} -DLUA_COMPAT_APIINTCASTS"
+LDFLAGS="$LDFLAGS %{?__global_ldflags}"
 export CPPFLAGS CFLAGS LDFLAGS
 
 autoreconf -i -f
+
+# Hardening hack taken from macro %%configure defined in redhat-rpm-config
+for i in $(find . -name ltmain.sh) ; do
+     %{__sed} -i.backup -e 's~compiler_flags=$~compiler_flags="%{_hardened_ldflags}"~' $i
+done;
 
 # Using configure macro has some unwanted side-effects on rpm platform
 # setup, use the old-fashioned way for now only defining minimal paths.
@@ -571,6 +577,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Feb 01 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.22
+- Harden rpm package again, previous attempt had to be reverted (#1289734)
+
 * Mon Feb 01 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.21
 - Remove setting %%_gnu macro explictly, no more needed (#1303265)
 

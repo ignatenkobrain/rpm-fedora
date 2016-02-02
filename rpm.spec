@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}22%{?dist}
+Release: %{?snapver:0.%{snapver}.}23%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -67,6 +67,7 @@ Patch111: rpm-4.13.0-chroot-file-triggers.patch
 Patch112: rpm-4.13.0-missingok.patch
 Patch113: rpm-4.13.0-recursing-rpmdeps.patch
 Patch114: rpm-4.13.0-autosetup-errors.patch
+Patch115: rpm-4.13.0-unlimited-macro-expand.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -577,6 +578,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Feb 02 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.23
+- Remove size limit when expanding macros (#1301677)
+
 * Mon Feb 01 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.22
 - Harden rpm package again, previous attempt had to be reverted (#1289734)
 

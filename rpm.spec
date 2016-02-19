@@ -69,6 +69,7 @@ Patch113: rpm-4.13.0-recursing-rpmdeps.patch
 Patch114: rpm-4.13.0-autosetup-errors.patch
 Patch115: rpm-4.13.0-unlimited-macro-expand.patch
 Patch116: rpm-4.13.0-idle-and-sleep-in-systemd-inhibit.patch
+Patch117: rpm-4.13.0-add-mipsr6-support.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -581,6 +582,8 @@ exit 0
 %changelog
 * Fri Feb 19 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.24
 - Also block idle and sleep in the systemd-inhibit plugin (#1297984)
+- Add support for MIPS release 6
+- Add mips32 mips64 mipsel and mipseb macros (#1285116)
 
 * Mon Feb 02 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.23
 - Remove size limit when expanding macros (#1301677)

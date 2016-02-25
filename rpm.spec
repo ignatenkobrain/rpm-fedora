@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}24%{?dist}
+Release: %{?snapver:0.%{snapver}.}25%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -70,6 +70,7 @@ Patch114: rpm-4.13.0-autosetup-errors.patch
 Patch115: rpm-4.13.0-unlimited-macro-expand.patch
 Patch116: rpm-4.13.0-idle-and-sleep-in-systemd-inhibit.patch
 Patch117: rpm-4.13.0-add-mipsr6-support.patch
+Patch118: rpm-4.13.0-Use-pkg-dpaths-during-dependency-generation.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -580,6 +581,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Feb 25 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.25
+- Fix dependencies for RemovePathPostfixes (#1306559)
+
 * Fri Feb 19 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.24
 - Also block idle and sleep in the systemd-inhibit plugin (#1297984)
 - Add support for MIPS release 6

@@ -308,7 +308,8 @@ Group: System Environment/Base
 Requires: rpm-libs%{_isa} = %{version}-%{release}
 
 %description plugin-systemd-inhibit
-%{summary}
+This plugin blocks systemd from entering idle, sleep or shutdown while an rpm
+transaction is running using the systemd-inhibit mechanism.
 
 %package plugin-ima
 Summary: Rpm plugin ima file signatures

@@ -1,0 +1,71 @@
+From 19fe0d9ae12644b8af9513aa2a8cf7d16f7caa61 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Zbigniew=20J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
+Date: Fri, 4 Mar 2016 16:40:30 -0500
+Subject: [PATCH] Add posix.redirect2null
+
+This is useful to silence output in forked programs:
+https://bugzilla.redhat.com/show_bug.cgi?id=1287918
+
+Tested with the following scriptlet:
+%post -p <lua>
+pid = posix.fork()
+if pid == 0 then
+    assert(posix.exec("/bin/sed"))
+elseif pid > 0 then
+    posix.wait(pid)
+end
+pid = posix.fork()
+if pid == 0 then
+    posix.redirect2null(2)
+    assert(posix.exec("/bin/awk"))
+elseif pid > 0 then
+    posix.wait(pid)
+end
+
+As expected, the error message from sed is printed, the error message
+from awk is not.
+---
+ luaext/lposix.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/luaext/lposix.c b/luaext/lposix.c
+index 51ea2b3..c578c5a 100644
+--- a/luaext/lposix.c
++++ b/luaext/lposix.c
+@@ -819,6 +819,25 @@ static int Pmkstemp(lua_State *L)
+ 	return 2;
+ }
+ 
++static int Predirect2null(lua_State *L)
++{
++    int target_fd, fd, r, e;
++
++    if (!have_forked)
++	return luaL_error(L, "silence_file_descriptor not permitted in this context");
++
++    target_fd = luaL_checkinteger(L, 1);
++
++    r = fd = open("/dev/null", O_WRONLY);
++    if (fd >= 0 && fd != target_fd) {
++	r = dup2(fd, target_fd);
++	e = errno;
++	(void) close(fd);
++	errno = e;
++    }
++    return pushresult(L, r, NULL);
++}
++
+ static const luaL_Reg R[] =
+ {
+ 	{"access",		Paccess},
+@@ -861,6 +880,7 @@ static const luaL_Reg R[] =
+ 	{"wait",		Pwait},
+ 	{"setenv",		Psetenv},
+ 	{"unsetenv",		Punsetenv},
++	{"redirect2null",       Predirect2null},
+ 	{NULL,			NULL}
+ };
+ 
+-- 
+1.9.3
+

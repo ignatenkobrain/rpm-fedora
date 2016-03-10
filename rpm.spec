@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}26%{?dist}
+Release: %{?snapver:0.%{snapver}.}27%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -72,6 +72,7 @@ Patch116: rpm-4.13.0-idle-and-sleep-in-systemd-inhibit.patch
 Patch117: rpm-4.13.0-add-mipsr6-support.patch
 Patch118: rpm-4.13.0-Use-pkg-dpaths-during-dependency-generation.patch
 Patch119: rpm-4.13.0-Noarch-ExclusiveArch.patch
+Patch120: rpm-4.13.0-redirect2null.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -583,6 +584,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Mar 10 2016 Lubos Kardos <lkardos@redhat.com> 4.13.0-0.rc1.27
+- Add posix.redirect2null (#1287918)
+
 * Fri Feb 26 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.26
 - Fix ExclusiveArch/ExcludeArch for noarch packages (#1298668)
 

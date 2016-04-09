@@ -602,7 +602,7 @@ exit 0
 - Add support for MIPS release 6
 - Add mips32 mips64 mipsel and mipseb macros (#1285116)
 
-* Thu Feb 02 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.23
+* Tue Feb 02 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.23
 - Remove size limit when expanding macros (#1301677)
 
 * Mon Feb 01 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.22

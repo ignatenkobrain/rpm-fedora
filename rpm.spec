@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}28%{?dist}
+Release: %{?snapver:0.%{snapver}.}29%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -74,6 +74,7 @@ Patch118: rpm-4.13.0-Use-pkg-dpaths-during-dependency-generation.patch
 Patch119: rpm-4.13.0-Noarch-ExclusiveArch.patch
 Patch120: rpm-4.13.0-redirect2null.patch
 Patch121: rpm-4.13.0-lang-doc-directives.patch
+Patch122: rpm-4.13.0-elem-progress-callback.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -585,6 +586,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Apr 12 2016 Lubos Kardos <lkardos@redhat.com> 4.13.0-0.rc1.29
+- Add RPMCALLBACK_ELEM_PROGRESS callback type (needed by dnf)
+
 * Wed Apr 06 2016 Lubos Kardos <lkardos@redhat.com> 4.13.0-0.rc1.28
 - Fix non-working combination of %%lang and %%doc directive (#1254483)
 

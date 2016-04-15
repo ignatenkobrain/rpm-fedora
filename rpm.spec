@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}31%{?dist}
+Release: %{?snapver:0.%{snapver}.}32%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -590,10 +590,13 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Apr 15 2016 Lubos Kardos <lkardos@redhat.com> 4.13.0-0.rc1.32
+- escape %% chars in previous changelog record
+
 * Fri Apr 15 2016 Lubos Kardos <lkardos@redhat.com> 4.13.0-0.rc1.31
-- Enable --no-backup-if-mismatch by default in %patch macro (#884755)
-- Add %{_default_patch_flags} to %__patch which is used in %autosetup
-- Use fuzz settings for %autopatch/%autosetup
+- Enable --no-backup-if-mismatch by default in %%patch macro (#884755)
+- Add %%{_default_patch_flags} to %%__patch which is used in %%autosetup
+- Use fuzz settings for %%autopatch/%%autosetup
 
 * Thu Apr 14 2016 Lubos Kardos <lkardos@redhat.com> 4.13.0-0-rc1.30
 - Make creating index records consistent for rich and rich-weak deps (#1325982)

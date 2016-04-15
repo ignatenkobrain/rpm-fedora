@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}30%{?dist}
+Release: %{?snapver:0.%{snapver}.}31%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -76,6 +76,9 @@ Patch120: rpm-4.13.0-redirect2null.patch
 Patch121: rpm-4.13.0-lang-doc-directives.patch
 Patch122: rpm-4.13.0-elem-progress-callback.patch
 Patch123: rpm-4.13.0-weak-rich-consistency.patch
+Patch124: rpm-4.13.0-fuzz-settings.patch
+Patch125: rpm-4.13.0-patch-flags.patch
+Patch126: rpm-4.13.0-no-backup-if-mismatch.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -587,6 +590,11 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Apr 15 2016 Lubos Kardos <lkardos@redhat.com> 4.13.0-0.rc1.31
+- Enable --no-backup-if-mismatch by default in %patch macro (#884755)
+- Add %{_default_patch_flags} to %__patch which is used in %autosetup
+- Use fuzz settings for %autopatch/%autosetup
+
 * Thu Apr 14 2016 Lubos Kardos <lkardos@redhat.com> 4.13.0-0-rc1.30
 - Make creating index records consistent for rich and rich-weak deps (#1325982)
 

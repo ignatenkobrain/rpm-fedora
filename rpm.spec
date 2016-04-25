@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}32%{?dist}
+Release: %{?snapver:0.%{snapver}.}33%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -79,6 +79,8 @@ Patch123: rpm-4.13.0-weak-rich-consistency.patch
 Patch124: rpm-4.13.0-fuzz-settings.patch
 Patch125: rpm-4.13.0-patch-flags.patch
 Patch126: rpm-4.13.0-no-backup-if-mismatch.patch
+Patch127: rpm-4.13.0-rpmtd-out-of-bounds.patch
+Patch128: rpm-4.13.0-stringFormat-sigsegv.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -590,6 +592,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Apr 25 2016 Lubos Kardos <lkardos@redhat.com> 4.13.0-0.rc1.33
+- Fix sigsegv in stringFormat() (#1316903)
+- Fix reading rpmtd behind its size in formatValue() (#1316896)
+
 * Fri Apr 15 2016 Lubos Kardos <lkardos@redhat.com> 4.13.0-0.rc1.32
 - escape %% chars in previous changelog record
 

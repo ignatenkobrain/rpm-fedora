@@ -1,0 +1,27 @@
+From b722cf86200505b3e3fcbb2095c4ff61f1f5a2ab Mon Sep 17 00:00:00 2001
+From: Lubos Kardos <lkardos@redhat.com>
+Date: Mon, 25 Apr 2016 13:31:08 +0200
+Subject: [PATCH 1/2] Fix reading rpmtd behind its size in formatValue()
+ (rhbz:1316896)
+
+When it is read from index higher than size of rpmtd, return "(none)".
+---
+ lib/headerfmt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/headerfmt.c b/lib/headerfmt.c
+index fb29d6f..f6fd707 100644
+--- a/lib/headerfmt.c
++++ b/lib/headerfmt.c
+@@ -623,7 +623,7 @@ static char * formatValue(headerSprintfArgs hsa, sprintfTag tag, int element)
+     char * t, * te;
+     rpmtd td;
+ 
+-    if ((td = getData(hsa, tag->tag))) {
++    if ((td = getData(hsa, tag->tag)) && td->count > element) {
+ 	td->ix = element; /* Ick, use iterators instead */
+ 	val = tag->fmt(td);
+     } else {
+-- 
+1.9.3
+

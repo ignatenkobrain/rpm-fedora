@@ -167,6 +167,9 @@ BuildRequires: libubsan
 BuildRequires: ima-evm-utils
 %endif
 
+# For generating docs
+BuildRequires: doxygen
+
 %description
 The RPM Package Manager (RPM) is a powerful command line driven
 package management system capable of installing, uninstalling,
@@ -373,6 +376,7 @@ done;
     --with-selinux \
     --with-cap \
     --with-acl \
+    --enable-ndb \
     --enable-python
 
 make %{?_smp_mflags}
@@ -462,7 +466,7 @@ exit 0
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 %license COPYING
-%doc GROUPS CREDITS doc/manual/[a-z]*
+%doc CREDITS doc/manual/[a-z]*
 
 /usr/lib/tmpfiles.d/rpm.conf
 %dir %{_sysconfdir}/rpm
@@ -479,6 +483,7 @@ exit 0
 %{_bindir}/rpmverify
 
 %{_mandir}/man8/rpm.8*
+%{_mandir}/man8/rpm-misc.8*
 %{_mandir}/man8/rpmdb.8*
 %{_mandir}/man8/rpmkeys.8*
 %{_mandir}/man8/rpm2cpio.8*
@@ -568,12 +573,12 @@ exit 0
 %files python
 %defattr(-,root,root)
 %{python_sitearch}/rpm
-%{python_sitearch}/rpm_python-%{eggver}-py2.7.egg-info
+%{python_sitearch}/rpm_python-*.egg-info
 
 %files python3
 %defattr(-,root,root)
 %{python3_sitearch}/rpm
-%{python3_sitearch}/rpm_python-%{eggver}-py%{python3_version}.egg-info
+%{python3_sitearch}/rpm_python-*.egg-info
 
 %files devel
 %defattr(-,root,root)

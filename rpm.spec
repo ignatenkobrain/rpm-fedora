@@ -177,6 +177,9 @@ BuildRequires: libubsan
 BuildRequires: ima-evm-utils
 %endif
 
+# For generating docs
+BuildRequires: doxygen
+
 %description
 The RPM Package Manager (RPM) is a powerful command line driven
 package management system capable of installing, uninstalling,
@@ -486,7 +489,7 @@ exit 0
 
 %files -f %{name}.lang
 %license COPYING
-%doc GROUPS CREDITS doc/manual/[a-z]*
+%doc CREDITS doc/manual/[a-z]*
 
 /usr/lib/tmpfiles.d/rpm.conf
 %dir %{_sysconfdir}/rpm
@@ -494,7 +497,7 @@ exit 0
 %attr(0755, root, root) %dir /var/lib/rpm
 %attr(0644, root, root) %verify(not md5 size mtime) %ghost %config(missingok,noreplace) /var/lib/rpm/*
 
-/bin/rpm
+%{_bindir}/rpm
 %{_bindir}/rpm2archive
 %{_bindir}/rpm2cpio
 %{_bindir}/rpmdb
@@ -503,6 +506,7 @@ exit 0
 %{_bindir}/rpmverify
 
 %{_mandir}/man8/rpm.8*
+%{_mandir}/man8/rpm-misc.8*
 %{_mandir}/man8/rpmdb.8*
 %{_mandir}/man8/rpmkeys.8*
 %{_mandir}/man8/rpm2cpio.8*
@@ -587,11 +591,11 @@ exit 0
 
 %files -n python2-%{name}
 %{python_sitearch}/%{name}/
-%{python_sitearch}/%{name}_python-*.egg-info
+%{python_sitearch}/%{name}*.egg-info
 
 %files -n python3-%{name}
 %{python3_sitearch}/%{name}/
-%{python3_sitearch}/%{name}_python-*.egg-info
+%{python3_sitearch}/%{name}*.egg-info
 
 %files devel
 %{_mandir}/man8/rpmgraph.8*

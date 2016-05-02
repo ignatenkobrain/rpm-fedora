@@ -3,7 +3,7 @@
 # just for giggles, option to build with internal Berkeley DB
 %bcond_with int_bdb
 # run internal testsuite?
-%bcond_with check
+%bcond_without check
 # build with plugins?
 %bcond_without plugins
 # build with sanitizers?

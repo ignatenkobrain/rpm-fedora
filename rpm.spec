@@ -2,8 +2,6 @@
 %bcond_without xz
 # just for giggles, option to build with internal Berkeley DB
 %bcond_with int_bdb
-# run internal testsuite?
-%bcond_without check
 # build with plugins?
 %bcond_without plugins
 # build with sanitizers?
@@ -16,10 +14,14 @@
 %bcond_with ndb
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %bcond_with python3
+# run internal testsuite?
+%bcond_with check
 # use system-wide perl-generators?
 %bcond_with system_perl_generators
 %else
 %bcond_without python3
+# run internal testsuite?
+%bcond_without check
 # use system-wide perl-generators?
 %bcond_without system_perl_generators
 %endif

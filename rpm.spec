@@ -12,6 +12,8 @@
 %bcond_without libarchive
 # build with libimaevm.so
 %bcond_without libimaevm
+# build with new db format
+%bcond_with ndb
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
@@ -376,7 +378,7 @@ done;
     --with-selinux \
     --with-cap \
     --with-acl \
-    --enable-ndb \
+    %{?with_ndb: --with-ndb} \
     --enable-python
 
 make %{?_smp_mflags}

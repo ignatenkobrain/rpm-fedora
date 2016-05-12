@@ -12,6 +12,8 @@
 %bcond_without libarchive
 # build with libimaevm.so
 %bcond_without libimaevm
+# build with new db format
+%bcond_with ndb
 
 %define rpmhome /usr/lib/rpm
 
@@ -381,6 +383,7 @@ done;
     --with-selinux \
     --with-cap \
     --with-acl \
+    %{?with_ndb: --with-ndb} \
     --enable-python
 
 make %{?_smp_mflags}

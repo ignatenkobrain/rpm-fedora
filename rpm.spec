@@ -55,57 +55,8 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 # Temporary band-aid for rpm2cpio whining on payload size mismatch (#1142949)
 Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 
-# Patches already upstream:
-
-Patch133: rpm-4.13.x-pythondistdeps.patch
-Patch134: rpm-4.13.x-pythondistdeps-Makefile.patch
-Patch135: rpm-4.13.x-pythondistdeps-fileattr.patch
-Patch136: rpm-4.13.x-pythondistdeps.py-skip-distribution-metadata-if-ther.patch
-Patch137: rpm-4.13.x-pythondistdeps.py-show-warning-if-version-is-not-fou.patch
-Patch138: rpm-4.13.x-pythondistdeps.py-skip-.egg-link-files.patch
-Patch139: rpm-4.13.x-pythondistdeps.py-add-forgotten-import.patch
-Patch140: rpm-4.13.x-brp-python-bytecompile-Python3-only.patch
-# Upstream PR: https://github.com/rpm-software-management/rpm/pull/154
-# rhbz#1421776
-Patch141: rpm-4.13.x-pythondistdeps.py-fix-processing-wheels.patch
-Patch142: rpm-4.13.x-fix-refcount-for-spec_type.patch
-
 # Fedora-specific (python3) patch (RHBZ #1405483)
 Patch200: rpm-4.13.x-pythondistdeps-python3.patch
-
-# debuginfo backports (#1427970)
-Patch250: 0001-Add-build-id-links-to-rpm-for-all-ELF-files.patch
-Patch251: 0002-Make-it-possible-to-have-unique-build-ids-across-bui.patch
-Patch252: 0003-Make-adding-GDB-index-sections-configurable.patch
-Patch253: 0004-Add-option-to-have-unique-debug-file-names-across-ve.patch
-Patch254: 0005-Fix-behavior-when-_build_id_links-is-undefined.patch
-Patch255: 0006-Fix-debuginfo-etc-when-subpackages-have-different-ve.patch
-Patch256: 0007-Only-process-regular-files-when-generating-build-ids.patch
-Patch257: 0008-configure.ac-use-LIBDW-always-conditionally.patch
-Patch258: 0009-Fix-libdw-configure-check.patch
-Patch259: 0010-debugedit-Support-String-Line-table-rewriting-for-la.patch
-Patch260: 0011-Add-option-to-have-unique-debug-source-dirs-across-v.patch
-
-# debuginfo build-id warn/error fix (#1430587)
-Patch261: 0012-generateBuildIDs-Don-t-warn-or-error-for-object-file.patch
-Patch262: 0013-missing_build_ids_terminate_build.patch
-Patch263: 0014-generateBuildIDs-Fix-error-handling.patch
-Patch264: 0015-reset-buildid-file-attrs.patch
-Patch265: 0016-debugedit-replace-files.patch
-Patch266: 0017-do-not-process-buildi-ds-for-noarch.patch
-Patch267: 0018-update-build-id-endian.patch
-Patch268: 0019-fix-sed-build-id-match-test.patch
-Patch269: 0020-build-files-exec-build-id.patch
-Patch270: 0021-debugedit-Fix-off-by-one-adding-DW_FORM_string-repla.patch
-Patch271: 0022-unbreak-short-circuit.patch
-Patch272: 0023-minisymtab-exe-sh.patch
-Patch273: 0024-no-recompute-build-id.patch
-
-# World writable empty (tmp) dirs in debuginfo packages (#641022)
-Patch280: rpm-4.13.x-writable-tmp-dir.patch
-
-# OpenSSL backend
-Patch300: 0001-Add-OpenSSL-support-for-digest-and-signatures.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch

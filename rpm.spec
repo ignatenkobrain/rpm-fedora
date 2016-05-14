@@ -53,39 +53,6 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 # Temporary band-aid for rpm2cpio whining on payload size mismatch (#1142949)
 Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 
-# Patches already upstream:
-Patch100: rpm-4.13.0-rc1-Fix-new-richdep-syntax.patch
-Patch101: rpm-4.13.0-selinux--permissive-scriptlets.patch
-Patch102: rpm-4.13.0-non-numeric-epoch.patch
-Patch103: rpm-4.13.0-wrong-version-macro.patch
-Patch104: rpm-4.13.0-memory-error.patch
-Patch105: rpm-4.13.0-rpmdeps-weakdep-support.patch
-Patch106: rpm-4.13.0-autopatch-fix.patch
-Patch107: rpm-4.13.0-ignore-sigpipe.patch
-Patch108: rpm-4.13.0-unsupported-keys.patch
-Patch109: rpm-4.13.0-fix-crash-on-corrupted.patch
-Patch110: rpm-4.13.0-disabling-filetriggers.patch
-Patch111: rpm-4.13.0-chroot-file-triggers.patch
-Patch112: rpm-4.13.0-missingok.patch
-Patch113: rpm-4.13.0-recursing-rpmdeps.patch
-Patch114: rpm-4.13.0-autosetup-errors.patch
-Patch115: rpm-4.13.0-unlimited-macro-expand.patch
-Patch116: rpm-4.13.0-idle-and-sleep-in-systemd-inhibit.patch
-Patch117: rpm-4.13.0-add-mipsr6-support.patch
-Patch118: rpm-4.13.0-Use-pkg-dpaths-during-dependency-generation.patch
-Patch119: rpm-4.13.0-Noarch-ExclusiveArch.patch
-Patch120: rpm-4.13.0-redirect2null.patch
-Patch121: rpm-4.13.0-lang-doc-directives.patch
-Patch122: rpm-4.13.0-elem-progress-callback.patch
-Patch123: rpm-4.13.0-weak-rich-consistency.patch
-Patch124: rpm-4.13.0-fuzz-settings.patch
-Patch125: rpm-4.13.0-patch-flags.patch
-Patch126: rpm-4.13.0-no-backup-if-mismatch.patch
-Patch127: rpm-4.13.0-rpmtd-out-of-bounds.patch
-Patch128: rpm-4.13.0-stringFormat-sigsegv.patch
-Patch129: rpm-4.13.0-filter-unversioned.patch
-Patch130: rpm-4.13.0-armv7hl-isa.patch
-
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
 # Probably to be upstreamed in slightly different form

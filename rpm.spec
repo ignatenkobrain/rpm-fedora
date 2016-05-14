@@ -53,24 +53,8 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 # Temporary band-aid for rpm2cpio whining on payload size mismatch (#1142949)
 Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 
-# Patches already upstream:
-
-Patch133: rpm-4.13.x-pythondistdeps.patch
-Patch134: rpm-4.13.x-pythondistdeps-Makefile.patch
-Patch135: rpm-4.13.x-pythondistdeps-fileattr.patch
-Patch136: rpm-4.13.x-pythondistdeps.py-skip-distribution-metadata-if-ther.patch
-Patch137: rpm-4.13.x-pythondistdeps.py-show-warning-if-version-is-not-fou.patch
-Patch138: rpm-4.13.x-pythondistdeps.py-skip-.egg-link-files.patch
-Patch139: rpm-4.13.x-pythondistdeps.py-add-forgotten-import.patch
-Patch140: rpm-4.13.x-brp-python-bytecompile-Python3-only.patch
-# Upstream PR: https://github.com/rpm-software-management/rpm/pull/154
-# rhbz#1421776
-Patch141: rpm-4.13.x-pythondistdeps.py-fix-processing-wheels.patch
-Patch142: rpm-4.13.x-fix-refcount-for-spec_type.patch
-
 # Fedora-specific (python3) patch (RHBZ #1405483)
 Patch200: rpm-4.13.x-pythondistdeps-python3.patch
-
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch

@@ -51,17 +51,6 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 # Temporary band-aid for rpm2cpio whining on payload size mismatch (#1142949)
 Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 
-# Patches already upstream:
-Patch100: rpm-4.13.x-transfiletriggerpostun-invalid-read.patch
-
-Patch133: rpm-4.13.x-pythondistdeps.patch
-Patch134: rpm-4.13.x-pythondistdeps-Makefile.patch
-Patch135: rpm-4.13.x-pythondistdeps-fileattr.patch
-Patch136: rpm-4.13.x-pythondistdeps.py-skip-distribution-metadata-if-ther.patch
-Patch137: rpm-4.13.x-pythondistdeps.py-show-warning-if-version-is-not-fou.patch
-Patch138: rpm-4.13.x-pythondistdeps.py-skip-.egg-link-files.patch
-Patch139: rpm-4.13.x-pythondistdeps.py-add-forgotten-import.patch
-
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
 # Probably to be upstreamed in slightly different form

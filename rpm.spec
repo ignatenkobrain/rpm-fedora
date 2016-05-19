@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}34%{?dist}
+Release: %{?snapver:0.%{snapver}.}35%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -82,6 +82,7 @@ Patch126: rpm-4.13.0-no-backup-if-mismatch.patch
 Patch127: rpm-4.13.0-rpmtd-out-of-bounds.patch
 Patch128: rpm-4.13.0-stringFormat-sigsegv.patch
 Patch129: rpm-4.13.0-filter-unversioned.patch
+Patch130: rpm-4.13.0-armv7hl-isa.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -593,6 +594,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu May 19 2016 Lubos Kardos <lkardos@redhat.com> 4.13.0-0.rc1.35
+- Use armv7hl isa for all armhfp (armv7h*l) arches (#1326871)
+
 * Tue May 17 2016 Lubos Kardos <lkardos@redhat.com> 4.13.0-0.rc1.34
 - Filter unversioned deps if corresponding versioned deps exist (#678605)
 

@@ -1,0 +1,20 @@
+--- rpm-4.13.0-rc1/scripts/Makefile.am.orig	2015-09-01 19:45:43.896822977 +0200
++++ rpm-4.13.0-rc1/scripts/Makefile.am	2016-06-13 15:46:34.281390084 +0200
+@@ -11,7 +11,7 @@
+ 	check-files check-prereqs \
+ 	check-buildroot check-rpaths check-rpaths-worker \
+ 	find-debuginfo.sh find-lang.sh \
+-	perl.prov perl.req pythondeps.sh \
++	perl.prov perl.req pythondeps.sh pythondistdeps.py \
+ 	rpmdb_loadcvt rpm.daily rpm.log rpm.supp rpm2cpio.sh \
+ 	tgpg vpkg-provides.sh \
+ 	find-requires find-provides \
+@@ -30,7 +30,7 @@
+ 	check-files check-prereqs \
+ 	check-buildroot check-rpaths check-rpaths-worker \
+ 	find-lang.sh find-requires find-provides \
+-	perl.prov perl.req pythondeps.sh \
++	perl.prov perl.req pythondeps.sh pythondistdeps.py \
+ 	mono-find-requires mono-find-provides \
+ 	pkgconfigdeps.sh libtooldeps.sh \
+ 	ocaml-find-requires.sh ocaml-find-provides.sh \

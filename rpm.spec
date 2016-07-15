@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}38%{?dist}
+Release: %{?snapver:0.%{snapver}.}39%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -599,6 +599,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Jul 15 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.39
+- Pass relevant files to new Python dependency generator
+
 * Mon Jun 13 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.38
 - Add new Python dependency generator (provides only for now) (#1340885)
 

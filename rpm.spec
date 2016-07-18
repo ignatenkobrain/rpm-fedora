@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}39%{?dist}
+Release: %{?snapver:0.%{snapver}.}40%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
@@ -242,7 +242,6 @@ Requires: /usr/bin/gdb-add-index
 # "just work" while allowing for alternatives, depend on a virtual
 # provide, typically coming from redhat-rpm-config.
 Requires: system-rpm-config
-Requires: perl-generators
 
 %description build
 The rpm-build package contains the scripts and executable programs
@@ -599,6 +598,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Jul 18 2016 Petr Pisar <ppisar@redhat.com> - 4.4.13.0-0.rc1.40
+- Drop rpm-build's dependency on perl-generators (bug #1158860)
+
 * Fri Jul 15 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.39
 - Pass relevant files to new Python dependency generator
 

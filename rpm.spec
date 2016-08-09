@@ -13,14 +13,12 @@
 # build with libimaevm.so
 %bcond_without libimaevm
 
-%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
-
 %define rpmhome /usr/lib/rpm
 
-%define rpmver 4.13.0
-%define snapver rc1
-%define srcver %{rpmver}%{?snapver:-%{snapver}}
-%define eggver %{rpmver}%{?snapver:_%{snapver}}
+%global rpmver 4.13.0
+%global snapver rc1
+%global srcver %{version}%{?snapver:-%{snapver}}
+%global srcdir %{?snapver:testing}%{!?snapver:%{name}-%(v=%{version}; echo ${v%.*}.x)}
 
 %define bdbname libdb
 %define bdbver 5.3.15
@@ -29,10 +27,10 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}40%{?dist}.1
+Release: %{?snapver:0.%{snapver}.}41%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{srcver}.tar.bz2
+Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %else
@@ -139,8 +137,6 @@ BuildRequires: file-devel
 BuildRequires: gettext-devel
 BuildRequires: ncurses-devel
 BuildRequires: bzip2-devel >= 0.9.0c-2
-BuildRequires: python-devel >= 2.6
-BuildRequires: python3-devel >= 3.2
 BuildRequires: lua-devel >= 5.1
 BuildRequires: libcap-devel
 BuildRequires: libacl-devel
@@ -183,7 +179,7 @@ the package like its version, a description, etc.
 Summary:  Libraries for manipulating RPM packages
 Group: Development/Libraries
 License: GPLv2+ and LGPLv2+ with exceptions
-Requires: rpm = %{version}-%{release}
+Requires: %{name}%{?_isa} = %{version}-%{release}
 # librpm uses cap_compare, introduced sometimes between libcap 2.10 and 2.16.
 # A manual require is needed, see #505596
 Requires: libcap%{_isa} >= 2.16
@@ -212,9 +208,9 @@ packages.
 Summary:  Development files for manipulating RPM packages
 Group: Development/Libraries
 License: GPLv2+ and LGPLv2+ with exceptions
-Requires: rpm = %{version}-%{release}
-Requires: rpm-libs%{_isa} = %{version}-%{release}
-Requires: rpm-build-libs%{_isa} = %{version}-%{release}
+Requires: %{name}%{?_isa} = %{version}-%{release}
+Requires: %{name}-libs%{_isa} = %{version}-%{release}
+Requires: %{name}-build-libs%{_isa} = %{version}-%{release}
 Requires: popt-devel%{_isa}
 
 %description devel
@@ -255,12 +251,16 @@ Requires: rpm-build-libs%{_isa} = %{version}-%{release}
 %description sign
 This package contains support for digitally signing RPM packages.
 
-%package python
+%package -n python2-%{name}
 Summary: Python 2 bindings for apps which will manipulate RPM packages
 Group: Development/Libraries
-Requires: rpm = %{version}-%{release}
+BuildRequires: python2-devel
+%{?python_provide:%python_provide python2-%{name}}
+Requires: %{name}%{?_isa} = %{version}-%{release}
+Provides: %{name}-python = %{version}-%{release}
+Obsoletes: %{name}-python < 4.13.0-0.rc1.41
 
-%description python
+%description -n python2-%{name}
 The rpm-python package contains a module that permits applications
 written in the Python programming language to use the interface
 supplied by RPM Package Manager libraries.
@@ -268,12 +268,16 @@ supplied by RPM Package Manager libraries.
 This package should be installed if you want to develop Python 2
 programs that will manipulate RPM packages and databases.
 
-%package python3
+%package -n python3-%{name}
 Summary: Python 3 bindings for apps which will manipulate RPM packages
 Group: Development/Libraries
-Requires: rpm = %{version}-%{release}
+BuildRequires: python3-devel
+%{?system_python_abi}
+Requires: %{name}%{?_isa} = %{version}-%{release}
+Provides: %{name}-python3 = %{version}-%{release}
+Obsoletes: %{name}-python3 < 4.13.0-0.rc1.41
 
-%description python3
+%description -n python3-%{name}
 The rpm-python3 package contains a module that permits applications
 written in the Python programming language to use the interface
 supplied by RPM Package Manager libraries.
@@ -382,7 +386,7 @@ done;
 make %{?_smp_mflags}
 
 pushd python
-%{__python} setup.py build
+%{__python2} setup.py build
 %{__python3} setup.py build
 popd
 
@@ -393,9 +397,8 @@ make DESTDIR="$RPM_BUILD_ROOT" install
 
 # We need to build with --enable-python for the self-test suite, but we
 # actually package the bindings built with setup.py (#531543#c26)
-rm -rf $RPM_BUILD_ROOT/%{python_sitearch}
 pushd python
-%{__python} setup.py install --skip-build --root $RPM_BUILD_ROOT
+%{__python2} setup.py install --skip-build --root $RPM_BUILD_ROOT
 %{__python3} setup.py install --skip-build --root $RPM_BUILD_ROOT
 popd
 
@@ -464,7 +467,6 @@ fi
 exit 0
 
 %files -f %{name}.lang
-%defattr(-,root,root,-)
 %license COPYING
 %doc GROUPS CREDITS doc/manual/[a-z]*
 
@@ -513,7 +515,6 @@ exit 0
 %dir %{rpmhome}/fileattrs
 
 %files libs
-%defattr(-,root,root)
 %{_libdir}/librpmio.so.*
 %{_libdir}/librpm.so.*
 %if %{with plugins}
@@ -533,12 +534,10 @@ exit 0
 %endif
 
 %files build-libs
-%defattr(-,root,root)
 %{_libdir}/librpmbuild.so.*
 %{_libdir}/librpmsign.so.*
 
 %files build
-%defattr(-,root,root)
 %{_bindir}/rpmbuild
 %{_bindir}/gendiff
 %{_bindir}/rpmspec
@@ -565,52 +564,51 @@ exit 0
 %{rpmhome}/fileattrs/*
 
 %files sign
-%defattr(-,root,root)
 %{_bindir}/rpmsign
 %{_mandir}/man8/rpmsign.8*
 
-%files python
-%defattr(-,root,root)
-%{python_sitearch}/rpm
-%{python_sitearch}/rpm_python-%{eggver}-py2.7.egg-info
+%files -n python2-%{name}
+%{python_sitearch}/%{name}/
+%{python_sitearch}/%{name}_python-*.egg-info
 
-%files python3
-%defattr(-,root,root)
-%{python3_sitearch}/rpm
-%{python3_sitearch}/rpm_python-%{eggver}-py%{python3_version}.egg-info
+%files -n python3-%{name}
+%{python3_sitearch}/%{name}/
+%{python3_sitearch}/%{name}_python-*.egg-info
 
 %files devel
-%defattr(-,root,root)
 %{_mandir}/man8/rpmgraph.8*
 %{_bindir}/rpmgraph
 %{_libdir}/librp*[a-z].so
-%{_libdir}/pkgconfig/rpm.pc
-%{_includedir}/rpm
+%{_libdir}/pkgconfig/%{name}.pc
+%{_includedir}/%{name}/
 
 %files cron
-%defattr(-,root,root)
 %{_sysconfdir}/cron.daily/rpm
 %config(noreplace) %{_sysconfdir}/logrotate.d/rpm
 
 %files apidocs
-%defattr(-,root,root)
 %license COPYING
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Aug 09 2016 Igor Gnatenko <ignatenko@redhat.com> - 4.13.0-0.rc1.41
+- Add %%{?system_python_abi}
+- rpm-python -> python2-rpm && rpm-python3 -> python3-rpm with providing old names
+- Fixes and cleanups
+
 * Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.13.0-0.rc1.40.1
 - https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
 
-* Mon Jul 18 2016 Petr Pisar <ppisar@redhat.com> - 4.4.13.0-0.rc1.40
+* Mon Jul 18 2016 Petr Pisar <ppisar@redhat.com> - 4.13.0-0.rc1.40
 - Drop rpm-build's dependency on perl-generators (bug #1158860)
 
-* Fri Jul 15 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.39
+* Fri Jul 15 2016 Florian Festi <ffesti@rpm.org> - 4.13.0-0.rc1.39
 - Pass relevant files to new Python dependency generator
 
-* Mon Jun 13 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.38
+* Mon Jun 13 2016 Florian Festi <ffesti@rpm.org> - 4.13.0-0.rc1.38
 - Add new Python dependency generator (provides only for now) (#1340885)
 
-* Thu Jun 02 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.37
+* Thu Jun 02 2016 Florian Festi <ffesti@rpm.org> - 4.13.0-0.rc1.37
 - Add support for _buildhost macro (#1309367)
 
 * Mon May 23 2016 Lubos Kardos <lkardos@redhat.com> 4.13.0-0.rc1.36
@@ -646,13 +644,13 @@ exit 0
 * Thu Mar 10 2016 Lubos Kardos <lkardos@redhat.com> 4.13.0-0.rc1.27
 - Add posix.redirect2null (#1287918)
 
-* Fri Feb 26 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.26
+* Fri Feb 26 2016 Florian Festi <ffesti@rpm.org> - 4.13.0-0.rc1.26
 - Fix ExclusiveArch/ExcludeArch for noarch packages (#1298668)
 
-* Thu Feb 25 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.25
+* Thu Feb 25 2016 Florian Festi <ffesti@rpm.org> - 4.13.0-0.rc1.25
 - Fix dependencies for RemovePathPostfixes (#1306559)
 
-* Fri Feb 19 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.24
+* Fri Feb 19 2016 Florian Festi <ffesti@rpm.org> - 4.13.0-0.rc1.24
 - Also block idle and sleep in the systemd-inhibit plugin (#1297984)
 - Add support for MIPS release 6
 - Add mips32 mips64 mipsel and mipseb macros (#1285116)
@@ -682,7 +680,7 @@ exit 0
 * Fri Jan 15 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.16
 - Fix recursive calling of rpmdeps tool (#1297557)
 
-* Fri Jan 15 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.15
+* Fri Jan 15 2016 Florian Festi <ffesti@rpm.org> - 4.13.0-0.rc1.15
 - Add support for missingok file attribute
 
 * Fri Jan 15 2016 Lubos Kardos <lkardos@redhat.com> - 4.13.0-0.rc1.14
@@ -704,7 +702,7 @@ exit 0
 * Fri Oct 30 2015 Lubos Kardos <lkardos@rpm.org> - 4.13.0-0.rc1.9
 - Ignore SIGPIPE signals during execucton of scriptlets (#1264198)
 
-* Fri Oct 30 2015 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.8
+* Fri Oct 30 2015 Florian Festi <ffesti@rpm.org> - 4.13.0-0.rc1.8
 - Move /usr/lib/rpm/fileattrs directory from rpm-build to rpm (#1272766)
 
 * Fri Oct 23 2015 Lubos Kardos <lkardos@redhat.com> - 4.13-0.rc1.7
@@ -721,10 +719,10 @@ exit 0
 * Wed Oct 14 2015 Robert Kuska <rkuska@redhat.com> - 4.13.0-0.rc1.5
 - Rebuilt for Python3.5 rebuild
 
-* Mon Oct 12 2015 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.4
+* Mon Oct 12 2015 Florian Festi <ffesti@rpm.org> - 4.13.0-0.rc1.4
 - Fix selinux plugin for permissive mode
 
-* Mon Sep 07 2015 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.3
+* Mon Sep 07 2015 Florian Festi <ffesti@rpm.org> - 4.13.0-0.rc1.3
 - Fix new rich dependency syntax
 
 * Sat Sep 05 2015 Kalev Lember <klember@redhat.com> - 4.13.0-0.rc1.2
@@ -1046,7 +1044,7 @@ exit 0
 - fixup a bunch of old incorrect dates in spec changelog
 
 * Sat Nov 17 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.90-0.git11989.2
-- fix double-free on %caps in spec (#877512)
+- fix double-free on %%caps in spec (#877512)
 
 * Thu Nov 15 2012 Panu Matilainen <pmatilai@redhat.com> - 4.10.90-0.git11989.1
 - update to 4.11 (http://rpm.org/wiki/Releases/4.11.0) post-alpha snapshot

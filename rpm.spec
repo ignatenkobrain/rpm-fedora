@@ -27,7 +27,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}41%{?dist}
+Release: %{?snapver:0.%{snapver}.}42%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -591,6 +591,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Aug 12 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.42
+- Enable --majorver-provides in Python dependency generator
+
 * Tue Aug 09 2016 Igor Gnatenko <ignatenko@redhat.com> - 4.13.0-0.rc1.41
 - Add %%{?system_python_abi}
 - rpm-python -> python2-rpm && rpm-python3 -> python3-rpm with providing old names

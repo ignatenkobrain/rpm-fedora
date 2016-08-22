@@ -1,0 +1,29 @@
+From 2f51022e1586a9b3ac8036b23995074b00910475 Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <ignatenko@redhat.com>
+Date: Mon, 22 Aug 2016 12:55:50 +0200
+Subject: [PATCH 2/3] pythondistdeps.py: show warning if version is not found
+ in metadata
+
+In 49197c930bb6090d0fca4089ea75ec9d10e62f99 we introduced skipping
+metadata which has no version, but it's better to show some warning.
+
+Signed-off-by: Igor Gnatenko <ignatenko@redhat.com>
+---
+ scripts/pythondistdeps.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/pythondistdeps.py b/scripts/pythondistdeps.py
+index 54905c3..d7226e0 100755
+--- a/scripts/pythondistdeps.py
++++ b/scripts/pythondistdeps.py
+@@ -110,6 +110,7 @@ for f in files:
+         dist = Distribution.from_location(path_item, dist_name, metadata)
+         # Check if py_version is defined in the file
+         if not dist.py_version:
++            warnings.warn("Version for {!r} has not been found".format(dist), RuntimeWarning)
+             continue
+         if (Provides_PyMajorVer_Variant or legacy_Provides or legacy) and Provides:
+             # Get the Python major version
+-- 
+2.9.3
+

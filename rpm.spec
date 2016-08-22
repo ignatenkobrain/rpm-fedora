@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}42%{?dist}
+Release: %{?snapver:0.%{snapver}.}43%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -88,6 +88,9 @@ Patch132: rpm-4.13.0-_buildhost-macro.diff
 Patch133: rpm-4.13.x-pythondistdeps.patch
 Patch134: rpm-4.13.x-pythondistdeps-Makefile.patch
 Patch135: rpm-4.13.x-pythondistdeps-fileattr.patch
+Patch136: rpm-4.13.x-pythondistdeps.py-skip-distribution-metadata-if-ther.patch
+Patch137: rpm-4.13.x-pythondistdeps.py-show-warning-if-version-is-not-fou.patch
+Patch138: rpm-4.13.x-pythondistdeps.py-skip-.egg-link-files.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -594,7 +597,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
-* Fri Aug 12 2016 Florian Festi <ffesti@rpm.org> - 4.4.13.0-0.rc1.42
+* Mon Aug 22 2016 Igor Gnatenko <ignatenko@redhat.com> - 4.13.0-0.rc1.43
+- Backport fixes to ignore .egg-link files in Python dependency  generator
+
+* Fri Aug 12 2016 Florian Festi <ffesti@rpm.org> - 4.13.0-0.rc1.42
 - Enable --majorver-provides in Python dependency generator
 
 * Tue Aug 09 2016 Igor Gnatenko <ignatenko@redhat.com> - 4.13.0-0.rc1.41

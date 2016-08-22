@@ -1,0 +1,50 @@
+From 83e4d44b802d39dfbd407488c0d9f629799b809c Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <ignatenko@redhat.com>
+Date: Mon, 22 Aug 2016 12:56:05 +0200
+Subject: [PATCH 3/3] pythondistdeps.py: skip .egg-link files
+
+From setuptools's documentation:
+These files are not eggs, strictly speaking. They simply provide a way
+to reference an egg that is not physically installed in the desired
+location. They exist primarily as a cross-platform alternative to
+symbolic links, to support "installing" code that is being developed in
+a different location than the desired installation location.
+
+If we read .egg-link using pkg_resources.Distribution it will
+never have version as it is just list of directories which should be
+taken into account.
+
+We could change into that directories and add eggs from those locations
+for parsing, but RPM's dependency generator already passing all files
+from built RPM so it just does not make any sense to traverse those
+directories.
+
+After all written above, let's just ignore .egg-link files.
+
+Signed-off-by: Igor Gnatenko <ignatenko@redhat.com>
+---
+ scripts/pythondistdeps.py | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/scripts/pythondistdeps.py b/scripts/pythondistdeps.py
+index d7226e0..76017f3 100755
+--- a/scripts/pythondistdeps.py
++++ b/scripts/pythondistdeps.py
+@@ -89,14 +89,12 @@ for f in files:
+     lower_dir = dirname(lower)
+     if lower_dir.endswith('.egg') or \
+             lower_dir.endswith('.egg-info') or \
+-            lower_dir.endswith('.egg-link') or \
+             lower_dir.endswith('.dist-info'):
+         lower = lower_dir
+         f = dirname(f)
+     # Determine provide, requires, conflicts & recommends based on egg/dist metadata
+     if lower.endswith('.egg') or \
+             lower.endswith('.egg-info') or \
+-            lower.endswith('.egg-link') or \
+             lower.endswith('.dist-info'):
+         # This import is very slow, so only do it if needed
+         from pkg_resources import Distribution, FileMetadata, PathMetadata
+-- 
+2.9.3
+

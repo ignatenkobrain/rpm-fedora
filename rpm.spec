@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}43%{?dist}
+Release: %{?snapver:0.%{snapver}.}44%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -277,6 +277,7 @@ programs that will manipulate RPM packages and databases.
 Summary: Python 3 bindings for apps which will manipulate RPM packages
 Group: Development/Libraries
 BuildRequires: python3-devel
+%{?python_provide:%python_provide python3-%{name}}
 %{?system_python_abi}
 Requires: %{name}%{?_isa} = %{version}-%{release}
 Provides: %{name}-python3 = %{version}-%{release}
@@ -597,6 +598,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Aug 23 2016 Igor Gnatenko <ignatenko@redhat.com> - 4.13.0-0.rc1.44
+- Use %%python_provide for python3 subpackage
+
 * Mon Aug 22 2016 Igor Gnatenko <ignatenko@redhat.com> - 4.13.0-0.rc1.43
 - Backport fixes to ignore .egg-link files in Python dependency  generator
 

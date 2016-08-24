@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}45%{?dist}
+Release: %{?snapver:0.%{snapver}.}46%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -91,6 +91,7 @@ Patch135: rpm-4.13.x-pythondistdeps-fileattr.patch
 Patch136: rpm-4.13.x-pythondistdeps.py-skip-distribution-metadata-if-ther.patch
 Patch137: rpm-4.13.x-pythondistdeps.py-show-warning-if-version-is-not-fou.patch
 Patch138: rpm-4.13.x-pythondistdeps.py-skip-.egg-link-files.patch
+Patch139: rpm-4.13.x-pythondistdeps.py-add-forgotten-import.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -598,6 +599,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Aug 24 2016 Igor Gnatenko <ignatenko@redhat.com> - 4.13.0-0.rc1.46
+- Backport patch for missing import in Python dependency generator
+
 * Wed Aug 24 2016 Kalev Lember <klember@redhat.com> - 4.13.0-0.rc1.45
 - Fix -python2 and -python3 subpackage obsoleting from .42
 

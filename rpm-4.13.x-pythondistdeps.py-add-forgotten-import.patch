@@ -1,0 +1,34 @@
+From 30d472c8af086df077e6cf047a87fdaf93c9b21b Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <ignatenko@redhat.com>
+Date: Wed, 24 Aug 2016 15:37:16 +0200
+Subject: [PATCH] pythondistdeps.py: add forgotten import
+
+Signed-off-by: Igor Gnatenko <ignatenko@redhat.com>
+---
+ scripts/pythondistdeps.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/pythondistdeps.py b/scripts/pythondistdeps.py
+index 76017f3..e4b99e2 100755
+--- a/scripts/pythondistdeps.py
++++ b/scripts/pythondistdeps.py
+@@ -15,6 +15,7 @@ from getopt import getopt
+ from os.path import basename, dirname, isdir, sep
+ from sys import argv, stdin, version
+ from distutils.sysconfig import get_python_lib
++from warnings import warn
+ 
+ 
+ opts, args = getopt(
+@@ -108,7 +109,7 @@ for f in files:
+         dist = Distribution.from_location(path_item, dist_name, metadata)
+         # Check if py_version is defined in the file
+         if not dist.py_version:
+-            warnings.warn("Version for {!r} has not been found".format(dist), RuntimeWarning)
++            warn("Version for {!r} has not been found".format(dist), RuntimeWarning)
+             continue
+         if (Provides_PyMajorVer_Variant or legacy_Provides or legacy) and Provides:
+             # Get the Python major version
+-- 
+2.9.3
+

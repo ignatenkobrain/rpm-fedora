@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}44%{?dist}
+Release: %{?snapver:0.%{snapver}.}45%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -263,7 +263,7 @@ BuildRequires: python2-devel
 %{?python_provide:%python_provide python2-%{name}}
 Requires: %{name}%{?_isa} = %{version}-%{release}
 Provides: %{name}-python = %{version}-%{release}
-Obsoletes: %{name}-python < 4.13.0-0.rc1.41
+Obsoletes: %{name}-python < 4.13.0-0.rc1.44
 
 %description -n python2-%{name}
 The rpm-python package contains a module that permits applications
@@ -281,7 +281,7 @@ BuildRequires: python3-devel
 %{?system_python_abi}
 Requires: %{name}%{?_isa} = %{version}-%{release}
 Provides: %{name}-python3 = %{version}-%{release}
-Obsoletes: %{name}-python3 < 4.13.0-0.rc1.41
+Obsoletes: %{name}-python3 < 4.13.0-0.rc1.44
 
 %description -n python3-%{name}
 The rpm-python3 package contains a module that permits applications
@@ -598,6 +598,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Aug 24 2016 Kalev Lember <klember@redhat.com> - 4.13.0-0.rc1.45
+- Fix -python2 and -python3 subpackage obsoleting from .42
+
 * Tue Aug 23 2016 Igor Gnatenko <ignatenko@redhat.com> - 4.13.0-0.rc1.44
 - Use %%python_provide for python3 subpackage
 

@@ -16,8 +16,12 @@
 %bcond_with ndb
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %bcond_with python3
+# use system-wide perl-generators?
+%bcond_with system_perl_generators
 %else
 %bcond_without python3
+# use system-wide perl-generators?
+%bcond_without system_perl_generators
 %endif
 
 %global _default_patch_fuzz 3
@@ -417,9 +421,11 @@ done
 
 find $RPM_BUILD_ROOT -name "*.la"|xargs rm -f
 
+%if %{with system_perl_generators}
 # These live in perl-generators now
 rm -f $RPM_BUILD_ROOT/%{rpmhome}/{perldeps.pl,perl.*}
 rm -f $RPM_BUILD_ROOT/%{_fileattrsdir}/perl*
+%endif
 # Axe unused cruft
 rm -f $RPM_BUILD_ROOT/%{rpmhome}/{tcl.req,osgideps.pl}
 

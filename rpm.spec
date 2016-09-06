@@ -8,20 +8,22 @@
 %bcond_with sanitizer
 # build with libarchive? (needed for rpm2archive)
 %bcond_without libarchive
-# build with libimaevm.so
-%bcond_without libimaevm
 # build with new db format
 %bcond_with ndb
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %bcond_with python3
 # run internal testsuite?
 %bcond_with check
+# build with libimaevm.so
+%bcond_with libimaevm
 # use system-wide perl-generators?
 %bcond_with system_perl_generators
 %else
 %bcond_without python3
 # run internal testsuite?
 %bcond_without check
+# build with libimaevm.so
+%bcond_without libimaevm
 # use system-wide perl-generators?
 %bcond_without system_perl_generators
 %endif

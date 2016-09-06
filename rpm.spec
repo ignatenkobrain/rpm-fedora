@@ -14,6 +14,11 @@
 %bcond_without libimaevm
 # build with new db format
 %bcond_with ndb
+%if 0%{?rhel} && 0%{?rhel} <= 7
+%bcond_with python3
+%else
+%bcond_without python3
+%endif
 
 %define rpmhome /usr/lib/rpm
 
@@ -225,6 +230,7 @@ supplied by RPM Package Manager libraries.
 This package should be installed if you want to develop Python 2
 programs that will manipulate RPM packages and databases.
 
+%if %{with python3}
 %package -n python3-%{name}
 Summary: Python 3 bindings for apps which will manipulate RPM packages
 Group: Development/Libraries
@@ -242,6 +248,7 @@ supplied by RPM Package Manager libraries.
 
 This package should be installed if you want to develop Python 3
 programs that will manipulate RPM packages and databases.
+%endif
 
 %package apidocs
 Summary: API documentation for RPM libraries
@@ -346,7 +353,9 @@ make %{?_smp_mflags}
 
 pushd python
 %{__python2} setup.py build
+%if %{with python3}
 %{__python3} setup.py build
+%endif
 popd
 
 %install
@@ -358,7 +367,9 @@ make DESTDIR="$RPM_BUILD_ROOT" install
 # actually package the bindings built with setup.py (#531543#c26)
 pushd python
 %{__python2} setup.py install --skip-build --root $RPM_BUILD_ROOT
+%if %{with python3}
 %{__python3} setup.py install --skip-build --root $RPM_BUILD_ROOT
+%endif
 popd
 
 
@@ -531,9 +542,11 @@ exit 0
 %{python_sitearch}/%{name}/
 %{python_sitearch}/%{name}_python-*.egg-info
 
+%if %{with python3}
 %files -n python3-%{name}
 %{python3_sitearch}/%{name}/
 %{python3_sitearch}/%{name}_python-*.egg-info
+%endif
 
 %files devel
 %{_mandir}/man8/rpmgraph.8*

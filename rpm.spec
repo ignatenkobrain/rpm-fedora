@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}46%{?dist}
+Release: %{?snapver:0.%{snapver}.}47%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -92,6 +92,8 @@ Patch136: rpm-4.13.x-pythondistdeps.py-skip-distribution-metadata-if-ther.patch
 Patch137: rpm-4.13.x-pythondistdeps.py-show-warning-if-version-is-not-fou.patch
 Patch138: rpm-4.13.x-pythondistdeps.py-skip-.egg-link-files.patch
 Patch139: rpm-4.13.x-pythondistdeps.py-add-forgotten-import.patch
+Patch140: rpm-4.13.x-RISCV-64-bit-riscv64-support.patch
+Patch141: rpm-4.13.x-rpmrc-Convert-uname.machine-riscv-to-riscv32-riscv64.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -599,6 +601,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Sep 23 2016 Richard W.M. Jones <rjones@redhat.com> - 4.13.0-0.rc1.47
+- Backport two upstream patches which add riscv64 architecture support.
+
 * Wed Aug 24 2016 Igor Gnatenko <ignatenko@redhat.com> - 4.13.0-0.rc1.46
 - Backport patch for missing import in Python dependency generator
 

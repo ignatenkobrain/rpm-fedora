@@ -32,7 +32,7 @@
 
 %define rpmhome /usr/lib/rpm
 
-%global rpmver 4.13.0.1
+%global rpmver 4.14.0
 #global snapver rc2
 %global srcver %{version}%{?snapver:-%{snapver}}
 %global srcdir %{?snapver:testing}%{!?snapver:%{name}-%(v=%{version}; echo ${v%.*}.x)}

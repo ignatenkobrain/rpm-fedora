@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -43,7 +43,7 @@ BuildRequires: libdb-devel
 Patch1: rpm-4.11.x-siteconfig.patch
 # Fedora specspo is setup differently than what rpm expects, considering
 # this as Fedora-specific patch for now
-Patch2: rpm-4.9.90-fedora-specspo.patch
+Patch2: rpm-4.13.0-fedora-specspo.patch
 # In current Fedora, man-pages pkg owns all the localized man directories
 Patch3: rpm-4.9.90-no-man-dirs.patch
 # gnupg2 comes installed by default, avoid need to drag in gnupg too
@@ -556,6 +556,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Nov 02 2016 Panu Matilainen <pmatilai@redhat.com> - 4.13.0-0.rc2.2
+- Fix harmless unused variable warning from fedora-specspo patch
+
 * Thu Oct 20 2016 Panu Matilainen <pmatilai@redhat.com> - 4.13.0-0.rc2.1
 - Rebase to rpm 4.13.0-rc2
 

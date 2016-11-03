@@ -18,7 +18,7 @@
 %define rpmhome /usr/lib/rpm
 
 %global rpmver 4.13.0
-%global snapver rc2
+#global snapver rc2
 %global srcver %{version}%{?snapver:-%{snapver}}
 %global srcdir %{?snapver:testing}%{!?snapver:%{name}-%(v=%{version}; echo ${v%.*}.x)}
 
@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -556,6 +556,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Nov 03 2016 Panu Matilainen <pmatilai@redhat.com> - 4.13.0-1
+- Rebase to rpm 4.13.0 final (http://rpm.org/wiki/Releases/4.13.0)
+
 * Wed Nov 02 2016 Panu Matilainen <pmatilai@redhat.com> - 4.13.0-0.rc2.2
 - Fix harmless unused variable warning from fedora-specspo patch
 

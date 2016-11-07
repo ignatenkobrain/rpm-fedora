@@ -3,7 +3,7 @@
 # just for giggles, option to build with internal Berkeley DB
 %bcond_with int_bdb
 # run internal testsuite?
-%bcond_with check
+%bcond_without check
 # build with plugins?
 %bcond_without plugins
 # build with sanitizers?
@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -224,7 +224,7 @@ Provides: %{name}-python = %{version}-%{release}
 Obsoletes: %{name}-python < 4.13.0-0.rc1.44
 
 %description -n python2-%{name}
-The rpm-python package contains a module that permits applications
+The python2-rpm package contains a module that permits applications
 written in the Python programming language to use the interface
 supplied by RPM Package Manager libraries.
 
@@ -242,7 +242,7 @@ Provides: %{name}-python3 = %{version}-%{release}
 Obsoletes: %{name}-python3 < 4.13.0-0.rc1.44
 
 %description -n python3-%{name}
-The rpm-python3 package contains a module that permits applications
+The python3-rpm package contains a module that permits applications
 written in the Python programming language to use the interface
 supplied by RPM Package Manager libraries.
 
@@ -556,6 +556,10 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Nov 04 2016 Thierry Vignaud <tvignaud@redhat.com> - 4.13.0-2
+- Fix package name references in python sub-packages to match reality
+- Re-enable test-suite now that it works again
+
 * Thu Nov 03 2016 Panu Matilainen <pmatilai@redhat.com> - 4.13.0-1
 - Rebase to rpm 4.13.0 final (http://rpm.org/wiki/Releases/4.13.0)
 

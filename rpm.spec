@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -52,6 +52,8 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 
 # Patches already upstream:
+Patch100: rpm-4.13.x-transfiletriggerpostun-invalid-read.patch
+
 Patch133: rpm-4.13.x-pythondistdeps.patch
 Patch134: rpm-4.13.x-pythondistdeps-Makefile.patch
 Patch135: rpm-4.13.x-pythondistdeps-fileattr.patch
@@ -556,6 +558,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Nov 07 2016 Panu Matilainen <pmatilai@redhat.com> - 4.13.0-3
+- Fix invalid memory access on %transfiletriggerpostun (#1284645)
+
 * Fri Nov 04 2016 Thierry Vignaud <tvignaud@redhat.com> - 4.13.0-2
 - Fix package name references in python sub-packages to match reality
 - Re-enable test-suite now that it works again

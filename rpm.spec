@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -173,7 +173,7 @@ packages.
 Summary:  Development files for manipulating RPM packages
 Group: Development/Libraries
 License: GPLv2+ and LGPLv2+ with exceptions
-Requires: %{name}%{?_isa} = %{version}-%{release}
+Requires: %{name} = %{version}-%{release}
 Requires: %{name}-libs%{_isa} = %{version}-%{release}
 Requires: %{name}-build-libs%{_isa} = %{version}-%{release}
 Requires: popt-devel%{_isa}
@@ -221,7 +221,7 @@ Summary: Python 2 bindings for apps which will manipulate RPM packages
 Group: Development/Libraries
 BuildRequires: python2-devel
 %{?python_provide:%python_provide python2-%{name}}
-Requires: %{name}%{?_isa} = %{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Provides: %{name}-python = %{version}-%{release}
 Obsoletes: %{name}-python < %{version}-%{release}
 
@@ -239,7 +239,7 @@ Group: Development/Libraries
 BuildRequires: python3-devel
 %{?python_provide:%python_provide python3-%{name}}
 %{?system_python_abi}
-Requires: %{name}%{?_isa} = %{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Provides: %{name}-python3 = %{version}-%{release}
 Obsoletes: %{name}-python3 < %{version}-%{release}
 
@@ -558,6 +558,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Nov 25 2016 Igor Gnatenko <ignatenko@redhat.com> - 4.13.0-5
+- Fix arch-dependent requires in subpackages (RHBZ #1398591)
+
 * Fri Nov 11 2016 Panu Matilainen <pmatilai@redhat.com> - 4.13.0-4
 - Expand python subpackage obsoletion range (related: #1394125)
 

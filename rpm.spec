@@ -552,12 +552,12 @@ exit 0
 
 %files -n python2-%{name}
 %{python_sitearch}/%{name}/
-%{python_sitearch}/%{name}_python-*.egg-info
+%{python_sitearch}/%{name}*.egg-info
 
 %if %{with python3}
 %files -n python3-%{name}
 %{python3_sitearch}/%{name}/
-%{python3_sitearch}/%{name}_python-*.egg-info
+%{python3_sitearch}/%{name}*.egg-info
 %endif
 
 %files devel

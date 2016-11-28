@@ -28,6 +28,8 @@
 %bcond_without system_perl_generators
 %endif
 
+%global _default_patch_fuzz 3
+
 %define rpmhome /usr/lib/rpm
 
 %global rpmver 4.14.0

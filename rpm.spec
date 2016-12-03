@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}5%{?dist}
+Release: %{?snapver:0.%{snapver}.}6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -144,7 +144,7 @@ the package like its version, a description, etc.
 Summary:  Libraries for manipulating RPM packages
 Group: Development/Libraries
 License: GPLv2+ and LGPLv2+ with exceptions
-Requires: %{name}%{?_isa} = %{version}-%{release}
+Requires: %{name} = %{version}-%{release}
 # librpm uses cap_compare, introduced sometimes between libcap 2.10 and 2.16.
 # A manual require is needed, see #505596
 Requires: libcap%{_isa} >= 2.16
@@ -558,6 +558,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sat Dec 03 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 4.13.0-6
+- Fix arch-dependent requires in subpackages (RHBZ #1398591)
+
 * Fri Nov 25 2016 Igor Gnatenko <ignatenko@redhat.com> - 4.13.0-5
 - Fix arch-dependent requires in subpackages (RHBZ #1398591)
 

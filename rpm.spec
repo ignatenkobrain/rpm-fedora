@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}6%{?dist}
+Release: %{?snapver:0.%{snapver}.}7%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -558,6 +558,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Dec 09 2016 Charalampos Stratakis <cstratak@redhat.com> - 4.13.0-7
+- Rebuild for Python 3.6
+
 * Sat Dec 03 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 4.13.0-6
 - Fix arch-dependent requires in subpackages (RHBZ #1398591)
 

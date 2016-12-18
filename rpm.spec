@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}7%{?dist}
+Release: %{?snapver:0.%{snapver}.}8%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -61,6 +61,9 @@ Patch136: rpm-4.13.x-pythondistdeps.py-skip-distribution-metadata-if-ther.patch
 Patch137: rpm-4.13.x-pythondistdeps.py-show-warning-if-version-is-not-fou.patch
 Patch138: rpm-4.13.x-pythondistdeps.py-skip-.egg-link-files.patch
 Patch139: rpm-4.13.x-pythondistdeps.py-add-forgotten-import.patch
+
+# Fedora-specific (system-python) patch (RHBZ #1405483)
+Patch140: rpm-4.13.x-pythondistdeps-system-python.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -558,6 +561,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sun Dec 18 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 4.13.0-8
+- Switch rpm-build to system-python (RHBZ #1405483)
+
 * Fri Dec 09 2016 Charalampos Stratakis <cstratak@redhat.com> - 4.13.0-7
 - Rebuild for Python 3.6
 

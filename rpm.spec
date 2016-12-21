@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}8%{?dist}
+Release: %{?snapver:0.%{snapver}.}9%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -561,6 +561,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Dec 21 2016 Peter Robinson <pbrobinson@fedoraproject.org> 4.13.0-9
+- Rebuild for Python 3.6
+
 * Sun Dec 18 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 4.13.0-8
 - Switch rpm-build to system-python (RHBZ #1405483)
 

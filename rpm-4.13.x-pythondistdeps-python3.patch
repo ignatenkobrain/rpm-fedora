@@ -3,7 +3,7 @@ diff -uNr rpm-4.13.0.orig/scripts/pythondistdeps.py rpm-4.13.0/scripts/pythondis
 +++ rpm-4.13.0/scripts/pythondistdeps.py	2016-12-18 12:25:48.857479226 +0100
 @@ -1,4 +1,4 @@
 -#!/usr/bin/python
-+#!/usr/libexec/system-python
++#!/usr/bin/python3
  # -*- coding: utf-8 -*-
  #
  # Copyright 2010 Per Øyvind Karlsen <proyvind@moondrake.org>

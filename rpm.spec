@@ -62,8 +62,8 @@ Patch137: rpm-4.13.x-pythondistdeps.py-show-warning-if-version-is-not-fou.patch
 Patch138: rpm-4.13.x-pythondistdeps.py-skip-.egg-link-files.patch
 Patch139: rpm-4.13.x-pythondistdeps.py-add-forgotten-import.patch
 
-# Fedora-specific (system-python) patch (RHBZ #1405483)
-Patch140: rpm-4.13.x-pythondistdeps-system-python.patch
+# Fedora-specific (python3) patch (RHBZ #1405483)
+Patch140: rpm-4.13.x-pythondistdeps-python3.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch

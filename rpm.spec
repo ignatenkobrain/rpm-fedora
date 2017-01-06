@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}9%{?dist}
+Release: %{?snapver:0.%{snapver}.}10%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -206,6 +206,10 @@ Requires: /usr/bin/gdb-add-index
 # "just work" while allowing for alternatives, depend on a virtual
 # provide, typically coming from redhat-rpm-config.
 Requires: system-rpm-config
+# Techincally rpmbuild doesn't require python3 (and setuptools), but
+# pythondistdeps generator expects it.
+# See: https://bugzilla.redhat.com/show_bug.cgi?id=1410631
+Requires: python3-setuptools
 
 %description build
 The rpm-build package contains the scripts and executable programs
@@ -561,6 +565,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Jan 06 2017 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 4.13.0-10
+- Add Requires: python-setuptools for rpm-build (RHBZ #1410631)
+
 * Wed Dec 21 2016 Peter Robinson <pbrobinson@fedoraproject.org> 4.13.0-9
 - Rebuild for Python 3.6
 

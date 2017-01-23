@@ -1,0 +1,48 @@
+commit 61b41cd3d9f2003cbfd7c987f35fc6aedddd2a73
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Fri Jan 13 10:48:43 2017 +0200
+
+    Make the signature header size constant between 32- and 64-bit tags
+    
+    Since commit 68bddc353a7ea87ea00ad957858cd509e845e84c we're initially
+    creating the signature header with estimated values, and if you're
+    unlucky enough to have the estimated and actual size on the different
+    sides of UINT32_MAX boundary, the resulting package will have the main
+    header off by eight bytes, making it unreadable by rpm (RhBug:1405570)
+    
+    Always reserve a little bit of space in the signature header so we
+    we can maintain the overall size constant regardless of whether 32- or
+    64-bit tags were used by using a smaller "padding" with 64bit tags.
+    
+    (cherry picked from commit e51644e0ee2d33c02c06560f87ea6aecb9991673)
+
+diff --git a/lib/signature.c b/lib/signature.c
+index 9784c7b..1b9fe34 100644
+--- a/lib/signature.c
++++ b/lib/signature.c
+@@ -304,7 +304,8 @@ rpmRC rpmGenerateSignature(char *SHA1, uint8_t *MD5, rpm_loff_t size,
+     struct rpmtd_s td;
+     rpmRC rc = RPMRC_OK;
+     char *reservedSpace;
+-    int spaceSize = 0;
++    int spaceSize = 32; /* always reserve a bit of space */
++    int gpgSize = rpmExpandNumeric("%{__gpg_reserved_space}");
+ 
+     /* Prepare signature */
+     sig = rpmNewSignature();
+@@ -349,9 +350,14 @@ rpmRC rpmGenerateSignature(char *SHA1, uint8_t *MD5, rpm_loff_t size,
+ 	td.tag = RPMSIGTAG_LONGSIZE;
+ 	td.data = &s;
+ 	headerPut(sig, &td, HEADERPUT_DEFAULT);
++
++	/* adjust for the size difference between 64- and 32bit tags */
++	spaceSize -= 8;
+     }
+ 
+-    spaceSize = rpmExpandNumeric("%{__gpg_reserved_space}");
++    if (gpgSize > 0)
++	spaceSize += gpgSize;
++
+     if(spaceSize > 0) {
+ 	reservedSpace = xcalloc(spaceSize, sizeof(char));
+ 	rpmtdReset(&td);

@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}10%{?dist}
+Release: %{?snapver:0.%{snapver}.}11%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -53,6 +53,7 @@ Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 
 # Patches already upstream:
 Patch100: rpm-4.13.x-transfiletriggerpostun-invalid-read.patch
+Patch101: rpm-4.13.0-signaturesize.patch
 
 Patch133: rpm-4.13.x-pythondistdeps.patch
 Patch134: rpm-4.13.x-pythondistdeps-Makefile.patch
@@ -565,6 +566,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Jan 23 2017 Panu Matilainen <pmatilai@redhat.com> - 4.13.0-11
+- Fix malformed packages being generated around 4GB boundary (#1405570)
+
 * Fri Jan 06 2017 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 4.13.0-10
 - Add Requires: python-setuptools for rpm-build (RHBZ #1410631)
 

@@ -54,6 +54,7 @@ Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 # Patches already upstream:
 Patch100: rpm-4.13.x-transfiletriggerpostun-invalid-read.patch
 Patch101: rpm-4.13.0-signaturesize.patch
+Patch102: rpm-4.13.0-gdbindex.patch
 
 Patch133: rpm-4.13.x-pythondistdeps.patch
 Patch134: rpm-4.13.x-pythondistdeps-Makefile.patch
@@ -568,6 +569,7 @@ exit 0
 %changelog
 * Mon Jan 23 2017 Panu Matilainen <pmatilai@redhat.com> - 4.13.0-11
 - Fix malformed packages being generated around 4GB boundary (#1405570)
+- Resurrect debuginfo GDB index generation (#1410907)
 
 * Fri Jan 06 2017 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 4.13.0-10
 - Add Requires: python-setuptools for rpm-build (RHBZ #1410631)

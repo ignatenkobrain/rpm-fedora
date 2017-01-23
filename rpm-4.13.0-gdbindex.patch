@@ -1,0 +1,25 @@
+commit de7a1e279f8a21fe3494daeb27801db74e8420c5
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Tue Jan 17 12:21:48 2017 +0200
+
+    Resurrect GDB index generation (RhBug:1410907)
+    
+    Commit 54d30ac4a344770571e56c60281a9130b61c1788 broke GDB index
+    generation due to a leftover "[". In git master this got fixed in
+    commit 67d3df338875ad5d9601e360bfdbd4289f271bc1 but we don't want
+    that on 4.13.x because there are behavior changes involved, so
+    fixing this specifically on the 4.13.x branch.
+
+diff --git a/scripts/find-debuginfo.sh b/scripts/find-debuginfo.sh
+index a70ef3c..4293261 100644
+--- a/scripts/find-debuginfo.sh
++++ b/scripts/find-debuginfo.sh
+@@ -312,7 +312,7 @@ while read nlinks inum f; do
+     $strict && exit 2
+   fi
+ 
+-  [ type gdb-add-index >/dev/null 2>&1 && gdb-add-index "$f" > /dev/null 2>&1
++  type gdb-add-index >/dev/null 2>&1 && gdb-add-index "$f" > /dev/null 2>&1
+ 
+   # A binary already copied into /usr/lib/debug doesn't get stripped,
+   # just has its file names collected and adjusted.

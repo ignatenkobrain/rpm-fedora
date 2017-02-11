@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}11%{?dist}
+Release: %{?snapver:0.%{snapver}.}11%{?dist}.1
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -567,6 +567,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 4.13.0-11.1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 * Mon Jan 23 2017 Panu Matilainen <pmatilai@redhat.com> - 4.13.0-11
 - Fix malformed packages being generated around 4GB boundary (#1405570)
 - Resurrect debuginfo GDB index generation (#1410907)

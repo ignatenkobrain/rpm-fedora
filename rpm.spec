@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}11%{?dist}.1
+Release: %{?snapver:0.%{snapver}.}12%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -63,9 +63,11 @@ Patch136: rpm-4.13.x-pythondistdeps.py-skip-distribution-metadata-if-ther.patch
 Patch137: rpm-4.13.x-pythondistdeps.py-show-warning-if-version-is-not-fou.patch
 Patch138: rpm-4.13.x-pythondistdeps.py-skip-.egg-link-files.patch
 Patch139: rpm-4.13.x-pythondistdeps.py-add-forgotten-import.patch
+Patch140: rpm-4.13.x-brp-python-bytecompile-Python3-only.patch
 
 # Fedora-specific (python3) patch (RHBZ #1405483)
-Patch140: rpm-4.13.x-pythondistdeps-python3.patch
+Patch200: rpm-4.13.x-pythondistdeps-python3.patch
+
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -567,6 +569,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Feb 14 2017 Florian Festi <ffesti@rpm.org> - 4.13.0-12
+- Fix Python byte compilation for Python3 only packages (#1411588)
+
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 4.13.0-11.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 

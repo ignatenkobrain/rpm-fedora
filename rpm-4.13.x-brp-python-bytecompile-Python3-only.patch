@@ -1,0 +1,49 @@
+From a8e51b3bb05c6acb1d9b2e3d34f859ddda1677be Mon Sep 17 00:00:00 2001
+From: Florian Festi <ffesti@redhat.com>
+Date: Tue, 14 Feb 2017 14:04:35 +0100
+Subject: [PATCH] brp-python-bytecompile: Process python lib dirs even without
+ standard Python
+
+There is no need for /usr/bin/python when byte compiling files in
+/usr/lib/pythonX.Y (only /usr/bin/pythonX.Y). Moved check so we do not exit
+prematurely.
+
+Fixes: rhbz#1411588
+---
+ scripts/brp-python-bytecompile | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/scripts/brp-python-bytecompile b/scripts/brp-python-bytecompile
+index 838f23d..894fa34 100644
+--- a/scripts/brp-python-bytecompile
++++ b/scripts/brp-python-bytecompile
+@@ -6,12 +6,6 @@ if [ -z "$RPM_BUILD_ROOT" -o "$RPM_BUILD_ROOT" = "/" ]; then
+ 	exit 0
+ fi
+ 
+-# If we don't have a python interpreter, avoid changing anything.
+-default_python=${1:-/usr/bin/python}
+-if [ ! -x "$default_python" ]; then
+-	exit 0
+-fi
+-
+ # Figure out how deep we need to descend.  We could pick an insanely high
+ # number and hope it's enough, but somewhere, somebody's sure to run into it.
+ depth=`(find "$RPM_BUILD_ROOT" -type f -name "*.py" -print0 ; echo /) | \
+@@ -86,7 +80,12 @@ done
+ 
+ 
+ # Handle other locations in the filesystem using the default python
+-# implementation:
++# implementation - if we  have a default python interpreter
++
++default_python=${1:-/usr/bin/python}
++if [ ! -x "$default_python" ]; then
++	exit 0
++fi
+ 
+ # Generate normal (.pyc) byte-compiled files.
+ python_bytecompile "" $default_python "/bin/|/sbin/|/usr/lib(64)?/python[0-9]\.[0-9]|/usr/share/doc" "$RPM_BUILD_ROOT" "$depth" "/"
+-- 
+2.5.5
+

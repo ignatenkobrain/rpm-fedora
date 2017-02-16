@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}1%{?dist}
+Release: %{?snapver:0.%{snapver}.}2%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -61,6 +61,9 @@ Patch137: rpm-4.13.x-pythondistdeps.py-show-warning-if-version-is-not-fou.patch
 Patch138: rpm-4.13.x-pythondistdeps.py-skip-.egg-link-files.patch
 Patch139: rpm-4.13.x-pythondistdeps.py-add-forgotten-import.patch
 Patch140: rpm-4.13.x-brp-python-bytecompile-Python3-only.patch
+# Upstream PR: https://github.com/rpm-software-management/rpm/pull/154
+# rhbz#1421776
+Patch141: rpm-4.13.x-pythondistdeps.py-fix-processing-wheels.patch
 
 # Fedora-specific (python3) patch (RHBZ #1405483)
 Patch200: rpm-4.13.x-pythondistdeps-python3.patch
@@ -566,6 +569,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Feb 16 2017 Tomas Orsava <torsava@redhat.com> - 4.13.0.1-2
+- Fix handling of Python wheels by pythondistdeps.py --provides (#1421776)
+
 * Thu Feb 16 2017 Panu Matilainen <pmatilai@redhat.com> - 4.13.0.1-1
 - Update to 4.13.0.1 ((http://rpm.org/wiki/Releases/4.13.0)
 

@@ -1,0 +1,43 @@
+From ff395f4a820497a443baa6cd0198c49b06207c3f Mon Sep 17 00:00:00 2001
+From: Tomas Orsava <torsava@redhat.com>
+Date: Thu, 16 Feb 2017 11:36:29 +0100
+Subject: [PATCH] Fix pythondistdeps.py --provides for Python wheels
+
+As Python wheels do not contain targetted Python version in the directory/file
+name of their metadata like Python eggs do, and since the Python version is not
+contained in the metadata either, it is necessary to get it from elsewhere.
+
+Here it is parsed from the path the metadata resides at
+(e.g. /usr/lib/pythonX.Y/site-packages/...)
+---
+ scripts/pythondistdeps.py | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/pythondistdeps.py b/scripts/pythondistdeps.py
+index e4b99e2..d44210c 100644
+--- a/scripts/pythondistdeps.py
++++ b/scripts/pythondistdeps.py
+@@ -107,10 +107,17 @@ for f in files:
+             path_item = f
+             metadata = FileMetadata(f)
+         dist = Distribution.from_location(path_item, dist_name, metadata)
+-        # Check if py_version is defined in the file
++        # Check if py_version is defined in the metadata file/directory name
+         if not dist.py_version:
+-            warn("Version for {!r} has not been found".format(dist), RuntimeWarning)
+-            continue
++            # Try to parse the Python version from the path the metadata
++            # resides at (e.g. /usr/lib/pythonX.Y/site-packages/...)
++            import re
++            res = re.search(r"/python(?P<pyver>\d+\.\d)/", path_item)
++            if res:
++                dist.py_version = res.group('pyver')
++            else:
++                warn("Version for {!r} has not been found".format(dist), RuntimeWarning)
++                continue
+         if (Provides_PyMajorVer_Variant or legacy_Provides or legacy) and Provides:
+             # Get the Python major version
+             pyver_major = dist.py_version.split('.')[0]
+-- 
+2.11.0
+

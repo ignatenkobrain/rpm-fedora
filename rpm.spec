@@ -17,7 +17,7 @@
 
 %define rpmhome /usr/lib/rpm
 
-%global rpmver 4.13.0
+%global rpmver 4.13.0.1
 #global snapver rc2
 %global srcver %{version}%{?snapver:-%{snapver}}
 %global srcdir %{?snapver:testing}%{!?snapver:%{name}-%(v=%{version}; echo ${v%.*}.x)}
@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}12%{?dist}
+Release: %{?snapver:0.%{snapver}.}1%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -52,9 +52,6 @@ Patch4: rpm-4.8.1-use-gpg2.patch
 Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 
 # Patches already upstream:
-Patch100: rpm-4.13.x-transfiletriggerpostun-invalid-read.patch
-Patch101: rpm-4.13.0-signaturesize.patch
-Patch102: rpm-4.13.0-gdbindex.patch
 
 Patch133: rpm-4.13.x-pythondistdeps.patch
 Patch134: rpm-4.13.x-pythondistdeps-Makefile.patch
@@ -569,6 +566,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Feb 16 2017 Panu Matilainen <pmatilai@redhat.com> - 4.13.0.1-1
+- Update to 4.13.0.1 ((http://rpm.org/wiki/Releases/4.13.0)
+
 * Tue Feb 14 2017 Florian Festi <ffesti@rpm.org> - 4.13.0-12
 - Fix Python byte compilation for Python3 only packages (#1411588)
 

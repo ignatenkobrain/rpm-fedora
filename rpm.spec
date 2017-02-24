@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}2%{?dist}
+Release: %{?snapver:0.%{snapver}.}3%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -64,6 +64,7 @@ Patch140: rpm-4.13.x-brp-python-bytecompile-Python3-only.patch
 # Upstream PR: https://github.com/rpm-software-management/rpm/pull/154
 # rhbz#1421776
 Patch141: rpm-4.13.x-pythondistdeps.py-fix-processing-wheels.patch
+Patch142: rpm-4.13.x-fix-refcount-for-spec_type.patch
 
 # Fedora-specific (python3) patch (RHBZ #1405483)
 Patch200: rpm-4.13.x-pythondistdeps-python3.patch
@@ -569,6 +570,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Feb 24 2017 Pavlina Moravcova Varekova <pmoravco@redhat.com> - 4.13.0.2-3
+- Fix number of references on spec_Type (#1426578)
+
 * Thu Feb 16 2017 Tomas Orsava <torsava@redhat.com> - 4.13.0.1-2
 - Fix handling of Python wheels by pythondistdeps.py --provides (#1421776)
 

@@ -21,7 +21,7 @@
 
 %define rpmhome /usr/lib/rpm
 
-%global rpmver 4.14.0~git.544
+%global rpmver 4.14.0~git.556
 #global snapver rc2
 %global srcver %{version}%{?snapver:-%{snapver}}
 %global srcdir %{?snapver:testing}%{!?snapver:%{name}-%(echo %{version} | cut -d'.' -f1-2).x}

@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}8%{?dist}
+Release: %{?snapver:0.%{snapver}.}9%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -88,6 +88,9 @@ Patch262: 0013-missing_build_ids_terminate_build.patch
 Patch263: 0014-generateBuildIDs-Fix-error-handling.patch
 Patch264: 0015-reset-buildid-file-attrs.patch
 
+# OpenSSL backend
+Patch300: 0001-Add-OpenSSL-support-for-digest-and-signatures.patch
+
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
 # Probably to be upstreamed in slightly different form
@@ -120,8 +123,7 @@ BuildRequires: gawk
 BuildRequires: elfutils-devel >= 0.112
 BuildRequires: elfutils-libelf-devel
 BuildRequires: readline-devel zlib-devel
-BuildRequires: nss-devel
-BuildRequires: nss-softokn-freebl-devel
+BuildRequires: openssl-devel
 # The popt version here just documents an older known-good version
 BuildRequires: popt-devel >= 1.10.2
 BuildRequires: file-devel
@@ -348,7 +350,7 @@ ln -s db-%{bdbver} db
 #CPPFLAGS=-I%{_includedir}/db%{bdbver} 
 #LDFLAGS=-L%{_libdir}/db%{bdbver}
 %endif
-CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss` -DLUA_COMPAT_APIINTCASTS"
+CPPFLAGS="$CPPFLAGS -DLUA_COMPAT_APIINTCASTS"
 CFLAGS="$RPM_OPT_FLAGS %{?sanitizer_flags} -DLUA_COMPAT_APIINTCASTS"
 LDFLAGS="$LDFLAGS %{?__global_ldflags}"
 export CPPFLAGS CFLAGS LDFLAGS
@@ -378,7 +380,8 @@ done;
     --with-cap \
     --with-acl \
     %{?with_ndb: --with-ndb} \
-    --enable-python
+    --enable-python \
+    --with-crypto=openssl
 
 make %{?_smp_mflags}
 
@@ -588,6 +591,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Mar 16 2017 Igor Gnatenko <ignatenko@redhat.com> - 4.13.0.1-9
+- Switch to OpenSSL (RHBZ #1390624)
+
 * Wed Mar 15 2017 Mark Wielaard <mjw@redhat.com> - 4.13.0.1-8
 - Add fix to reset buildid file attributes (#1432372)
 

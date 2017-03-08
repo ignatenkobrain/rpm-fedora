@@ -570,7 +570,7 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
-* Fri Feb 24 2017 Pavlina Moravcova Varekova <pmoravco@redhat.com> - 4.13.0.2-3
+* Fri Feb 24 2017 Pavlina Moravcova Varekova <pmoravco@redhat.com> - 4.13.0.1-3
 - Fix number of references on spec_Type (#1426578)
 
 * Thu Feb 16 2017 Tomas Orsava <torsava@redhat.com> - 4.13.0.1-2

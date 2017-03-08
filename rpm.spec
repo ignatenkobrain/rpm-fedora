@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}3%{?dist}
+Release: %{?snapver:0.%{snapver}.}4%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -69,11 +69,23 @@ Patch142: rpm-4.13.x-fix-refcount-for-spec_type.patch
 # Fedora-specific (python3) patch (RHBZ #1405483)
 Patch200: rpm-4.13.x-pythondistdeps-python3.patch
 
+# debuginfo backports (#1427970)
+Patch250: 0001-Add-build-id-links-to-rpm-for-all-ELF-files.patch
+Patch251: 0002-Make-it-possible-to-have-unique-build-ids-across-bui.patch
+Patch252: 0003-Make-adding-GDB-index-sections-configurable.patch
+Patch253: 0004-Add-option-to-have-unique-debug-file-names-across-ve.patch
+Patch254: 0005-Fix-behavior-when-_build_id_links-is-undefined.patch
+Patch255: 0006-Fix-debuginfo-etc-when-subpackages-have-different-ve.patch
+Patch256: 0007-Only-process-regular-files-when-generating-build-ids.patch
+Patch257: 0008-configure.ac-use-LIBDW-always-conditionally.patch
+Patch258: 0009-Fix-libdw-configure-check.patch
+Patch259: 0010-debugedit-Support-String-Line-table-rewriting-for-la.patch
+Patch260: 0011-Add-option-to-have-unique-debug-source-dirs-across-v.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
 # Probably to be upstreamed in slightly different form
-Patch304: rpm-4.9.1.1-ld-flags.patch
+Patch304: rpm-4.13.90-ldflags.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -570,6 +582,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Mar 08 2017 Panu Matilainen <pmatilai@redhat.com> - 4.13.0.1-4
+- Mark Wielaard's backports for debuginfo parallel installation etc (#1427970)
+
 * Fri Feb 24 2017 Pavlina Moravcova Varekova <pmoravco@redhat.com> - 4.13.0.1-3
 - Fix number of references on spec_Type (#1426578)
 

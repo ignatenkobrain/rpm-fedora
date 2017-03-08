@@ -12,4 +12,4 @@ diff -up rpm-4.9.1.1/macros.in.jx rpm-4.9.1.1/macros.in
 +  export RPM_SOURCE_DIR RPM_BUILD_DIR RPM_OPT_FLAGS RPM_LD_FLAGS RPM_ARCH RPM_OS\
    RPM_DOC_DIR=\"%{_docdir}\"\
    export RPM_DOC_DIR\
-   RPM_PACKAGE_NAME=\"%{name}\"\
+   RPM_PACKAGE_NAME=\"%{NAME}\"\

@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}4%{?dist}
+Release: %{?snapver:0.%{snapver}.}5%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -81,6 +81,9 @@ Patch257: 0008-configure.ac-use-LIBDW-always-conditionally.patch
 Patch258: 0009-Fix-libdw-configure-check.patch
 Patch259: 0010-debugedit-Support-String-Line-table-rewriting-for-la.patch
 Patch260: 0011-Add-option-to-have-unique-debug-source-dirs-across-v.patch
+
+# debuginfo build-id warn/error fix (#1430587)
+Patch261: 0012-generateBuildIDs-Don-t-warn-or-error-for-object-file.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -582,6 +585,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Mar 09 2017 Mark Wielaard <mjw@redhat.com> - 4.13.0.1-5
+- Add fix for build-id warnings on object files (#1430587)
+
 * Wed Mar 08 2017 Panu Matilainen <pmatilai@redhat.com> - 4.13.0.1-4
 - Mark Wielaard's backports for debuginfo parallel installation etc (#1427970)
 

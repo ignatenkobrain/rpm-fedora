@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}5%{?dist}
+Release: %{?snapver:0.%{snapver}.}6%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -84,6 +84,7 @@ Patch260: 0011-Add-option-to-have-unique-debug-source-dirs-across-v.patch
 
 # debuginfo build-id warn/error fix (#1430587)
 Patch261: 0012-generateBuildIDs-Don-t-warn-or-error-for-object-file.patch
+Patch262: 0013-missing_build_ids_terminate_build.patch
 
 # These are not yet upstream
 Patch302: rpm-4.7.1-geode-i686.patch
@@ -585,6 +586,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Mar 09 2017 Mark Wielaard <mjw@redhat.com> - 4.13.0.1-6
+- Add fix for missing_build_ids_terminate_build without __debug_package.
+
 * Thu Mar 09 2017 Mark Wielaard <mjw@redhat.com> - 4.13.0.1-5
 - Add fix for build-id warnings on object files (#1430587)
 

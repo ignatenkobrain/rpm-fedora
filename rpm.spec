@@ -21,7 +21,7 @@
 
 %define rpmhome /usr/lib/rpm
 
-%global rpmver 4.14.0~git.569
+%global rpmver 4.14.0~git.572
 #global snapver rc2
 %global srcver %{version}%{?snapver:-%{snapver}}
 %global srcdir %{?snapver:testing}%{!?snapver:%{name}-%(echo %{version} | cut -d'.' -f1-2).x}
@@ -308,6 +308,16 @@ Requires: rpm-libs%{_isa} = %{version}-%{release}
 %description plugin-ima
 %{summary}
 
+%package plugin-prioreset
+Summary: Rpm plugin for resetting scriptlet priorities for SysV init
+Group: System Environment/Base
+Requires: rpm-libs%{_isa} = %{version}-%{release}
+
+%description plugin-prioreset
+%{summary}
+
+Useful on legacy SysV init systems if you run rpm transactions with
+nice/ionice priorities. Should not be used on systemd systems.
 %endif
 
 %prep
@@ -504,6 +514,9 @@ exit 0
 
 %files plugin-ima
 %{_libdir}/rpm-plugins/ima.so
+
+%files plugin-prioreset
+%{_libdir}/rpm-plugins/prioreset.so
 %endif
 
 %files build-libs

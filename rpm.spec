@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}11%{?dist}
+Release: %{?snapver:0.%{snapver}.}12%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -89,6 +89,7 @@ Patch263: 0014-generateBuildIDs-Fix-error-handling.patch
 Patch264: 0015-reset-buildid-file-attrs.patch
 Patch265: 0016-debugedit-replace-files.patch
 Patch266: 0017-do-not-process-buildi-ds-for-noarch.patch
+Patch267: 0018-update-build-id-endian.patch
 
 # OpenSSL backend
 Patch300: 0001-Add-OpenSSL-support-for-digest-and-signatures.patch
@@ -593,6 +594,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Mar 17 2017 Mark Wielaard <mjw@redhat.com> - 4.13.0.1-12
+- Fix reading and updating (cross-endian) build-id information.
+
 * Fri Mar 17 2017 Mark Wielaard <mjw@redhat.com> - 4.13.0.1-11
 - Do not process build-ids for noarch packages.
 

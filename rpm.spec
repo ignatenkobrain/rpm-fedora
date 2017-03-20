@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}12%{?dist}
+Release: %{?snapver:0.%{snapver}.}13%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -91,6 +91,7 @@ Patch265: 0016-debugedit-replace-files.patch
 Patch266: 0017-do-not-process-buildi-ds-for-noarch.patch
 Patch267: 0018-update-build-id-endian.patch
 Patch268: 0019-fix-sed-build-id-match-test.patch
+Patch269: 0020-build-files-exec-build-id.patch
 
 # OpenSSL backend
 Patch300: 0001-Add-OpenSSL-support-for-digest-and-signatures.patch
@@ -595,8 +596,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
-* Mon Mar 20 2017 Mark Wielaard <mjw@redhat.com>
+* Mon Mar 20 2017 Mark Wielaard <mjw@redhat.com> - 4.13.0.1-13
 - Add tests fix for sed file build-id regexp matching.
+- Add fix for build-ids in non-executable ELF files (#1433837).
 
 * Fri Mar 17 2017 Mark Wielaard <mjw@redhat.com> - 4.13.0.1-12
 - Fix reading and updating (cross-endian) build-id information.

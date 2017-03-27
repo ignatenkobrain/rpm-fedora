@@ -29,7 +29,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}14%{?dist}
+Release: %{?snapver:0.%{snapver}.}15%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -93,6 +93,7 @@ Patch267: 0018-update-build-id-endian.patch
 Patch268: 0019-fix-sed-build-id-match-test.patch
 Patch269: 0020-build-files-exec-build-id.patch
 Patch270: 0021-debugedit-Fix-off-by-one-adding-DW_FORM_string-repla.patch
+Patch271: 0022-unbreak-short-circuit.patch
 
 # OpenSSL backend
 Patch300: 0001-Add-OpenSSL-support-for-digest-and-signatures.patch
@@ -597,6 +598,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Mar 27 2017 Mark Wielaard <mjw@redhat.com> - 4.13.0.1-15
+- Unbreak short-circuited binary builds (#1434235).
+
 * Tue Mar 21 2017 Mark Wielaard <mjw@redhat.com> - 4.13.0.1-14
 - Add fix for off by one adding DW_FORM_string replacement (#1434347).
 

@@ -15,6 +15,10 @@
 # build with new db format
 %bcond_with ndb
 
+%define pyver_cmd "import sys; sys.stdout.write(sys.version.split(' ')[0])"
+%define py2_fullver %(%{__python2} -c %{pyver_cmd})
+%define py3_fullver %(%{__python3} -c %{pyver_cmd})
+
 %define rpmhome /usr/lib/rpm
 
 %global rpmver 4.13.0.1
@@ -29,7 +33,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}15%{?dist}
+Release: %{?snapver:0.%{snapver}.}16%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -263,6 +267,7 @@ BuildRequires: python2-devel
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Provides: %{name}-python = %{version}-%{release}
 Obsoletes: %{name}-python < %{version}-%{release}
+Requires: python2-libs = %{py2_fullver}
 
 %description -n python2-%{name}
 The python2-rpm package contains a module that permits applications
@@ -281,6 +286,7 @@ BuildRequires: python3-devel
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Provides: %{name}-python3 = %{version}-%{release}
 Obsoletes: %{name}-python3 < %{version}-%{release}
+Requires: system-python-libs = %{py3_fullver}
 
 %description -n python3-%{name}
 The python3-rpm package contains a module that permits applications
@@ -598,6 +604,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Mon Mar 27 2017 Panu Matilainen <pmatilai@redhat.com> - 4.13.0.1-16
+- Band-aid for python library versioning inadequacies (#1435135)
+
 * Mon Mar 27 2017 Mark Wielaard <mjw@redhat.com> - 4.13.0.1-15
 - Unbreak short-circuited binary builds (#1434235).
 

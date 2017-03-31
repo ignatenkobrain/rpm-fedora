@@ -6,7 +6,7 @@ diff -up rpm-4.8.1/macros.in.gpg2 rpm-4.8.1/macros.in
  %__cpio			@__CPIO@
  %__file			@__FILE@
 -%__gpg			@__GPG@
-+%__gpg			%{_bindir}/gpg2
++%__gpg			/usr/bin/gpg2
  %__grep			@__GREP@
  %__gzip			@__GZIP@
  %__id			@__ID@

@@ -33,7 +33,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}17%{?dist}
+Release: %{?snapver:0.%{snapver}.}18%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -604,6 +604,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Fri Mar 31 2017 Panu Matilainen <pmatilai@redhat.com> - 4.13.0.1-18
+- gpg path must not depend on %%_prefix and such (#1437726)
+
 * Mon Mar 27 2017 Panu Matilainen <pmatilai@redhat.com> - 4.13.0.1-17
 - Work around missing python[23] during build dependency parse
 - Include ISA in the new python library version dependencies too

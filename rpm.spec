@@ -33,7 +33,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}18%{?dist}
+Release: %{?snapver:0.%{snapver}.}19%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -99,6 +99,7 @@ Patch269: 0020-build-files-exec-build-id.patch
 Patch270: 0021-debugedit-Fix-off-by-one-adding-DW_FORM_string-repla.patch
 Patch271: 0022-unbreak-short-circuit.patch
 Patch272: 0023-minisymtab-exe-sh.patch
+Patch273: 0024-no-recompute-build-id.patch
 
 # OpenSSL backend
 Patch300: 0001-Add-OpenSSL-support-for-digest-and-signatures.patch
@@ -605,8 +606,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
-* Sat Apr 15 2017 Mark Wielaard <mjw@fedoraproject.org>
+* Sat Apr 15 2017 Mark Wielaard <mjw@fedoraproject.org> - 4.13.0.1-19
 - Minisymtab should only be added for executables or shared libraries.
+- Add find-debuginfo.sh -n (debugedit --no-recompute-build-id) option.
 
 * Fri Mar 31 2017 Panu Matilainen <pmatilai@redhat.com> - 4.13.0.1-18
 - gpg path must not depend on %%_prefix and such (#1437726)

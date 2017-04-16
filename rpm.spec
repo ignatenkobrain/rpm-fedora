@@ -98,6 +98,7 @@ Patch268: 0019-fix-sed-build-id-match-test.patch
 Patch269: 0020-build-files-exec-build-id.patch
 Patch270: 0021-debugedit-Fix-off-by-one-adding-DW_FORM_string-repla.patch
 Patch271: 0022-unbreak-short-circuit.patch
+Patch272: 0023-minisymtab-exe-sh.patch
 
 # OpenSSL backend
 Patch300: 0001-Add-OpenSSL-support-for-digest-and-signatures.patch
@@ -604,6 +605,9 @@ exit 0
 %doc doc/librpm/html/*
 
 %changelog
+* Sat Apr 15 2017 Mark Wielaard <mjw@fedoraproject.org>
+- Minisymtab should only be added for executables or shared libraries.
+
 * Fri Mar 31 2017 Panu Matilainen <pmatilai@redhat.com> - 4.13.0.1-18
 - gpg path must not depend on %%_prefix and such (#1437726)
 

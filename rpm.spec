@@ -24,7 +24,7 @@
 %global rpmver 4.13.0.1
 #global snapver rc2
 %global srcver %{version}%{?snapver:-%{snapver}}
-%global srcdir %{?snapver:testing}%{!?snapver:%{name}-%(v=%{version}; echo ${v%.*}.x)}
+%global srcdir %{?snapver:testing}%{!?snapver:%{name}-%(echo %{version} | cut -d'.' -f1-2).x}
 
 %define bdbname libdb
 %define bdbver 5.3.15
@@ -36,7 +36,7 @@ Version: %{rpmver}
 Release: %{?snapver:0.%{snapver}.}20%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
-Source0: http://rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
+Source0: http://ftp.rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
 %if %{with int_bdb}
 Source1: db-%{bdbver}.tar.gz
 %else
